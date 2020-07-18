@@ -1,0 +1,16 @@
+{% extends 'bootstrap/base.html' %}
+
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }}</title>
+      {% else %}
+      <title>Welcome to Site</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>Index: <a href="/index">Home</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>

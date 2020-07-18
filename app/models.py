@@ -1,9 +1,16 @@
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash,  check_password_hash
+from flask_login import LoginManager, UserMixin
+from app import login_manager
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100))
