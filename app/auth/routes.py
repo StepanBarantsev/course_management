@@ -18,12 +18,12 @@ def login():
             login_user(user, remember=form.remember.data)
             return redirect(url_for('main.index'))
 
-        flash("Invalid username/password", 'error')
+        flash("Неправильное имя пользователя/пароль", 'error')
         return redirect(url_for('auth.login'))
-    return render_template('auth/login.html', title='Sign In', form=form)
+    return render_template('auth/login.html', title='Авторизация', form=form)
 
 
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.login'))
