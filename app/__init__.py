@@ -8,6 +8,8 @@ from flask_bootstrap import Bootstrap
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Войдите в систему, чтобы просматривать данную страницу!'
 bootstrap = Bootstrap()
 
 
