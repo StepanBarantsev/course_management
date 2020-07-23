@@ -5,16 +5,39 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-default">
+    <nav class="navbar bg-primary">
+        {% if current_user.is_authenticated %}
         <div class="container">
             <div class="navbar-header">
+                <a class="btn btn-success navbar-btn" href="{{ url_for('main.index') }}">Добавить курс</a>
+
             </div>
-            <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_authenticated %}
-                <li><a class="navbar-brand" href="{{ url_for('auth.logout') }}">Выход</a></li>
-                {% endif %}
-            </ul>
+            <div class="nav navbar-nav navbar-right">
+                <div class="btn-group">
+                    <a class="btn btn-success navbar-btn" href="{{ url_for('main.index') }}">
+                    <i class="glyphglyphicon glyphicon-user glyphicon"></i>
+                    </a>
+                    <div class="btn-group pull-right ml-20">
+                        <a class="btn dropdown-toggle btn-success navbar-btn" data-toggle="dropdown"> <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+
+                            <li><a href="{{ url_for('main.index') }}">
+                            <i class="glyphglyphicon glyphicon-user glyphicon"></i>
+                                Профиль
+                            </a></li>
+
+                            <li class="divider"></li>
+
+                            <li><a href="{{ url_for('auth.logout') }}">
+                            <i class="glyphicon glyphglyphicon glyphicon-off"></i>
+                                Выход
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+        </div>
+        {% endif %}
     </nav>
 {% endblock %}
 
