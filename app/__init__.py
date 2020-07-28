@@ -27,6 +27,9 @@ def create_app():
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
+    from app.coursecreate import bp as coursecreate_bp
+    app.register_blueprint(coursecreate_bp, url_prefix='/coursecreate')
+
     return app
 
 
