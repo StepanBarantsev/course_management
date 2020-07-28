@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(100), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    courses = db.relationship('Course', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.username)
@@ -28,3 +29,13 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class Course(db.Model):
+    __tablename__ = 'courses'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(140))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __repr__(self):
+        return '<Course {}>'.format(self.body)
