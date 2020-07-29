@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h1> Информация о профиле </h1>
-    <br>
+    <hr align="left" width="400" class="hr" />
     {% if current_user.name is not none %}
     <p class="profile_text"> Имя: {{ current_user.name }} </p>
     {% endif %}
