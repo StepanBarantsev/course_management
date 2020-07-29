@@ -11,8 +11,4 @@
 
     <p class="profile_text"> E-mail: {{ current_user.email }} </p>
 
-    {% if current_user.created_on is not none %}
-    <p class="profile_text"> Аккаунт создан: {{ current_user.created_on }}</p>
-    {% endif %}
-
 {% endblock %}
