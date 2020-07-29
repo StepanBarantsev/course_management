@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1> Привет, {{ current_user.username }}</h1>
+    <h1> Информация о профиле </h1>
     <br>
+    {% if current_user.name is not none %}
+    <p class="profile_text"> Имя: {{ current_user.name }} </p>
+    {% endif %}
+
+    <p class="profile_text"> Логин: {{ current_user.username }} </p>
+
+    <p class="profile_text"> E-mail: {{ current_user.email }} </p>
+
+    {% if current_user.created_on is not none %}
+    <p class="profile_text"> Аккаунт создан: {{ current_user.created_on }}</p>
+    {% endif %}
+
 {% endblock %}
