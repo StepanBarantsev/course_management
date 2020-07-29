@@ -30,6 +30,9 @@ def create_app():
     from app.coursecreate import bp as coursecreate_bp
     app.register_blueprint(coursecreate_bp, url_prefix='/coursecreate')
 
+    from app.profile import bp as profile_bp
+    app.register_blueprint(profile_bp)
+
     return app
 
 
