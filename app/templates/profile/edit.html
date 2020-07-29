@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <div>
-        <h1> Информация о профиле </h1>
-        <a class="btn btn-success" style="position: relative; bottom: 45px; left: 420px" href="{{ url_for('profile.editprofile') }}">
-            <i class="glyphicon glyphicon-pencil glyphglyphicon" style="width:10px"></i>
-        </a>
-    </div>
+    <h1> Информация о профиле </h1>
+    <a class="btn btn-success navbar-btn" href="{{ url_for('profile.editprofile') }}"></a>
     <hr align="left" width="400" class="hr" />
     {% if current_user.name is not none %}
     <p class="profile_text"> Имя: {{ current_user.name }} </p>
