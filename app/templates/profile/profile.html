@@ -8,7 +8,7 @@
         </a>
     </div>
     <hr align="left" width="400" class="hr" />
-    {% if current_user.name is not none %}
+    {% if current_user.name is not none and current_user.name != "" %}
     <p class="profile_text"> Имя: {{ current_user.name }} </p>
     {% endif %}
 

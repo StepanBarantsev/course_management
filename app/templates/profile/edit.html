@@ -1,15 +1,31 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1> Информация о профиле </h1>
-    <a class="btn btn-success navbar-btn" href="{{ url_for('profile.editprofile') }}"></a>
-    <hr align="left" width="400" class="hr" />
-    {% if current_user.name is not none %}
-    <p class="profile_text"> Имя: {{ current_user.name }} </p>
-    {% endif %}
+    <h1> Изменение информации о профиле </h1>
+    <hr align="left" width="600" class="hr" />
 
-    <p class="profile_text"> Логин: {{ current_user.username }} </p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}<br>
+            {% for error in form.username.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}<br>
+            {% for error in form.email.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(size=32) }}<br>
+        </p>
 
-    <p class="profile_text"> E-mail: {{ current_user.email }} </p>
-
+        <p>{{ form.submit() }}</p>
+    </form>
 {% endblock %}
