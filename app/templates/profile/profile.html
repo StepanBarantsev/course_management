@@ -16,4 +16,6 @@
 
     <p class="profile_text"> E-mail: {{ current_user.email }} </p>
 
+    <a style="font-size: 2rem;" href="{{ url_for('profile.reset_password') }}">{{ 'Изменить пароль' }}</a>
+
 {% endblock %}

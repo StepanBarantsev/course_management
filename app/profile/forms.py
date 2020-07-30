@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email
+from wtforms import StringField, SubmitField, PasswordField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
+from werkzeug.security import check_password_hash
 
 
 class EditProfileForm(FlaskForm):
@@ -27,3 +28,18 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError('Данный email уже занят')
 
+
+class ResetPasswordForm(FlaskForm):
+
+    old_password = PasswordField('Введите старый пароль', validators=[DataRequired()])
+    new_password = PasswordField('Введите новый пароль', validators=[DataRequired()])
+    repeated_password = PasswordField('Введите новый пароль еще раз', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Изменить')
+
+    def __init__(self, current_user, *args, **kwargs):
+        super(ResetPasswordForm, self).__init__(*args, **kwargs)
+        self.current_user = current_user
+
+    def validate_old_password(self, old_password):
+        if not self.current_user.check_password(old_password.data):
+            raise ValidationError('Неверно введен старый пароль!')

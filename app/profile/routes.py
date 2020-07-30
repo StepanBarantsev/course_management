@@ -1,6 +1,6 @@
 from app.profile import bp
 from flask_login import login_required
-from app.profile.forms import EditProfileForm
+from app.profile.forms import EditProfileForm, ResetPasswordForm
 from flask_login import current_user
 from app import db
 from flask import render_template, redirect, url_for, flash, request
@@ -28,3 +28,15 @@ def editprofile():
         form.email.data = current_user.email
         form.name.data = current_user.name
     return render_template('profile/edit.html', title='Редактирование профиля', form=form)
+
+
+@bp.route('/reset_password', methods=['GET', 'POST'])
+@login_required
+def reset_password():
+    form = ResetPasswordForm(current_user)
+    if form.validate_on_submit():
+        current_user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Пароль был успешно изменен')
+        return redirect(url_for('profile.profile'))
+    return render_template('profile/reset_password.html', title='Изменение пароля', form=form)
