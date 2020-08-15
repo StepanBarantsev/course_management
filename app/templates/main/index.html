@@ -31,27 +31,28 @@
         </div>
     </div>
     <nav aria-label="Page navigation example">
-        <ul class="d-flex pagination justify-content-center">
+        <div class="text-center">
+            <ul class="pagination pagination-lg">
+                {% if prev_url %}
+                    <li class="page-item">
+                    <a class="page-link page-item" href="{{ prev_url }}">Предыдущая</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                    <a aria-disabled="true" class="page-link page-item" href="#">Предыдущая</a>
+                    </li>
+                {% endif %}
 
-            {% if prev_url %}
-                <li class="page-item">
-                <a class="page-link page-item" href="{{ prev_url }}">Предыдущая</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                <a aria-disabled="true" class="page-link page-item" href="#">Предыдущая</a>
-                </li>
-            {% endif %}
-
-            {% if next_url %}
-                <li class="page-item">
-                <a class="page-link page-item" href="{{ next_url }}">Следующая</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                <a aria-disabled="true" class="page-link page-item" href="#">Следующая</a>
-                </li>
-            {% endif %}
-        </ul>
+                {% if next_url %}
+                    <li class="page-item">
+                    <a class="page-link page-item" href="{{ next_url }}">Следующая</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                    <a aria-disabled="true" class="page-link page-item" href="#">Следующая</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
 {% endblock %}
