@@ -19,7 +19,7 @@
                         Заглушка
                         </td>
                         <td>
-                        course.name
+                        {{course.name}}
                         </td>
                         <td>
                         Заглушка
@@ -30,10 +30,21 @@
             </div>
         </div>
     </div>
-    {% if prev_url %}
-        <a href="{{ prev_url }}">{{ current_page-1 }}</a>
-    {% endif %}
-    {% if next_url %}
-        <a href="{{ next_url }}">{{ current_page+1 }}</a>
-    {% endif %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+            {% if prev_url %}
+                <a class="page-link" href="{{ prev_url }}">Предыдущая</a>
+            {% endif %}
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+            {% if next_url %}
+                <a class="page-link" href="{{ next_url }}">Следующая</a>
+            {% endif %}
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
