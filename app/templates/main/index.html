@@ -13,7 +13,7 @@
                     <th>Действия</th>
                     </tr>
 
-                    {% for course in current_user.courses %}
+                    {% for course in courses %}
                     <tr>
                         <td>
                         Заглушка
@@ -30,4 +30,10 @@
             </div>
         </div>
     </div>
+    {% if prev_url %}
+        <a href="{{ prev_url }}">{{ current_page-1 }}</a>
+    {% endif %}
+    {% if next_url %}
+        <a href="{{ next_url }}">{{ current_page+1 }}</a>
+    {% endif %}
 {% endblock %}
