@@ -8,7 +8,7 @@ class LoginForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
-    submit = SubmitField('Войти')
+    submit = SubmitField('Войти', render_kw={'class': "btn btn-success"})
 
 
 class RegistrationForm(FlaskForm):
@@ -16,7 +16,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField('Введите пароль еще раз', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Зарегистрироваться')
+    submit = SubmitField('Зарегистрироваться', render_kw={'class': "btn btn-success"})
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()

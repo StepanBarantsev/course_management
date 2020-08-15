@@ -10,7 +10,7 @@ class EditProfileForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     name = StringField('Имя')
-    submit = SubmitField('Сохранить')
+    submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)

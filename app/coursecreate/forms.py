@@ -8,7 +8,7 @@ from app import db
 class CreateCourseProfileForm(FlaskForm):
 
     name = StringField('Название курса', validators=[DataRequired()])
-    submit = SubmitField('Сохранить')
+    submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, *args, **kwargs):
         super(CreateCourseProfileForm, self).__init__(*args, **kwargs)

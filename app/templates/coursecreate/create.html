@@ -5,16 +5,23 @@
     <h1> Создание курса </h1>
     <hr align="left" width="600" class="hr" />
 
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name(size=32) }}<br>
-            {% for error in form.name.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="" method="post">
+                <div class="form-group">
+                    {{ form.hidden_tag() }}
+                    <p>
+                        {{ form.name.label(class_="control-label") }}<br>
+                        {{ form.name(class_="form-control") }}<br>
+                        {% for error in form.name.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                </div>
 
-        <p>{{ form.submit() }}</p>
-    </form>
+                <p>{{ form.submit() }}</p>
+
+            </form>
+        </div>
+    </div>
 {% endblock %}
