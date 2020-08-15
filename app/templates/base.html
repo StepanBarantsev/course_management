@@ -15,8 +15,8 @@
         {% if current_user.is_authenticated %}
         <div class="container">
             <div class="navbar-header">
+                <a class="btn btn-success navbar-btn" href="{{ url_for('main.index') }}">Курсы</a>
                 <a class="btn btn-success navbar-btn" href="{{ url_for('coursecreate.create') }}">Добавить курс</a>
-
             </div>
             <div class="nav navbar-nav navbar-right">
                 <div class="btn-group">
