@@ -22,7 +22,7 @@
                         {{course.name}}
                         </td>
                         <td>
-                            <a title="Edit" class="btn btn-primary" href="#">
+                            <a title="Edit" class="btn btn-primary" href="{{ url_for('coursecreate.edit', course_id=course.id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
                             <a href="#" class="btn btn-danger index-delete">
