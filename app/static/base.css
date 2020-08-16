@@ -5,3 +5,26 @@
 .hr{
     border-top: 1px solid #a21f1f
 }
+
+.mycentered_horizont{
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+#modal-container{
+    text-align:center;
+}
+
+.menubutton{
+        text-align: center;
+        height: 50px;
+        width: 100px;
+        border-radius: 5px;
+        display: inline-block;
+}
+
+.button_in_modal{
+        height: 40px;
+        width: 80px;
+}

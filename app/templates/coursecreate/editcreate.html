@@ -11,6 +11,13 @@
                 <div class="form-group">
                     {{ form.hidden_tag() }}
                     <p>
+                        {{ form.lms_id.label(class_="control-label") }}<br>
+                        {{ form.lms_id(class_="form-control") }}<br>
+                        {% for error in form.lms_id.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                    <p>
                         {{ form.name.label(class_="control-label") }}<br>
                         {{ form.name(class_="form-control") }}<br>
                         {% for error in form.name.errors %}

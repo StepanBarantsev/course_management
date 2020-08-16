@@ -34,7 +34,9 @@ class User(db.Model, UserMixin):
 class Course(db.Model):
     __tablename__ = 'courses'
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(140))
+    name = db.Column(db.String(140), nullable=False)
+    deleted = db.Column(db.Boolean(), nullable=False, default=False)
+    lms_id = db.Column(db.Integer(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):

@@ -16,7 +16,7 @@
                     {% for course in courses %}
                     <tr>
                         <td>
-                        Заглушка
+                        {{course.lms_id}}
                         </td>
                         <td>
                         {{course.name}}
@@ -32,22 +32,21 @@
                             <div class="modal fade" id="exampleModalCenter{{course.id}}">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle{{course.id}}">Deleting Post Permanently</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <h3>{{course.name}}??</h3>
-                                            <p>Are you sure?</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <span style="font-size: 100px;" class="glyphicon glyphicon-question-sign mycentered_horizont"></span>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <p style="text-align: center; font-size: 20px" >Вы уверены, что хотите удалить курс <b>"{{course.name}}"</b>?</p>
+                                        <div id="modal-container">
+                                            <div class="menubutton">
+                                            <button type="button" class="btn btn-secondary button_in_modal" data-dismiss="modal">Отмена</button>
+                                            </div>
+                                            <div class="menubutton">
                                             <form action="{{url_for('coursecreate.delete')}}" method="post">
                                                 <input type="hidden" name="course_id" value="{{ course.id }}">
-                                                <input type="submit" value="Delete" class="btn btn-danger">
+                                                <input type="submit" value="Удалить" class="btn btn-danger button_in_modal" height="100px">
                                             </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
