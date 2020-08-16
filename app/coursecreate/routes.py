@@ -35,3 +35,14 @@ def edit():
     elif request.method == 'GET':
         form.name.data = course.name
     return render_template('coursecreate/editcreate.html', title='Редактировать курс', form=form)
+
+
+@bp.route('/delete', methods=['POST'])
+@login_required
+def delete():
+    course_id = int(request.form['course_id'])
+    Course.query.filter_by(id=course_id).delete()
+    db.session.commit()
+    flash('Курс успешно удален!')
+    return redirect(url_for('main.index'))
+
