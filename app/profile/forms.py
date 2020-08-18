@@ -7,8 +7,8 @@ from werkzeug.security import check_password_hash
 
 class EditProfileForm(FlaskForm):
 
-    username = StringField('Логин', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    username = StringField('Логин', validators=[DataRequired('Поле не должно быть пустым')])
+    email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым'), Email('Некорректный для e-mail формат')])
     name = StringField('Имя')
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
@@ -31,9 +31,9 @@ class EditProfileForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
 
-    old_password = PasswordField('Введите старый пароль', validators=[DataRequired()])
-    new_password = PasswordField('Введите новый пароль', validators=[DataRequired()])
-    repeated_password = PasswordField('Введите новый пароль еще раз', validators=[DataRequired(), EqualTo('new_password')])
+    old_password = PasswordField('Введите старый пароль', validators=[DataRequired('Поле не должно быть пустым')])
+    new_password = PasswordField('Введите новый пароль', validators=[DataRequired('Поле не должно быть пустым')])
+    repeated_password = PasswordField('Введите новый пароль еще раз', validators=[DataRequired('Поле не должно быть пустым'), EqualTo('new_password', message='Пароли не совпадают!')])
     submit = SubmitField('Изменить')
 
     def __init__(self, current_user, *args, **kwargs):

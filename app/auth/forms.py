@@ -5,17 +5,17 @@ from app.models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Логин', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    username = StringField('Логин', validators=[DataRequired('Поле не должно быть пустым')])
+    password = PasswordField('Пароль', validators=[DataRequired('Поле не должно быть пустым')])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти', render_kw={'class': "btn btn-success"})
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Логин', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password2 = PasswordField('Введите пароль еще раз', validators=[DataRequired(), EqualTo('password')])
+    username = StringField('Логин', validators=[DataRequired('Поле не должно быть пустым')])
+    email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым'), Email('Некорректный для e-mail формат')])
+    password = PasswordField('Пароль', validators=[DataRequired('Поле не должно быть пустым')])
+    password2 = PasswordField('Введите пароль еще раз', validators=[DataRequired('Поле не должно быть пустым'), EqualTo('password', message='Пароли не совпадают!')])
     submit = SubmitField('Зарегистрироваться', render_kw={'class': "btn btn-success"})
 
     def validate_username(self, username):
