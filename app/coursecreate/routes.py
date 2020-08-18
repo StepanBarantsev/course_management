@@ -42,7 +42,7 @@ def edit():
 @login_required
 def delete():
     course_id = int(request.form['course_id'])
-    Course.query.filter_by(id=course_id).first().deleted = True
+    Course.delete_course_by_id(course_id)
     db.session.commit()
     flash('Курс успешно удален!')
     return redirect(url_for('main.index'))

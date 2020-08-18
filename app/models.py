@@ -30,6 +30,9 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get_all_not_deleted_courses(self):
+        return self.courses.filter_by(deleted=False)
+
 
 class Course(db.Model):
     __tablename__ = 'courses'
@@ -41,3 +44,8 @@ class Course(db.Model):
 
     def __repr__(self):
         return '<Course {}>'.format(self.body)
+
+    @staticmethod
+    def delete_course_by_id(course_id):
+        Course.query.filter_by(id=course_id).first().deleted = True
+
