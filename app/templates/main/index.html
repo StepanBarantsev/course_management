@@ -22,10 +22,10 @@
                         {{course.name}}
                         </td>
                         <td>
-                            <a title="Edit" class="btn btn-primary" href="{{ url_for('coursecreate.edit', course_id=course.id) }}">
+                            <a title="Редактировать" class="btn btn-primary" href="{{ url_for('coursecreate.edit', course_id=course.id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter{{course.id}}">
+                            <button title="Удалить" type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter{{course.id}}">
                                 <i class="glyphicon glyphicon-trash"></i>
                             </button>
                             <!-- Modal -->
