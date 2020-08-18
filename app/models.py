@@ -33,6 +33,12 @@ class User(db.Model, UserMixin):
     def get_all_not_deleted_courses(self):
         return self.courses.filter_by(deleted=False)
 
+    def get_course_by_name(self, name):
+        return self.get_all_not_deleted_courses().filter_by(name=name).first()
+
+    def get_course_by_lms_id(self, lms_id):
+        return self.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
+
 
 class Course(db.Model):
     __tablename__ = 'courses'

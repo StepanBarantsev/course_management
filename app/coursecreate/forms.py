@@ -16,12 +16,12 @@ class CreateCourseForm(FlaskForm):
         self.current_user = current_user
 
     def validate_name(self, name):
-        coursename = db.session.query(Course).filter(Course.name == name.data).filter(Course.user_id == self.current_user.id).first()
+        coursename = self.current_user.get_course_by_name(name.data)
         if coursename is not None:
             raise ValidationError('Данное имя курса уже занято!')
 
     def validate_lms_id(self, lms_id):
-        lmsid = db.session.query(Course).filter(Course.lms_id == lms_id.data).filter(Course.user_id == self.current_user.id).first()
+        lmsid = self.current_user.get_course_by_lms_id(lms_id.data)
         if lmsid is not None:
             raise ValidationError('Данное LMS ID уже занято!')
 
@@ -39,12 +39,12 @@ class EditCourseForm(FlaskForm):
         self.old_lms_id = old_lms_id
 
     def validate_name(self, name):
-        coursename = db.session.query(Course.name).filter(Course.name == name.data).filter(Course.user_id == self.current_user.id).first()
+        coursename = self.current_user.get_course_by_name(name.data)
         if coursename is not None and coursename.name != self.old_course_name:
             raise ValidationError('Данное имя курса уже занято!')
 
     def validate_lms_id(self, lms_id):
-        lmsid = db.session.query(Course).filter(Course.lms_id == lms_id.data).filter(Course.user_id == self.current_user.id).first()
+        lmsid = self.current_user.get_course_by_lms_id(lms_id.data)
         if lmsid is not None and lmsid.lms_id != self.old_lms_id:
             raise ValidationError('Данное LMS ID уже занято!')
 
