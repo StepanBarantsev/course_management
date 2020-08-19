@@ -9,6 +9,8 @@ class CreateCourseForm(FlaskForm):
 
     name = StringField('Название курса', validators=[DataRequired('Поле не должно быть пустым')])
     lms_id = IntegerField('LMS ID курса', validators=[DataRequired('Введите число')])
+    trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
+    trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, *args, **kwargs):
@@ -30,6 +32,8 @@ class EditCourseForm(FlaskForm):
 
     name = StringField('Название курса', validators=[DataRequired('Поле не должно быть пустым')])
     lms_id = IntegerField('LMS ID курса', validators=[DataRequired('Введите число')])
+    trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
+    trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, old_course_name, old_lms_id,  *args, **kwargs):

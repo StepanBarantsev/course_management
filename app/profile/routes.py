@@ -20,6 +20,8 @@ def editprofile():
         current_user.username = form.username.data
         current_user.email = form.email.data
         current_user.name = form.name.data
+        current_user.telegram_id = form.telegram_id.data
+        current_user.lms_id = form.lms_id.data
         db.session.commit()
         flash('Изменения были успешно сохранены')
         return redirect(url_for('profile.profile'))
@@ -27,6 +29,8 @@ def editprofile():
         form.username.data = current_user.username
         form.email.data = current_user.email
         form.name.data = current_user.name
+        form.lms_id.data = current_user.lms_id
+        form.telegram_id.data = current_user.telegram_id
     return render_template('profile/edit.html', title='Редактирование профиля', form=form)
 
 

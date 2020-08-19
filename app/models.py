@@ -20,6 +20,8 @@ class User(db.Model, UserMixin):
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
     courses = db.relationship('Course', backref='author', lazy='dynamic')
+    telegram_id = db.Column(db.Integer())
+    lms_id = db.Column(db.Integer())
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.username)
@@ -47,6 +49,8 @@ class Course(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
     lms_id = db.Column(db.Integer(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    trainer_telegram_id = db.Column(db.Integer(), nullable=False)
+    trainer_lms_id = db.Column(db.Integer(), nullable=False)
 
     def __repr__(self):
         return '<Course {}>'.format(self.body)
@@ -54,4 +58,7 @@ class Course(db.Model):
     @staticmethod
     def delete_course_by_id(course_id):
         Course.query.filter_by(id=course_id).first().deleted = True
+
+
+
 

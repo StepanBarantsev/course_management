@@ -12,12 +12,19 @@ from sqlalchemy import update
 @login_required
 def create():
     form = CreateCourseForm(current_user)
+    form.trainer_telegram_id.data = current_user.telegram_id
+    form.trainer_lms_id.data = current_user.lms_id
+
     if form.validate_on_submit():
-        new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data)
+        new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
+                            trainer_lms_id=form.trainer_lms_id.data,
+                            trainer_telegram_id=form.trainer_telegram_id.data)
+
         db.session.add(new_course)
         db.session.commit()
         flash('Новый курс был успешно создан!')
         return redirect(url_for('main.index'))
+
     return render_template('coursecreate/editcreate.html', title='Создать курс', form=form)
 
 
@@ -28,13 +35,18 @@ def edit():
     course = db.session.query(Course).filter(Course.id == course_id).first()
     form = EditCourseForm(current_user, course.name, course.lms_id)
     if form.validate_on_submit():
-        db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data))
+        db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data,
+                                                                               trainer_lms_id=form.trainer_lms_id.data,
+                                                                               trainer_telegram_id=form.trainer_telegram_id.dataa))
         db.session.commit()
         flash('Данные курса были успешно изменены!')
         return redirect(url_for('main.index'))
     elif request.method == 'GET':
         form.name.data = course.name
         form.lms_id.data = course.lms_id
+        form.trainer_lms_id.data = course.trainer_lms_id
+        form.trainer_telegram_id.data = course.trainer_telegram_id
+
     return render_template('coursecreate/editcreate.html', title='Редактировать курс', form=form)
 
 

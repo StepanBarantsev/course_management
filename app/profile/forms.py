@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms import StringField, SubmitField, PasswordField, IntegerField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
 from app.models import User
 from werkzeug.security import check_password_hash
 
@@ -10,6 +10,8 @@ class EditProfileForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired('Поле не должно быть пустым')])
     email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым'), Email('Некорректный для e-mail формат')])
     name = StringField('Имя')
+    lms_id = IntegerField('LMS Id', validators=[Optional('Введите число')])
+    telegram_id = IntegerField('Telegram Id', validators=[Optional('Введите число')])
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, *args, **kwargs):

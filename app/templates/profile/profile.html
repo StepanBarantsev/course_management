@@ -8,13 +8,22 @@
         </a>
     </div>
     <hr align="left" width="400" class="hr" />
-    {% if current_user.name is not none and current_user.name != "" %}
-    <p class="profile_text"> Имя: {{ current_user.name }} </p>
-    {% endif %}
 
     <p class="profile_text"> Логин: {{ current_user.username }} </p>
 
     <p class="profile_text"> E-mail: {{ current_user.email }} </p>
+
+    {% if current_user.name is not none and current_user.name != "" %}
+    <p class="profile_text"> Имя: {{ current_user.name }} </p>
+    {% endif %}
+
+    {% if current_user.telegram_id is not none %}
+    <p class="profile_text"> Telegram Id: {{ current_user.telegram_id }} </p>
+    {% endif %}
+
+    {% if current_user.lms_id is not none %}
+    <p class="profile_text"> LMS Id: {{ current_user.lms_id }} </p>
+    {% endif %}
 
     <a style="font-size: 2rem;" href="{{ url_for('profile.reset_password') }}">{{ 'Изменить пароль' }}</a>
 

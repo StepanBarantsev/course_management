@@ -24,6 +24,20 @@
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </p>
+                    <p>
+                        {{ form.trainer_telegram_id.label(class_="control-label") }}<br>
+                        {{ form.trainer_telegram_id(class_="form-control") }}<br>
+                        {% for error in form.trainer_telegram_id.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ form.trainer_lms_id.label(class_="control-label") }}<br>
+                        {{ form.trainer_lms_id(class_="form-control") }}<br>
+                        {% for error in form.trainer_lms_id.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
                 </div>
 
                 <p>{{ form.submit() }}</p>
