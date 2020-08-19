@@ -12,8 +12,12 @@ from sqlalchemy import update
 @login_required
 def create():
     form = CreateCourseForm(current_user)
-    form.trainer_telegram_id.data = current_user.telegram_id
-    form.trainer_lms_id.data = current_user.lms_id
+
+    if current_user.telegram_id is not None:
+        form.trainer_telegram_id.data = current_user.telegram_id
+
+    if current_user.lms_id is not None:
+        form.trainer_lms_id.data = current_user.lms_id
 
     if form.validate_on_submit():
         new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
@@ -37,7 +41,7 @@ def edit():
     if form.validate_on_submit():
         db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data,
                                                                                trainer_lms_id=form.trainer_lms_id.data,
-                                                                               trainer_telegram_id=form.trainer_telegram_id.dataa))
+                                                                               trainer_telegram_id=form.trainer_telegram_id.data))
         db.session.commit()
         flash('Данные курса были успешно изменены!')
         return redirect(url_for('main.index'))
