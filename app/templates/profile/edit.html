@@ -14,7 +14,7 @@
                     {% with %} {% set  specificform = form.email %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.name %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.telegram_id %} {% include "helpers/field_form.html" %} {% endwith %}
-                    {% with %} {% set  specificform = form.form.lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
+                    {% with %} {% set  specificform = form.lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
                 </div>
 
                 <p> {{ form.submit() }}</p>
