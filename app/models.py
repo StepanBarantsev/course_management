@@ -57,7 +57,6 @@ class Course(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     blocks = db.relationship('CourseBlock', backref='course', lazy='dynamic')
-    tasks = db.relationship('LmsTask', backref='course', lazy='dynamic')
 
     def __repr__(self):
         return '<Course {}>'.format(self.body)
@@ -68,27 +67,15 @@ class Course(db.Model):
 
 
 class CourseBlock(db.Model):
-    __tablename__ = 'courseBlocks'
+    __tablename__ = 'course_blocks'
     id = db.Column(db.Integer(), primary_key=True)
+
     number = db.Column(db.Integer(), nullable=False)
-
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
-    # id таски, которую нужно выполнить чтобы открылся блок. Если null, то блок открыт и так
-    required_task_id = db.Column(db.Integer, db.ForeignKey('lmsTasks.id'))
-
-
-class LmsTask(db.Model):
-    __tablename__ = 'lmsTasks'
-    id = db.Column(db.Integer(), primary_key=True)
-
-    lms_id = db.Column(db.Integer(), nullable=False)
-    name = db.Column(db.Integer(), nullable=False)
-    # Короткое имя по которому будет идти запрос в телегу
-    short_name = db.Column(db.Integer(), nullable=False)
+    # lms_id таски, которую нужно выполнить чтобы открылся блок. Если null, то блок открыт и так
+    required_task_lms_id = db.Column(db.Integer())
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
-    related_blocks = db.relationship('CourseBlock', backref='task', lazy='dynamic')
 
 
 
