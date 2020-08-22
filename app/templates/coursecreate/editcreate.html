@@ -10,34 +10,10 @@
             <form action="" method="post">
                 <div class="form-group">
                     {{ form.hidden_tag() }}
-                    <p>
-                        {{ form.lms_id.label(class_="control-label") }}<br>
-                        {{ form.lms_id(class_="form-control") }}<br>
-                        {% for error in form.lms_id.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.name.label(class_="control-label") }}<br>
-                        {{ form.name(class_="form-control") }}<br>
-                        {% for error in form.name.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.trainer_telegram_id.label(class_="control-label") }}<br>
-                        {{ form.trainer_telegram_id(class_="form-control") }}<br>
-                        {% for error in form.trainer_telegram_id.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.trainer_lms_id.label(class_="control-label") }}<br>
-                        {{ form.trainer_lms_id(class_="form-control") }}<br>
-                        {% for error in form.trainer_lms_id.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </p>
+                    {% with %} {% set  specificform = form.lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
+                    {% with %} {% set  specificform = form.name %} {% include "helpers/field_form.html" %} {% endwith %}
+                    {% with %} {% set  specificform = form.trainer_telegram_id %} {% include "helpers/field_form.html" %} {% endwith %}
+                    {% with %} {% set  specificform = form.trainer_lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
                 </div>
 
                 <p>{{ form.submit() }}</p>
