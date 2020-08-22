@@ -13,15 +13,17 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
+
     name = db.Column(db.String(100))
     username = db.Column(db.String(50), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(100), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
-    courses = db.relationship('Course', backref='author', lazy='dynamic')
     telegram_id = db.Column(db.Integer())
     lms_id = db.Column(db.Integer())
+
+    courses = db.relationship('Course', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.username)
@@ -45,12 +47,17 @@ class User(db.Model, UserMixin):
 class Course(db.Model):
     __tablename__ = 'courses'
     id = db.Column(db.Integer(), primary_key=True)
+
     name = db.Column(db.String(140), nullable=False)
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
     lms_id = db.Column(db.Integer(), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     trainer_telegram_id = db.Column(db.Integer(), nullable=False)
     trainer_lms_id = db.Column(db.Integer(), nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    blocks = db.relationship('CourseBlock', backref='course', lazy='dynamic')
+    tasks = db.relationship('LmsTask', backref='course', lazy='dynamic')
 
     def __repr__(self):
         return '<Course {}>'.format(self.body)
@@ -58,6 +65,31 @@ class Course(db.Model):
     @staticmethod
     def delete_course_by_id(course_id):
         Course.query.filter_by(id=course_id).first().deleted = True
+
+
+class CourseBlock(db.Model):
+    __tablename__ = 'courseBlocks'
+    id = db.Column(db.Integer(), primary_key=True)
+    number = db.Column(db.Integer(), nullable=False)
+
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    # id таски, которую нужно выполнить чтобы открылся блок. Если null, то блок открыт и так
+    required_task_id = db.Column(db.Integer, db.ForeignKey('lmsTasks.id'))
+
+
+class LmsTask(db.Model):
+    __tablename__ = 'lmsTasks'
+    id = db.Column(db.Integer(), primary_key=True)
+
+    lms_id = db.Column(db.Integer(), nullable=False)
+    name = db.Column(db.Integer(), nullable=False)
+    # Короткое имя по которому будет идти запрос в телегу
+    short_name = db.Column(db.Integer(), nullable=False)
+
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+
+    related_blocks = db.relationship('CourseBlock', backref='task', lazy='dynamic')
+
 
 
 
