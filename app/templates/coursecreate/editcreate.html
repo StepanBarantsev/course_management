@@ -15,8 +15,8 @@
                     {% with %} {% set  specificform = form.trainer_telegram_id %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.trainer_lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
                 </div>
-
-                <p>{{ form.submit() }}</p>
+                <label> Курс разделяется на блоки? </label>
+                <p class="control-label">{{ form.submit() }}</p>
 
             </form>
         </div>
