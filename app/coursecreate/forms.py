@@ -14,7 +14,7 @@ class CreateOrEditCourseForm(FlaskForm):
 
     is_more_then_one_block = BooleanField('Курс разделяется на блоки?')
     number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число'),
-                                                                     NumberRange(1, 20, "Число должно бытьне больше 20 и не меньше 1")])
+                                                                     NumberRange(2, 20, "Число должно быть не больше 20 и не меньше 2")])
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 

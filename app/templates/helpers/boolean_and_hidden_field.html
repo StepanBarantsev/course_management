@@ -4,7 +4,11 @@
         {{ specificform_boolean}}<br>
     </p>
 
-    <p id="{{ specificform_hidden.id }}_p" style="display: none;">
+    {% if specificform_boolean.data %}
+        <p id="{{ specificform_hidden.id }}_p">
+    {% else %}
+        <p id="{{ specificform_hidden.id }}_p" style="display: none;">
+    {% endif %}
         {{ specificform_hidden.label(class_="control-label") }}<br>
         {{ specificform_hidden(class_="form-control") }}<br>
         {% for error in specificform_hidden.errors %}
