@@ -5,7 +5,7 @@ from app.models import Course, User
 from app import db
 
 
-class BlockForm(FlaskForm):
+class BlockForm:
     blocks_number = FieldList(IntegerField('Номер блока', validators=[DataRequired('Введите число')]), min_entries=0)
     blocks_required_task_lms_id = FieldList(
         IntegerField('Lms Id, необходимое чтобы блок был открыт (можно оставить пустым)',
