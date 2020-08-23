@@ -53,6 +53,7 @@ class Course(db.Model):
     lms_id = db.Column(db.Integer(), nullable=False)
     trainer_telegram_id = db.Column(db.Integer(), nullable=False)
     trainer_lms_id = db.Column(db.Integer(), nullable=False)
+    num_of_blocks = db.Column(db.Integer(), nullable=False, default=1)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
