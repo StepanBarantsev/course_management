@@ -1,6 +1,14 @@
 {% block boolean_and_hidden_form %}
      <p>
-        {{ specificform_boolean.label(class_="control-label") }}<br>
+        {{ specificform_boolean.label(class_="control-label") }}
         {{ specificform_boolean }}<br>
+    </p>
+
+    <p>
+        {{ specificform_hidden.label(class_="control-label", style="display: none;") }}<br>
+        {{ specificform_hidden(class_="form-control", style="display: none;") }}<br>
+        {% for error in specificform_hidden.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
     </p>
 {% endblock %}
