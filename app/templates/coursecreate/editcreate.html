@@ -63,4 +63,12 @@ $(document).ready(function() {
     });
 });
 </script>
+
+{% if from_post == True %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+             $("#submit").click();
+        });
+    </script>
+{% endif %}
 {% endblock %}
