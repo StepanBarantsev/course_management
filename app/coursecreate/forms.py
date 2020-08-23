@@ -5,21 +5,12 @@ from app.models import Course, User
 from app import db
 
 
-class BlockForm:
-    blocks_number = FieldList(IntegerField('Номер блока', validators=[DataRequired('Введите число')]), min_entries=0)
-    blocks_required_task_lms_id = FieldList(
-        IntegerField('Lms Id, необходимое чтобы блок был открыт (можно оставить пустым)',
-                     validators=[Optional('Введите число')]), min_entries=0)
-
-
 class CreateOrEditCourseForm(FlaskForm):
 
     name = StringField('Название курса', validators=[DataRequired('Поле не должно быть пустым')])
     lms_id = IntegerField('LMS ID курса', validators=[DataRequired('Введите число')])
     trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
     trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
-
-    blocks = FieldList(FormField(BlockForm), min_entries=0)
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
