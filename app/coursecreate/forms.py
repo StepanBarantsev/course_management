@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, FieldList, FormField, BooleanField
-from wtforms.validators import ValidationError, DataRequired, Optional
+from wtforms.validators import ValidationError, DataRequired, Optional, NumberRange
 from app.models import Course, User
 from app import db
 
@@ -13,7 +13,8 @@ class CreateOrEditCourseForm(FlaskForm):
     trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
 
     is_more_then_one_block = BooleanField('Курс разделяется на блоки?')
-    number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число')])
+    number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число'),
+                                                                     NumberRange(1, 20, "Число должно бытьне больше 20 и не меньше 1")])
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
