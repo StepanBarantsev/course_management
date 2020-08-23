@@ -16,9 +16,51 @@
                     {% with %} {% set  specificform = form.trainer_lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
                 </div>
                 <label> Курс разделяется на блоки? </label>
+
+                {{ form.blocks }}
+
+                <button type="button" id="addNewBlock" class="btn btn-success">Добавить блок</button>
+                <hr align="left" width="600" class="hr" />
                 <p class="control-label">{{ form.submit() }}</p>
 
             </form>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+
+{{super()}}
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+    var num = 1;
+
+    $("#addNewBlock").click(function() {
+
+        var labelInputNumber = $("<label class='control-label'>Номер блока</label>")
+
+        var labelInputLmsId = $("<label class='control-label'>LmsId блока</label>")
+        .attr("style", "left: 30px; position: relative")
+
+        var newInputNumber = $("<input required type='text'></input>")
+            .attr("name", "number" + num)
+            .attr("class", "form-control input_in_one_string")
+            .attr("value", num)
+
+        var newInputLmsId = $("<input required type='text' value=''></input>")
+            .attr("name", "lmsId" + num)
+            .attr("class", "form-control input_in_one_string")
+
+        $("#blocks").append(labelInputNumber);
+        $("#blocks").append(labelInputLmsId);
+        labelInputNumber.append(newInputNumber)
+        labelInputLmsId.append(newInputLmsId)
+        $("#blocks").append($("<br/>"));
+
+        num++;
+    });
+});
+</script>
 {% endblock %}
