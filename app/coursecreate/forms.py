@@ -6,10 +6,9 @@ from app import db
 
 
 class BlockForm(FlaskForm):
-    blocks_number = FieldList(IntegerField('Номер блока', validators=[DataRequired('Введите число')]), min_entries=0)
-    blocks_required_task_lms_id = FieldList(
-        IntegerField('Lms Id, необходимое чтобы блок был открыт (можно оставить пустым)',
-                     validators=[Optional('Введите число')]), min_entries=0)
+    blocks_number = IntegerField('Номер блока', validators=[DataRequired('Введите число')])
+    blocks_required_task_lms_id = IntegerField('Lms Id, необходимое чтобы блок был открыт',
+                     validators=[Optional('Введите число')])
 
 
 class CreateOrEditCourseForm(FlaskForm):
