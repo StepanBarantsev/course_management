@@ -6,6 +6,11 @@
      href="{{url_for('static', filename='base.css')}}">
 {% endblock %}
 
+{% block scripts %}
+    {{super()}}
+     <script type="text/javascript" src="{{ url_for('static', filename = 'base.js') }}"></script>
+{% endblock %}
+
 {% block title %}
     {% if title %}{{ title }} {% else %}{{ 'Стандартный заголовок' }}{% endif %}
 {% endblock %}
