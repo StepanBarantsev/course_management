@@ -11,25 +11,32 @@ from sqlalchemy import update
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
+
     form = CreateOrEditCourseForm(current_user)
 
-    if current_user.telegram_id is not None:
-        form.trainer_telegram_id.data = current_user.telegram_id
+    if request.method == 'GET':
 
-    if current_user.lms_id is not None:
-        form.trainer_lms_id.data = current_user.lms_id
+        if current_user.telegram_id is not None:
+            form.trainer_telegram_id.data = current_user.telegram_id
 
-    if form.validate_on_submit():
-        new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
-                            trainer_lms_id=form.trainer_lms_id.data,
-                            trainer_telegram_id=form.trainer_telegram_id.data)
+        if current_user.lms_id is not None:
+            form.trainer_lms_id.data = current_user.lms_id
 
-        db.session.add(new_course)
-        db.session.commit()
-        flash('Новый курс был успешно создан!')
-        return redirect(url_for('main.index'))
+        return render_template('coursecreate/editcreate.html', title='Создать курс', form=form, from_post=False)
 
-    return render_template('coursecreate/editcreate.html', title='Создать курс', form=form)
+    if request.method == 'POST':
+
+        if form.validate_on_submit():
+            new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
+                                trainer_lms_id=form.trainer_lms_id.data,
+                                trainer_telegram_id=form.trainer_telegram_id.data)
+
+            db.session.add(new_course)
+            db.session.commit()
+            flash('Новый курс был успешно создан!')
+            return redirect(url_for('main.index'))
+
+        return render_template('coursecreate/editcreate.html', title='Создать курс', form=form, from_post=True)
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
