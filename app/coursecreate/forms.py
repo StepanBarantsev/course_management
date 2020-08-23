@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, FieldList, FormField
+from wtforms import StringField, SubmitField, IntegerField, FieldList, FormField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Optional
 from app.models import Course, User
 from app import db
@@ -11,6 +11,9 @@ class CreateOrEditCourseForm(FlaskForm):
     lms_id = IntegerField('LMS ID курса', validators=[DataRequired('Введите число')])
     trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
     trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
+
+    is_more_then_one_block = BooleanField('Курс разделяется на блоки?')
+    number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число')])
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
@@ -27,7 +30,7 @@ class CreateOrEditCourseForm(FlaskForm):
 
     def validate_lms_id(self, lms_id):
         lmsid = self.current_user.get_course_by_lms_id(lms_id.data)
-        if lmsid is not None and lmsid.lms_id != (self.old_lms_id or self.old_lms_id is None):
+        if lmsid is not None and (lmsid.lms_id != self.old_lms_id or self.old_lms_id is None):
             raise ValidationError('Данное LMS ID уже занято!')
 
 
