@@ -29,3 +29,12 @@ def add():
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
     return render_template('students/add.html', title="Добавление студента", course_name=course_name)
+
+
+@bp.route('/edit', methods=['GET', 'POST'])
+@login_required
+def add():
+    course_id = request.args.get('course_id', type=int)
+    course = db.session.query(Course).filter(Course.id == course_id).first()
+    course_name = course.name
+    return render_template('students/add.html', title="Редактировние информации о студенте", course_name=course_name)
