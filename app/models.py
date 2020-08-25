@@ -74,6 +74,9 @@ class Course(db.Model):
     def delete_course_by_id(course_id):
         Course.query.filter_by(id=course_id).first().deleted = True
 
+    def get_all_not_delete_students(self):
+        return self.students.filter_by(deleted=False)
+
 
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'
@@ -99,6 +102,10 @@ class Student(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
     courses = db.relationship("Course", secondary=student_course)
+
+    @staticmethod
+    def delete_student_by_id(student_id):
+        Student.query.filter_by(id=student_id).first().deleted = True
 
 
 
