@@ -28,7 +28,7 @@ def add():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
-    return render_template('students/add.html', title="Добавление студента", course_name=course_name)
+    return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ")
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
@@ -37,4 +37,5 @@ def edit():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
-    return render_template('students/add.html', title="Редактировние информации о студенте", course_name=course_name)
+    return render_template('students/edit.html', title="Редактировние информации о студенте", course_name=course_name,
+                           header="Редактирование студента, обучающегося на курс ")

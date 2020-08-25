@@ -1,8 +1,8 @@
-"""link field not null
+"""not null field
 
-Revision ID: 666008854fca
+Revision ID: fe8466074bb8
 Revises: 459756de569f
-Create Date: 2020-08-25 23:49:15.765526
+Create Date: 2020-08-26 00:01:15.832603
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = '666008854fca'
+revision = 'fe8466074bb8'
 down_revision = '459756de569f'
 branch_labels = None
 depends_on = None
