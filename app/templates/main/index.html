@@ -25,6 +25,9 @@
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('coursecreate.edit', course_id=course.id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
+                            <a title="Студенты" type="button" class="btn btn-primary" data-toggle="modal" href="{{ url_for('students.index', course_id=course.id) }}">
+                                <i class="glyphicon glyphicon-user"></i>
+                            </a>
                             <button title="Удалить" type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter{{course.id}}">
                                 <i class="glyphicon glyphicon-trash"></i>
                             </button>
