@@ -54,6 +54,7 @@ class Course(db.Model):
     trainer_telegram_id = db.Column(db.Integer(), nullable=False)
     trainer_lms_id = db.Column(db.Integer(), nullable=False)
     num_of_blocks = db.Column(db.Integer(), nullable=False, default=1)
+    is_certificate_needed = db.Column(db.Boolean(), nullable=False, default=0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 

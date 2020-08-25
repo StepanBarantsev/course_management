@@ -29,7 +29,7 @@ def create():
         new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
                             trainer_lms_id=form.trainer_lms_id.data,
                             trainer_telegram_id=form.trainer_telegram_id.data,
-                            num_of_blocks=num_of_blocks)
+                            num_of_blocks=num_of_blocks, is_certificate_needed=form.is_certificate_needed.data)
 
         db.session.add(new_course)
         db.session.commit()
@@ -55,7 +55,8 @@ def edit():
         db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data,
                                                                                trainer_lms_id=form.trainer_lms_id.data,
                                                                                trainer_telegram_id=form.trainer_telegram_id.data,
-                                                                               num_of_blocks=num_of_blocks))
+                                                                               num_of_blocks=num_of_blocks,
+                                                                               is_certificate_needed=form.is_certificate_needed.data))
         db.session.commit()
         flash('Данные курса были успешно изменены!')
         return redirect(url_for('main.index'))
@@ -64,6 +65,7 @@ def edit():
         form.lms_id.data = course.lms_id
         form.trainer_lms_id.data = course.trainer_lms_id
         form.trainer_telegram_id.data = course.trainer_telegram_id
+        form.is_certificate_needed.data = course.is_certificate_needed
 
         if course.num_of_blocks == 1:
             form.is_more_then_one_block.data = False

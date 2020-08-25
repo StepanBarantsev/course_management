@@ -16,6 +16,8 @@ class CreateOrEditCourseForm(FlaskForm):
     number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число'),
                                                                      NumberRange(2, 20, "Число должно быть не больше 20 и не меньше 2")])
 
+    is_certificate_needed = BooleanField('Отслеживать ли выдачу сертификата?')
+
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, old_course_name=None, old_lms_id=None,  *args, **kwargs):
