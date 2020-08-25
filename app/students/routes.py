@@ -12,10 +12,20 @@ def index():
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
     students = course.students
-    return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students)
+    return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students,
+                           course_id=course_id)
 
 
 @bp.route('/delete', methods=['POST'])
 @login_required
 def delete():
-    return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students)
+    return render_template('students/index.html')
+
+
+@bp.route('/add', methods=['GET', 'POST'])
+@login_required
+def add():
+    course_id = request.args.get('course_id', type=int)
+    course = db.session.query(Course).filter(Course.id == course_id).first()
+    course_name = course.name
+    return render_template('students/add.html', title="Добавление студента", course_name=course_name)
