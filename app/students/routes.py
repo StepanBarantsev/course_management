@@ -11,7 +11,7 @@ def index():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
-    students = course.students
+    students = course.get_all_not_delete_students()
     return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students,
                            course_id=course_id)
 
