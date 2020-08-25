@@ -24,7 +24,10 @@ def create():
         if not form.is_more_then_one_block.data:
             num_of_blocks = 1
         else:
-            num_of_blocks = form.number_of_blocks.data
+            if form.number_of_blocks.data is None:
+                num_of_blocks = 1
+            else:
+                num_of_blocks = form.number_of_blocks.data
 
         new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
                             trainer_lms_id=form.trainer_lms_id.data,
@@ -50,7 +53,10 @@ def edit():
         if not form.is_more_then_one_block.data:
             num_of_blocks = 1
         else:
-            num_of_blocks = form.number_of_blocks.data
+            if form.number_of_blocks.data is None:
+                num_of_blocks = 1
+            else:
+                num_of_blocks = form.number_of_blocks.data
 
         db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data,
                                                                                trainer_lms_id=form.trainer_lms_id.data,
