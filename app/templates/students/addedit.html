@@ -2,4 +2,23 @@
 
 {% block app_content %}
     <h1> {{ header }} <b>{{ course_name }}</b></h1>
+
+    <hr align="left" width="600" class="hr" />
+
+        <div class="row">
+            <div class="col-md-6">
+                <form action="" method="post">
+                    <div class="form-group">
+                        {{ form.hidden_tag() }}
+                        {% with %} {% set  specificform = form.name %} {% include "helpers/field_form.html" %} {% endwith %}
+                        {% with %} {% set  specificform = form.email %} {% include "helpers/field_form.html" %} {% endwith %}
+                        {% with %} {% set  specificform = form.lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
+                        {% with %} {% set  specificform = form.days %} {% include "helpers/field_form.html" %} {% endwith %}
+                    </div>
+
+                    <p class="control-label">{{ form.submit() }}</p>
+
+                </form>
+            </div>
+        </div>
 {% endblock %}
