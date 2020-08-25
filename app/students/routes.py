@@ -33,7 +33,7 @@ def add():
 
 @bp.route('/edit', methods=['GET', 'POST'])
 @login_required
-def add():
+def edit():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
