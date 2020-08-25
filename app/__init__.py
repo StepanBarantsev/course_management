@@ -37,7 +37,7 @@ def create_app():
     app.register_blueprint(profile_bp)
 
     from app.students import bp as students_bp
-    app.register_blueprint(students_bp)
+    app.register_blueprint(students_bp, url_prefix='/students')
 
     return app
 
