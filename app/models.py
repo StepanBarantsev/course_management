@@ -44,6 +44,12 @@ class User(db.Model, UserMixin):
         return self.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
 
 
+student_course = db.Table('student_course', db.Model.metadata,
+    db.Column('student_id', db.Integer, db.ForeignKey('students.id')),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'))
+)
+
+
 class Course(db.Model):
     __tablename__ = 'courses'
     id = db.Column(db.Integer(), primary_key=True)
@@ -59,6 +65,7 @@ class Course(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     blocks = db.relationship('CourseBlock', backref='course', lazy='dynamic')
+    students = db.relationship("Student", secondary=student_course)
 
     def __repr__(self):
         return '<Course {}>'.format(self.body)
@@ -77,6 +84,13 @@ class CourseBlock(db.Model):
     required_task_lms_id = db.Column(db.Integer())
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+
+
+class Student(db.Model):
+    __tablename__ = 'students'
+    id = db.Column(db.Integer(), primary_key=True)
+
+    courses = db.relationship("Course", secondary=student_course)
 
 
 
