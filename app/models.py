@@ -72,6 +72,16 @@ class Course(db.Model):
     def get_all_not_delete_students(self):
         return self.students.filter_by(deleted=False)
 
+    @staticmethod
+    def get_all_not_deleted_courses():
+        return Course.query.filter_by(deleted=False)
+
+    @staticmethod
+    def get_course_by_lms_id(lms_id):
+        return Course.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
+
+
+
 
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'

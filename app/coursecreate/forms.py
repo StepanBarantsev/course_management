@@ -36,7 +36,8 @@ class CreateOrEditCourseForm(FlaskForm):
             raise ValidationError('Данное имя курса уже занято!')
 
     def validate_lms_id(self, lms_id):
-        lmsid = self.current_user.get_course_by_lms_id(lms_id.data)
+        # Валидация по всем юзерам, а не по current
+        lmsid = Course.get_course_by_lms_id(lms_id.data)
         if lmsid is not None and (lmsid.lms_id != self.old_lms_id or self.old_lms_id is None):
             raise ValidationError('Данное LMS ID уже занято!')
 
