@@ -4,7 +4,7 @@ from app.models import Course
 from app.coursecreate.forms import CreateOrEditCourseForm
 from flask_login import current_user
 from app import db
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app
 from sqlalchemy import update
 
 
@@ -12,12 +12,6 @@ from sqlalchemy import update
 @login_required
 def create():
     form = CreateOrEditCourseForm(current_user)
-
-    if current_user.telegram_id is not None:
-        form.trainer_telegram_id.data = current_user.telegram_id
-
-    if current_user.lms_id is not None:
-        form.trainer_lms_id.data = current_user.lms_id
 
     if form.validate_on_submit():
 
@@ -29,15 +23,28 @@ def create():
             else:
                 num_of_blocks = form.number_of_blocks.data
 
+        print(form.default_number_of_days.data)
+
         new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
                             trainer_lms_id=form.trainer_lms_id.data,
                             trainer_telegram_id=form.trainer_telegram_id.data,
-                            num_of_blocks=num_of_blocks, is_certificate_needed=form.is_certificate_needed.data)
+                            num_of_blocks=num_of_blocks, is_certificate_needed=form.is_certificate_needed.data,
+                            default_num_days=form.default_number_of_days.data)
 
         db.session.add(new_course)
         db.session.commit()
         flash('Новый курс был успешно создан!')
         return redirect(url_for('main.index'))
+
+    elif request.method == 'GET':
+        
+        if current_user.telegram_id is not None:
+            form.trainer_telegram_id.data = current_user.telegram_id
+
+        if current_user.lms_id is not None:
+            form.trainer_lms_id.data = current_user.lms_id
+
+        form.default_number_of_days.data = current_app.config['DEFAULT_NUM_OF_DAYS']
 
     return render_template('coursecreate/editcreate.html', title='Создать курс', form=form)
 
@@ -62,7 +69,8 @@ def edit():
                                                                                trainer_lms_id=form.trainer_lms_id.data,
                                                                                trainer_telegram_id=form.trainer_telegram_id.data,
                                                                                num_of_blocks=num_of_blocks,
-                                                                               is_certificate_needed=form.is_certificate_needed.data))
+                                                                               is_certificate_needed=form.is_certificate_needed.data,
+                                                                               default_num_days=form.default_number_of_days.data))
         db.session.commit()
         flash('Данные курса были успешно изменены!')
         return redirect(url_for('main.index'))
@@ -72,6 +80,7 @@ def edit():
         form.trainer_lms_id.data = course.trainer_lms_id
         form.trainer_telegram_id.data = course.trainer_telegram_id
         form.is_certificate_needed.data = course.is_certificate_needed
+        form.default_number_of_days.data = course.default_num_days
 
         if course.num_of_blocks == 1:
             form.is_more_then_one_block.data = False

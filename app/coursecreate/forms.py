@@ -12,6 +12,10 @@ class CreateOrEditCourseForm(FlaskForm):
     trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
     trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
 
+    default_number_of_days = IntegerField('Количество дней поддержки за блок',
+                                          validators=[Optional('Введите число'),
+                                                      NumberRange(1, 1000, "Число должно быть не больше 1000 и не меньше 1")])
+
     is_more_then_one_block = BooleanField('Курс разделяется на блоки?')
     number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число'),
                                                                      NumberRange(2, 20, "Число должно быть не больше 20 и не меньше 2")])

@@ -55,7 +55,7 @@ class Course(db.Model):
     trainer_lms_id = db.Column(db.Integer(), nullable=False)
     num_of_blocks = db.Column(db.Integer(), nullable=False, default=1)
     is_certificate_needed = db.Column(db.Boolean(), nullable=False, default=False)
-    link = db.Column(db.String(140), nullable=False)
+    default_num_days = db.Column(db.Integer(), nullable=False, default=30)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -89,6 +89,7 @@ class Student(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
+    lms_email = db.Column(db.String(100), nullable=False, unique=True)
     freezed = db.Column(db.Boolean(), nullable=False, default=False)
     number_of_days = db.Column(db.Integer(), nullable=False)
     lms_id = db.Column(db.Integer(), nullable=False)
