@@ -30,6 +30,11 @@ def add():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
+    if form.validate_on_submit():
+        pass
+    elif request.method == 'GET':
+        form.days.data = course.default_num_days
+
     return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ",
                            form=form)
 
@@ -41,5 +46,9 @@ def edit():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
+    if form.validate_on_submit():
+        pass
+    elif request.method == 'GET':
+        pass
     return render_template('students/edit.html', title="Редактировние информации о студенте", course_name=course_name,
                            header="Редактирование студента, обучающегося на курс ", form=form)
