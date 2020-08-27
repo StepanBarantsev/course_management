@@ -81,8 +81,6 @@ class Course(db.Model):
         return Course.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
 
 
-
-
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'
     id = db.Column(db.Integer(), primary_key=True)
