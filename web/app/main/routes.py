@@ -1,4 +1,4 @@
-from app.main import bp
+from web.app.main import bp
 from flask_login import login_required, current_user
 from flask import render_template, request, current_app, url_for
 

@@ -1,8 +1,8 @@
-from app.profile import bp
+from web.app.profile import bp
 from flask_login import login_required
-from app.profile.forms import EditProfileForm, ResetPasswordForm
+from web.app.profile.forms import EditProfileForm, ResetPasswordForm
 from flask_login import current_user
-from app import db
+from web.app import db
 from flask import render_template, redirect, url_for, flash, request
 
 

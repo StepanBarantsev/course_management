@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, IntegerField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
-from app.models import User
-from werkzeug.security import check_password_hash
+from web.app.models import User
 
 
 class EditProfileForm(FlaskForm):

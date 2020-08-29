@@ -1,9 +1,9 @@
-from app.students import bp
-from flask_login import login_required, current_user
-from flask import render_template, request, current_app, url_for
-from app.models import Course
-from app import db
-from app.students.forms import AddOrEditStudentForm
+from web.app.students import bp
+from flask_login import login_required
+from flask import render_template, request
+from web.app.models import Course
+from web.app import db
+from web.app.students.forms import AddOrEditStudentForm
 
 
 @bp.route('/', methods=['GET'])

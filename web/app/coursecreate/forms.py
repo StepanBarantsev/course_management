@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, FieldList, FormField, BooleanField
+from wtforms import StringField, SubmitField, IntegerField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Optional, NumberRange
-from app.models import Course, User
-from app import db
+from web.app.models import Course
 
 
 class CreateOrEditCourseForm(FlaskForm):

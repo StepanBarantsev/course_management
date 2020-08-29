@@ -1,9 +1,9 @@
 from flask_login import login_required
-from app.coursecreate import bp
-from app.models import Course
-from app.coursecreate.forms import CreateOrEditCourseForm
+from web.app.coursecreate import bp
+from web.app.models import Course
+from web.app.coursecreate.forms import CreateOrEditCourseForm
 from flask_login import current_user
-from app import db
+from web.app import db
 from flask import render_template, redirect, url_for, flash, request, current_app
 from sqlalchemy import update
 
