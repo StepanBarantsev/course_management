@@ -48,7 +48,7 @@ def edit():
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
 
-    form = AddOrEditStudentForm(course)
+    form = AddOrEditStudentForm(course, course_name, course.email)
 
     if form.validate_on_submit():
         pass
