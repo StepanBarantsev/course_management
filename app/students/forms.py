@@ -11,8 +11,11 @@ class AddOrEditStudentForm(FlaskForm):
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, current_course, *args, **kwargs):
         super(AddOrEditStudentForm, self).__init__(*args, **kwargs)
+        self.current_course = current_course
+
+
 
 
 

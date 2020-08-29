@@ -26,10 +26,12 @@ def delete():
 @bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
-    form = AddOrEditStudentForm()
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
+
+    form = AddOrEditStudentForm(course)
+
     if form.validate_on_submit():
         pass
     elif request.method == 'GET':
@@ -42,10 +44,12 @@ def add():
 @bp.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
-    form = AddOrEditStudentForm()
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
+
+    form = AddOrEditStudentForm(course)
+
     if form.validate_on_submit():
         pass
     elif request.method == 'GET':
