@@ -102,8 +102,8 @@ class Student(db.Model):
     __tablename__ = 'students'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    lms_email = db.Column(db.String(100), nullable=False, unique=True)
+    email = db.Column(db.String(100), nullable=False)
+    lms_email = db.Column(db.String(100), nullable=False)
     freezed = db.Column(db.Boolean(), nullable=False, default=False)
     number_of_days = db.Column(db.Integer(), nullable=False)
     lms_id = db.Column(db.Integer(), nullable=False)
