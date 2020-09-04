@@ -14,6 +14,8 @@ class AddOrEditStudentForm(FlaskForm):
     def __init__(self, current_course, old_email=None, old_lms_id=None, *args, **kwargs):
         super(AddOrEditStudentForm, self).__init__(*args, **kwargs)
         self.current_course = current_course
+        self.old_email = old_email
+        self.old_lms_id = old_lms_id
 
     # Поля уникальны только в рамках курса
 
