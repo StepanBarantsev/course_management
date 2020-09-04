@@ -23,8 +23,6 @@ def create():
             else:
                 num_of_blocks = form.number_of_blocks.data
 
-        print(form.default_number_of_days.data)
-
         new_course = Course(name=form.name.data, user_id=current_user.id, lms_id=form.lms_id.data,
                             trainer_lms_id=form.trainer_lms_id.data,
                             trainer_telegram_id=form.trainer_telegram_id.data,
