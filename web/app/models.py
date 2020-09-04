@@ -107,7 +107,7 @@ class Student(db.Model):
     freezed = db.Column(db.Boolean(), nullable=False, default=False)
     number_of_days = db.Column(db.Integer(), nullable=False)
     lms_id = db.Column(db.Integer(), nullable=False)
-    registration_code_hash = db.Column(db.String(100), nullable=False)
+    registration_code = db.Column(db.String(100), nullable=False)
     telegram_id = db.Column(db.Integer())
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
