@@ -60,7 +60,7 @@ def add():
         db.session.add(new_student)
         db.session.commit()
         flash('Новый студент был успешно добавлен!')
-        return redirect(url_for('students.index'))
+        return redirect(url_for('students.index', course_id=course_id))
     elif request.method == 'GET':
         form.days.data = course.default_num_days
 
