@@ -81,10 +81,10 @@ class Course(db.Model):
         return Course.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
 
     def get_not_deleted_student_by_email(self, email):
-        self.get_all_not_delete_students().filter_by(email=email).first()
+        return self.get_all_not_delete_students().filter_by(email=email).first()
 
     def get_not_deleted_student_by_lms_id(self, lms_id):
-        self.get_all_not_delete_students().filter_by(lms_id=lms_id).first()
+        return self.get_all_not_delete_students().filter_by(lms_id=lms_id).first()
 
 
 class CourseBlock(db.Model):
