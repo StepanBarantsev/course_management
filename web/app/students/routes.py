@@ -16,10 +16,14 @@ from flask import jsonify
 def index():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
-    course_name = course.name
-    students = course.get_all_not_delete_students()
-    return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students,
-                           course_id=course_id)
+
+    if course.author.id == current_user.id:
+        course_name = course.name
+        students = course.get_all_not_delete_students()
+        return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students,
+                               course_id=course_id)
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
 
 
 @bp.route('/delete', methods=['POST'])
