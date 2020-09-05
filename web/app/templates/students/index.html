@@ -23,7 +23,7 @@
                         {{student.email}}
                         </td>
                         <td>
-                            <a title="Редактировать" class="btn btn-primary" href="#">
+                            <a title="Редактировать" class="btn btn-primary" href="{{ url_for('students.edit', student_id=student.id, course_id=course_id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
                             <button title="Удалить" type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter{{student.id}}">

@@ -92,7 +92,7 @@ def edit():
             pass
         elif request.method == 'GET':
             pass
-        return render_template('students/edit.html', title="Редактировние информации о студенте", course_name=course_name,
+        return render_template('students/addedit.html', title="Редактировние информации о студенте", course_name=course_name,
                                header="Редактирование студента, обучающегося на курсе ", form=form)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
