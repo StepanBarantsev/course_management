@@ -8,6 +8,7 @@ from api_helper.lms_api_helper import LmsApiHelper
 import random
 from flask_login import current_user
 from sqlalchemy import update
+from flask import jsonify
 
 
 @bp.route('/', methods=['GET'])
@@ -128,4 +129,4 @@ def freeze():
     student_id = int(request.form['student_id'])
     Student.freeze_or_unfreeze_student_by_id(student_id)
     db.session.commit()
-    return {"color": Student.query.filter_by(id=student_id).first().return_color_of_td()}
+    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td()})
