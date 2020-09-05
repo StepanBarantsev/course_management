@@ -23,7 +23,12 @@ def index():
 @bp.route('/delete', methods=['POST'])
 @login_required
 def delete():
-    return render_template('students/index.html')
+    course_id = int(request.form['course_id'])
+    student_id = int(request.form['student_id'])
+    Student.delete_student_by_id(student_id)
+    db.session.commit()
+    flash('Студент успешно удален!')
+    return redirect(url_for('students.index', course_id=course_id))
 
 
 @bp.route('/add', methods=['GET', 'POST'])
