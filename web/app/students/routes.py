@@ -6,6 +6,7 @@ from web.app import db
 from web.app.students.forms import AddOrEditStudentForm
 from api_helper.lms_api_helper import LmsApiHelper
 import random
+from flask_login import current_user
 
 
 @bp.route('/', methods=['GET'])
@@ -71,17 +72,24 @@ def add():
 @bp.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
+    student_id = request.args.get('student_id', type=int)
+    student = db.session.query(Student).filter(Student.id == student_id).first()
+
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
 
-    form = AddOrEditStudentForm(course, course_name, course.email)
+    if student.course.author.id == current_user.id:
 
-    if form.validate_on_submit():
-        pass
-    elif request.method == 'GET':
-        pass
-    return render_template('students/edit.html', title="Редактировние информации о студенте", course_name=course_name,
-                           header="Редактирование студента, обучающегося на курс ", form=form)
+        form = AddOrEditStudentForm(current_course=course)
+
+        if form.validate_on_submit():
+            pass
+        elif request.method == 'GET':
+            pass
+        return render_template('students/edit.html', title="Редактировние информации о студенте", course_name=course_name,
+                               header="Редактирование студента, обучающегося на курсе ", form=form)
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
 
 
