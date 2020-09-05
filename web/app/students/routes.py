@@ -126,7 +126,11 @@ def edit():
 @bp.route('/freeze', methods=['POST'])
 @login_required
 def freeze():
-    student_id = int(request.form['student_id'])
+    try:
+        student_id = int(request.form['student_id'])
+    except:
+        return {"error": True}
     Student.freeze_or_unfreeze_student_by_id(student_id)
     db.session.commit()
-    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td()})
+    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(),
+                    "error": False})
