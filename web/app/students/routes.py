@@ -122,3 +122,10 @@ def edit():
         return render_template('error/403.html', title='Ошибка доступа')
 
 
+@bp.route('/freeze', methods=['POST'])
+@login_required
+def freeze():
+    student_id = int(request.form['student_id'])
+    Student.freeze_or_unfreeze_student_by_id(student_id)
+    db.session.commit()
+    return {"color": Student.query.filter_by(id=student_id).first().return_color_of_td()}

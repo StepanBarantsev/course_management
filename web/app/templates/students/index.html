@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block scripts %}
+    {{super()}}
+     <script type="text/javascript" src="{{ url_for('static', filename = 'mainStudents.js') }}"></script>
+{% endblock %}
+
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
@@ -16,13 +21,7 @@
 
                     {% for student in students %}
                     <tr>
-                    {% if student.freezed == True %}
-                        <td bgcolor="aqua">
-                    {% elif student.number_of_days < 0 %}
-                        <td bgcolor="ffc0cb">
-                    {% else %}
-                        <td bgcolor="98ff98">
-                    {% endif %}
+                        <td bgcolor="{{ student.return_color_of_td() }}" id="td_name_{{ student.id }}">
                         {{student.name}}
                         </td>
                         <td>
@@ -32,7 +31,7 @@
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('students.edit', student_id=student.id, course_id=course_id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
-                            <a title="Заморозить" class="btn btn-primary" href=#>
+                            <a title="Заморозить" class="btn btn-primary" name="freeze" data-id="{{ student.id }}">
                                 <i class="glyphicon glyphicon-time"></i>
                             </a>
                             <button title="Удалить" type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter{{student.id}}">

@@ -117,6 +117,18 @@ class Student(db.Model):
     def delete_student_by_id(student_id):
         Student.query.filter_by(id=student_id).first().deleted = True
 
+    @staticmethod
+    def freeze_or_unfreeze_student_by_id(student_id):
+        Student.query.filter_by(id=student_id).first().freezed = not Student.query.filter_by(id=student_id).first().freezed
+
+    def return_color_of_td(self):
+        if self.freezed:
+            return "aqua"
+        elif self.number_of_days < 0:
+            return "ffc0cb"
+        else:
+            return "98ff98"
+
 
 
 
