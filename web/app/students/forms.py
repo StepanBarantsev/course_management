@@ -10,6 +10,13 @@ class AddOrEditStudentForm(FlaskForm):
     lms_id = IntegerField('Lms Id', validators=[DataRequired('Поле не должно быть пустым')])
     days = IntegerField('Начальное количество дней', validators=[DataRequired('Поле не должно быть пустым')])
 
+    # Тут заблокированные формы
+    lms_email_locked = StringField('Lms Email', validators=[DataRequired('Поле не должно быть пустым'),
+                                                     Email('Формат Email некорректный')])
+    telegram_id_locked = IntegerField('Telegram Id', validators=[DataRequired('Поле не должно быть пустым')])
+    name_locked = StringField('Имя', validators=[DataRequired('Поле не должно быть пустым')])
+    registration_code_locked = StringField('Код регистрации', validators=[DataRequired('Поле не должно быть пустым')])
+
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_course, old_email=None, old_lms_id=None, *args, **kwargs):

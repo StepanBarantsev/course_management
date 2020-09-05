@@ -71,7 +71,7 @@ def add():
         form.days.data = course.default_num_days
 
     return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ",
-                           form=form)
+                           form=form, for_edit=False)
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
@@ -91,9 +91,9 @@ def edit():
         if form.validate_on_submit():
             pass
         elif request.method == 'GET':
-            pass
-        return render_template('students/addedit.html', title="Редактировние информации о студенте", course_name=course_name,
-                               header="Редактирование студента, обучающегося на курсе ", form=form)
+            return render_template('students/addedit.html', title="Редактировние информации о студенте",
+                                   course_name=course_name, header="Редактирование студента, обучающегося на курсе ",
+                                   form=form, for_edit=True)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
