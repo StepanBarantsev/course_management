@@ -16,7 +16,13 @@
 
                     {% for student in students %}
                     <tr>
-                        <td>
+                    {% if student.freezed == True %}
+                        <td bgcolor="aqua">
+                    {% elif student.number_of_days < 0 %}
+                        <td bgcolor="ffc0cb">
+                    {% else %}
+                        <td bgcolor="98ff98">
+                    {% endif %}
                         {{student.name}}
                         </td>
                         <td>
