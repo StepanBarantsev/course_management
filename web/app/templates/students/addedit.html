@@ -13,6 +13,16 @@
                         {% with %} {% set  specificform = form.email %} {% include "helpers/field_form.html" %} {% endwith %}
                         {% with %} {% set  specificform = form.lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
                         {% with %} {% set  specificform = form.days %} {% include "helpers/field_form.html" %} {% endwith %}
+
+                        {% if for_edit == True %}
+                            <label>Не рекомендуется использовать эту опцию.</label><br/>
+                            <a class="btn btn-success navbar-btn">Разрешить менять заблокированные поля</a>
+                            <br/><br/>
+                            {% set specificform = form.lms_email_locked %} {% include "helpers/locked_field_form.html" %}
+                            {% set specificform = form.telegram_id_locked %} {% include "helpers/locked_field_form.html" %}
+                            {% set specificform = form.name_locked %} {% include "helpers/locked_field_form.html" %}
+                            {% set specificform = form.registration_code_locked %} {% include "helpers/locked_field_form.html" %}
+                        {% endif %}
                     </div>
 
                     <p class="control-label">{{ form.submit() }}</p>
