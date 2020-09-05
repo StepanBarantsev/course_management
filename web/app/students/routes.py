@@ -133,6 +133,7 @@ def freeze():
     try:
         student_id = int(request.form['student_id'])
     except:
+        flash('Что-то пошло не так. Подождите несколько секунд и попробуйте заморозить студента снова.')
         return {"error": True}
     Student.freeze_or_unfreeze_student_by_id(student_id)
     db.session.commit()
