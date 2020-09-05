@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, Email
 
 
 class AddOrEditStudentForm(FlaskForm):
 
-    email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым')])
+    email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым'),
+                                             Email('Формат Email некорректный')])
     lms_id = IntegerField('Lms Id', validators=[DataRequired('Поле не должно быть пустым')])
     days = IntegerField('Начальное количество дней', validators=[DataRequired('Поле не должно быть пустым')])
 
