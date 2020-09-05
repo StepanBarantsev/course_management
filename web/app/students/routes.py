@@ -7,6 +7,7 @@ from web.app.students.forms import AddOrEditStudentForm
 from api_helper.lms_api_helper import LmsApiHelper
 import random
 from flask_login import current_user
+from sqlalchemy import update
 
 
 @bp.route('/', methods=['GET'])
@@ -86,14 +87,37 @@ def edit():
 
     if student.course.author.id == current_user.id:
 
-        form = AddOrEditStudentForm(current_course=course)
+        form = AddOrEditStudentForm(current_course=course, old_email=student.email, old_lms_id=student.lms_id)
 
         if form.validate_on_submit():
-            pass
+            if form.telegram_id_locked.data == "":
+                telegram_id = None
+            else:
+                telegram_id = form.telegram_id_locked.data
+
+            db.session.execute(update(Student).where(Student.id == student_id).values(
+                              name=form.name_locked.data,
+                              email=form.email.data,
+                              lms_email=form.lms_email_locked.data,
+                              number_of_days=form.days.data,
+                              lms_id=form.lms_id.data,
+                              registration_code=form.registration_code_locked.data,
+                              telegram_id=telegram_id))
+            db.session.commit()
+            flash('Данные о студенте были успешно изменены!')
+            return redirect(url_for('students.index', course_id=course_id))
         elif request.method == 'GET':
-            return render_template('students/addedit.html', title="Редактировние информации о студенте",
-                                   course_name=course_name, header="Редактирование студента, обучающегося на курсе ",
-                                   form=form, for_edit=True)
+            form.name_locked.data = student.name
+            form.email.data = student.email
+            form.lms_email_locked.data = student.lms_email
+            form.days.data = student.number_of_days
+            form.lms_id.data = student.lms_id
+            form.registration_code_locked.data = student.registration_code
+            form.telegram_id_locked.data = student.telegram_id
+
+        return render_template('students/addedit.html', title="Редактировние информации о студенте",
+                               course_name=course_name, header="Редактирование студента, обучающегося на курсе ",
+                               form=form, for_edit=True)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 

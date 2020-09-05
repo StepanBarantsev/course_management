@@ -12,7 +12,7 @@ class AddOrEditStudentForm(FlaskForm):
 
     # Тут заблокированные формы
     lms_email_locked = StringField('Lms Email')
-    telegram_id_locked = IntegerField('Telegram Id')
+    telegram_id_locked = StringField('Telegram Id')
     name_locked = StringField('Имя')
     registration_code_locked = StringField('Код регистрации')
 

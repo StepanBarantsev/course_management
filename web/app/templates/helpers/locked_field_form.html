@@ -1,7 +1,7 @@
 {% block myform %}
      <p>
         {{ specificform.label(class_="control-label") }}<br>
-        {{ specificform(class_="form-control", disabled="disabled") }}<br>
+        {{ specificform(class_="form-control", readonly=True) }}<br>
         {% for error in specificform.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
