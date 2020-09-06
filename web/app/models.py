@@ -3,6 +3,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from web.app import login_manager
+import telegram.chat.states as states
 
 
 @login_manager.user_loader
@@ -80,6 +81,10 @@ class Course(db.Model):
     def get_course_by_lms_id(lms_id):
         return Course.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
 
+    @staticmethod
+    def get_course_by_name(name):
+        return Course.get_all_not_deleted_courses().filter_by(name=name).first()
+
     def get_not_deleted_student_by_email(self, email):
         return self.get_all_not_delete_students().filter_by(email=email).first()
 
@@ -130,7 +135,11 @@ class Student(db.Model):
             return "98ff98"
 
 
+class TelegramState(db.Model):
+    __tablename__ = 'telegram_states'
+    id = db.Column(db.Integer(), primary_key=True)
+    telegram_id = db.Column(db.Integer(), nullable=False, unique=True)
+    state = db.Column(db.String(100), nullable=False, default=states.START)
 
-
-
+    current_course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
