@@ -17,3 +17,8 @@ def get_telegram_session_or_create_new(telegram_id, session):
 
     return session.query(TelegramState).filter_by(telegram_id=telegram_id).first()
 
+
+def set_new_state(element, state, session):
+    element.state = state
+    session.commit()
+
