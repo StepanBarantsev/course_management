@@ -10,6 +10,8 @@
                     <tr>
                     <th>Lms ID</th>
                     <th>Название курса</th>
+                    <th>Количество блоков</th>
+                    <th>Сертификат</th>
                     <th>Действия</th>
                     </tr>
 
@@ -20,6 +22,16 @@
                         </td>
                         <td>
                         {{course.name}}
+                        </td>
+                        <td>
+                        {{course.num_of_blocks}}
+                        </td>
+                        <td>
+                        {% if course.is_certificate_needed%}
+                        Да
+                        {% else %}
+                        Нет
+                        {% endif %}
                         </td>
                         <td>
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('coursecreate.edit', course_id=course.id) }}">
