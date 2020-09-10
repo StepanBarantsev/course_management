@@ -40,5 +40,18 @@ def register(message):
     session.commit()
 
 
+#################
+# QUERY HANDLER #
+#################
+
+
+@bot.callback_query_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.WAITING_FOR_COURSE_NAME_REGISTER)
+def handle_query(call):
+
+    if call.data.startswith("course_id"):
+        course_id = call.data.split()[1]
+        bot.send_message(call.message.chat.id, f"Вы выбрали курс с id {course_id}")
+
+
 if __name__ == '__main__':
     bot.polling(none_stop=True)
