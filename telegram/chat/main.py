@@ -45,7 +45,7 @@ def register(message):
 #################
 
 
-@bot.callback_query_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.WAITING_FOR_COURSE_NAME_REGISTER)
+@bot.callback_query_handler(func=lambda call: get_telegram_session_or_create_new(call.message.chat.id, session).state == states.WAITING_FOR_COURSE_NAME_REGISTER)
 def handle_query(call):
 
     if call.data.startswith("course_id"):
