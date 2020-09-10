@@ -30,7 +30,7 @@ def print_available_courses_as_buttons(session):
     markup = types.InlineKeyboardMarkup()
 
     for i in courses_list:
-        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_name {i.id}'))
+        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_id {i.id}'))
 
     return markup
 
