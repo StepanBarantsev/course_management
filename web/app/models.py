@@ -140,6 +140,9 @@ class TelegramState(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     telegram_id = db.Column(db.Integer(), nullable=False, unique=True)
     state = db.Column(db.String(100), nullable=False, default=states.START)
+    temp_lms_email = db.Column(db.String(100))
+    temp_authcode = db.Column(db.String(100))
+    temp_course_register_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
     current_course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
