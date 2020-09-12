@@ -30,8 +30,20 @@ def print_available_courses_as_buttons(session):
     markup = types.InlineKeyboardMarkup()
 
     for i in courses_list:
-        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_id {i.id}'))
+        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_id: {i.id}, course_name_with_author: {i.name} [{i.author.name}]'))
 
     return markup
+
+
+def parse_callback_data(string):
+    new_strings = string.split(',')
+
+    d = {}
+
+    for s in new_strings:
+        d[s.split(':')[0].strip()] = s.split(':')[1].strip()
+
+    return d
+
 
 
