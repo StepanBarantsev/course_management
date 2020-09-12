@@ -2,11 +2,10 @@ import telebot
 import telegram.config
 from telegram.chat.messages import get_message
 import telegram.chat.states as states
-from web.app.models import TelegramState
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, parse_callback_data
-from telebot import types
+from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, \
+    parse_callback_data, get_student_by_email_and_course_id
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
@@ -17,12 +16,16 @@ bot = telebot.TeleBot(telegram.config.ConfigTelegram.TOKEN)
 
 @bot.message_handler(commands=['start'], func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.START)
 def hello(message):
+    get_telegram_session_or_create_new(message.chat.id, session)
+
     chat_id = message.chat.id
     bot.send_message(chat_id, get_message('HELP_TEXT'))
 
 
 @bot.message_handler(commands=['help'])
 def help(message):
+    get_telegram_session_or_create_new(message.chat.id, session)
+
     chat_id = message.chat.id
     bot.send_message(chat_id, get_message('HELP_TEXT'))
 
@@ -38,6 +41,24 @@ def register(message):
 
     telegram_session.state = states.WAITING_FOR_COURSE_NAME_REGISTER
     session.commit()
+
+
+@bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.WAITING_FOR_EMAIL_REGISTER)
+def hello(message):
+
+    email = message.text
+    telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
+
+    student = get_student_by_email_and_course_id(telegram_session.temp_course_register_id, email, session)
+
+    if student is None:
+        bot.send_message(message.chat.id, get_message('EMAIL_ERROR'))
+        return
+    else:
+        bot.send_message(message.chat.id, get_message('EMAIL_SUCCESS'))
+        telegram_session.state = states.WAITING_FOR_AUTHCODE_REGISTER
+        session.commit()
+
 
 #################
 # QUERY HANDLER #

@@ -1,4 +1,4 @@
-from web.app.models import TelegramState, Course
+from web.app.models import TelegramState, Course, Student
 from telebot import types
 
 
@@ -45,5 +45,8 @@ def parse_callback_data(string):
 
     return d
 
+
+def get_student_by_email_and_course_id(course_id, email, session):
+    return session.query(Student).filter_by(course_id=int(course_id)).filter_by(email=email).first()
 
 

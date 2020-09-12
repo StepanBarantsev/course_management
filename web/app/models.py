@@ -117,6 +117,7 @@ class Student(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    telegram_state_id = db.Column(db.Integer(), db.ForeignKey('telegram_states.id'))
 
     @staticmethod
     def delete_student_by_id(student_id):
@@ -142,7 +143,14 @@ class TelegramState(db.Model):
     state = db.Column(db.String(100), nullable=False, default=states.START)
     temp_lms_email = db.Column(db.String(100))
     temp_authcode = db.Column(db.String(100))
-    temp_course_register_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
+    temp_course_register_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     current_course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
+
+    # id студентов которые соотносятся с конкретным телеграм id
+    # Для каждого курса студент создается заново, хотя это может быть один и тот же человек
+    # Создание отдельных студентов для кжадого курса очень сильно упрощает систему, но вот в данном месте это немного костыль
+    # После верификации, экземпляр студента получает в свое поле телеграм id
+    temp_course_student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
+
 
