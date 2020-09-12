@@ -56,6 +56,8 @@ def hello(message):
         return
     else:
         bot.send_message(message.chat.id, get_message('EMAIL_SUCCESS'))
+        telegram_session.temp_lms_email = email
+        telegram_session.temp_course_student_id = student.id
         telegram_session.state = states.WAITING_FOR_AUTHCODE_REGISTER
         session.commit()
 
