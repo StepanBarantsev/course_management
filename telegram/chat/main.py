@@ -44,7 +44,7 @@ def register(message):
 
 
 @bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.WAITING_FOR_EMAIL_REGISTER)
-def hello(message):
+def waiting_for_email(message):
 
     email = message.text
     telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
