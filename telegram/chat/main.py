@@ -1,11 +1,11 @@
 import telebot
 import telegram.config
-import telegram.chat.messages as messages
+from telegram.chat.messages import get_message
 import telegram.chat.states as states
 from web.app.models import TelegramState
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons
+from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, parse_callback_data
 from telebot import types
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
@@ -18,13 +18,13 @@ bot = telebot.TeleBot(telegram.config.ConfigTelegram.TOKEN)
 @bot.message_handler(commands=['start'], func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.START)
 def hello(message):
     chat_id = message.chat.id
-    bot.send_message(chat_id, messages.HELP_TEXT)
+    bot.send_message(chat_id, get_message('HELP_TEXT'))
 
 
 @bot.message_handler(commands=['help'])
-def hello(message):
+def help(message):
     chat_id = message.chat.id
-    bot.send_message(chat_id, messages.HELP_TEXT)
+    bot.send_message(chat_id, get_message('HELP_TEXT'))
 
 
 @bot.message_handler(commands=['register'])
@@ -39,7 +39,6 @@ def register(message):
     telegram_session.state = states.WAITING_FOR_COURSE_NAME_REGISTER
     session.commit()
 
-
 #################
 # QUERY HANDLER #
 #################
@@ -49,8 +48,14 @@ def register(message):
 def handle_query(call):
 
     if call.data.startswith("course_id"):
-        course_id = call.data.split()[1]
-        bot.send_message(call.message.chat.id, f"Вы выбрали курс с id {course_id}")
+        callback_data = parse_callback_data(call.data)
+        telegram_session = get_telegram_session_or_create_new(call.message.chat.id, session)
+
+        telegram_session.temp_course_register_id = int(callback_data['course_id'])
+        telegram_session.state = states.WAITING_FOR_EMAIL_REGISTER
+        session.commit()
+
+        bot.send_message(call.message.chat.id, get_message('ENTER_EMAIL', callback_data['course_name_with_author']))
 
 
 if __name__ == '__main__':
