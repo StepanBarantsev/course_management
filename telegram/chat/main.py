@@ -5,7 +5,7 @@ import telegram.chat.states as states
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, \
-    parse_callback_data, get_student_by_email_and_course_id
+    parse_callback_data, get_student_by_email_and_course_id, get_student_by_id
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
@@ -60,6 +60,28 @@ def waiting_for_email(message):
         telegram_session.temp_course_student_id = student.id
         telegram_session.state = states.WAITING_FOR_AUTHCODE_REGISTER
         session.commit()
+
+
+@bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.WAITING_FOR_AUTHCODE_REGISTER)
+def waiting_for_authcode(message):
+
+    authcode = message.text
+    telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
+
+    student = get_student_by_id(telegram_session.temp_course_student_id, session)
+
+    if student is None:
+        bot.send_message(message.chat.id, get_message('UNKNOWN_ERROR'))
+        return
+    else:
+        if student.registration_code == authcode:
+            bot.send_message(message.chat.id, get_message('AUTHCODE_SUCCESS'))
+            telegram_session.current_course_id = telegram_session.temp_course_register_id
+            student.telegram_id = telegram_session.telegram_id
+            session.commit()
+        else:
+            bot.send_message(message.chat.id, get_message('AUTHCODE_ERROR'))
+            return
 
 
 #################

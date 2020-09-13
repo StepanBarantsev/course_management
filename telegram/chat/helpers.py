@@ -47,6 +47,10 @@ def parse_callback_data(string):
 
 
 def get_student_by_email_and_course_id(course_id, email, session):
-    return session.query(Student).filter_by(course_id=int(course_id)).filter_by(email=email).first()
+    return session.query(Student).filter_by(course_id=int(course_id)).filter_by(lms_email=email).first()
+
+
+def get_student_by_id(student_id, session):
+    return session.query(Student).filter_by(id=int(student_id)).first()
 
 
