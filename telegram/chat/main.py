@@ -78,6 +78,7 @@ def waiting_for_authcode(message):
             bot.send_message(message.chat.id, get_message('AUTHCODE_SUCCESS'))
             telegram_session.current_course_id = telegram_session.temp_course_register_id
             student.telegram_id = telegram_session.telegram_id
+            telegram_session.state = states.REGISTERED
             session.commit()
         else:
             bot.send_message(message.chat.id, get_message('AUTHCODE_ERROR'))
