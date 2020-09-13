@@ -6,7 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, \
     parse_callback_data, get_student_by_email_and_course_id, get_student_by_id, \
-    create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id
+    create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id,\
+    print_available_courses_as_buttons_by_telegram_id
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
@@ -41,9 +42,14 @@ def current(message):
 @bot.message_handler(commands=['checkout'])
 def checkout(message):
     telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
-    chat_id = message.chat.id
 
-    print(get_all_active_courses_by_telegram_id(chat_id, session))
+    bot.send_message(chat_id=message.chat.id,
+                     text="Выберите курс, на который хотите переключиться:",
+                     reply_markup=print_available_courses_as_buttons_by_telegram_id(message.chat.id, session),
+                     parse_mode='HTML')
+
+    telegram_session.state = states.WAITING_FOR_COURSE_NAME
+    session.commit()
 
 
 @bot.message_handler(commands=['register'])
@@ -127,6 +133,19 @@ def handle_query(call):
             bot.send_message(call.message.chat.id, get_message('ENTER_EMAIL', callback_data['course_name_with_author']))
         else:
             bot.send_message(call.message.chat.id, get_message('YOU_ARE_ALREADY_REGISTERED'))
+
+
+@bot.callback_query_handler(func=lambda call: get_telegram_session_or_create_new(call.message.chat.id, session).state == states.WAITING_FOR_COURSE_NAME)
+def handle_query(call):
+
+    if call.data.startswith("course_id"):
+        callback_data = parse_callback_data(call.data)
+        telegram_session = get_telegram_session_or_create_new(call.message.chat.id, session)
+        telegram_session.current_course_id = int(callback_data['course_id'])
+        telegram_session.state = states.REGISTERED
+        session.commit()
+        bot.send_message(call.message.chat.id, get_message('CHECKOUT_SUCCESS',
+                                                           create_string_with_course_and_author_by_course_id(callback_data['course_id'], session)))
 
 
 if __name__ == '__main__':

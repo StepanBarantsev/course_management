@@ -44,3 +44,6 @@ def get_message(name, *args):
 
     if name == 'ANOTHER_USER_ALREADY_REGISTERED':
         return '''На курс уже зачислен другой пользователь с таким email. Если Вы считаете что произошла какая то ошибка, сообщите об этом тренеру.'''
+
+    if name == 'CHECKOUT_SUCCESS':
+        return f'''Вы успешно переключились на курс {args[0]}'''
