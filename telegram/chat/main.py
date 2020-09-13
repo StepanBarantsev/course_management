@@ -71,11 +71,14 @@ def waiting_for_email(message):
         bot.send_message(message.chat.id, get_message('EMAIL_ERROR'))
         return
     else:
-        bot.send_message(message.chat.id, get_message('EMAIL_SUCCESS'))
-        telegram_session.temp_lms_email = email
-        telegram_session.temp_course_student_id = student.id
-        telegram_session.state = states.WAITING_FOR_AUTHCODE_REGISTER
-        session.commit()
+        if student.telegram_id is None:
+            bot.send_message(message.chat.id, get_message('EMAIL_SUCCESS'))
+            telegram_session.temp_lms_email = email
+            telegram_session.temp_course_student_id = student.id
+            telegram_session.state = states.WAITING_FOR_AUTHCODE_REGISTER
+            session.commit()
+        else:
+            bot.send_message(message.chat.id, get_message('ANOTHER_USER_ALREADY_REGISTERED'))
 
 
 @bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.WAITING_FOR_AUTHCODE_REGISTER)

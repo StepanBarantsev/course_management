@@ -41,3 +41,6 @@ def get_message(name, *args):
 
     if name == 'YOU_ARE_ALREADY_REGISTERED':
         return '''Вы уже зарегистрированы на данный курс!'''
+
+    if name == 'ANOTHER_USER_ALREADY_REGISTERED':
+        return '''На курс уже зачислен другой пользователь с таким email. Если Вы считаете что произошла какая то ошибка, сообщите об этом тренеру.'''
