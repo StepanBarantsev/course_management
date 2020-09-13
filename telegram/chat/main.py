@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, \
     parse_callback_data, get_student_by_email_and_course_id, get_student_by_id, \
     create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id,\
-    print_available_courses_as_buttons_by_telegram_id
+    print_available_courses_as_buttons_by_telegram_id, get_current_course_by_id, get_student_by_telegram_id_and_course_id
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
@@ -15,6 +15,26 @@ session = Session()
 
 bot = telebot.TeleBot(telegram.config.ConfigTelegram.TOKEN)
 
+
+################
+#  DECORATORS  #
+################
+
+def no_current_course_decorator(f):
+    def func(message):
+        telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
+        chat_id = message.chat.id
+        if telegram_session.current_course_id is not None:
+            f(message)
+        else:
+            bot.send_message(chat_id, get_message('NO_CURRENT_COURSE'))
+
+    return func
+
+
+##############
+#  HANDLERS  #
+##############
 
 @bot.message_handler(commands=['start'], func=lambda message: get_telegram_session_or_create_new(message.chat.id, session).state == states.START)
 def hello(message):
@@ -50,6 +70,16 @@ def checkout(message):
 
     telegram_session.state = states.WAITING_FOR_COURSE_NAME
     session.commit()
+
+
+@bot.message_handler(commands=['getdays'])
+@no_current_course_decorator
+def getdays(message):
+    telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
+    chat_id = message.chat.id
+
+    bot.send_message(chat_id, get_message('NUM_OF_DAYS', create_string_with_course_and_author_by_course_id(telegram_session.current_course_id, session),
+                                          get_student_by_telegram_id_and_course_id(telegram_session.current_course_id, message.chat.id, session).number_of_days))
 
 
 @bot.message_handler(commands=['register'])
@@ -147,6 +177,10 @@ def handle_query(call):
         bot.send_message(call.message.chat.id, get_message('CHECKOUT_SUCCESS',
                                                            create_string_with_course_and_author_by_course_id(callback_data['course_id'], session)))
 
+
+##################
+#  LONG POLLING  #
+##################
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)

@@ -46,6 +46,14 @@ def get_student_by_email_and_course_id(course_id, email, session):
     return session.query(Student).filter_by(course_id=int(course_id)).filter_by(lms_email=email).filter_by(deleted=0).first()
 
 
+def get_student_by_telegram_id_and_course_id(course_id, telegram_id, session):
+
+    if course_id is None or telegram_id is None:
+        return None
+
+    return session.query(Student).filter_by(course_id=int(course_id)).filter_by(telegram_id=telegram_id).filter_by(deleted=0).first()
+
+
 def get_student_by_id(student_id, session):
     return session.query(Student).filter_by(id=int(student_id)).filter_by(deleted=0).first()
 
@@ -81,4 +89,7 @@ def print_available_courses_as_buttons_by_telegram_id(telegram_id, session):
 
     return markup
 
+
+def get_current_course_by_id(course_id, session):
+    return session.query(Course).filter_by(id=course_id).first()
 

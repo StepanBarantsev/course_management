@@ -47,3 +47,15 @@ def get_message(name, *args):
 
     if name == 'CHECKOUT_SUCCESS':
         return f'''Вы успешно переключились на курс {args[0]}'''
+
+    if name == 'NUM_OF_DAYS':
+        return f'''Курс {args[0]}
+
+Оставшееся количество дней: {args[1]}'''
+
+    if name == 'NO_CURRENT_COURSE':
+        return '''У Вас на данный момент нет активного курса. 
+        
+Выберите курс при помощи команды /checkout либо зарегистрируйтесь с помощью /register
+
+Для более подробной информации выполните команду /help'''
