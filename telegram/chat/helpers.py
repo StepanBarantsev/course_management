@@ -2,10 +2,6 @@ from web.app.models import TelegramState, Course, Student
 from telebot import types
 
 
-def get_buttons_by_telegram_id(telegram_id):
-    return ['Заглушка']
-
-
 def get_telegram_session_or_create_new(telegram_id, session):
     element = session.query(TelegramState).filter_by(telegram_id=telegram_id).first()
 
@@ -25,7 +21,7 @@ def set_new_state(element, state, session):
 
 
 def print_available_courses_as_buttons(session):
-    courses_list = session.query(Course).all()
+    courses_list = session.query(Course).filter_by(deleted=0).all()
 
     markup = types.InlineKeyboardMarkup()
 
@@ -47,10 +43,10 @@ def parse_callback_data(string):
 
 
 def get_student_by_email_and_course_id(course_id, email, session):
-    return session.query(Student).filter_by(course_id=int(course_id)).filter_by(lms_email=email).first()
+    return session.query(Student).filter_by(course_id=int(course_id)).filter_by(lms_email=email).filter_by(deleted=0).first()
 
 
 def get_student_by_id(student_id, session):
-    return session.query(Student).filter_by(id=int(student_id)).first()
+    return session.query(Student).filter_by(id=int(student_id)).filter_by(deleted=0).first()
 
 
