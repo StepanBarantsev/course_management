@@ -38,3 +38,6 @@ def get_message(name, *args):
             return f'''На данный момент активен курс {args[0]}
 
 Чтобы активировать другой курс, выполните команду /checkout'''
+
+    if name == 'YOU_ARE_ALREADY_REGISTERED':
+        return '''Вы уже зарегистрированы на данный курс!'''

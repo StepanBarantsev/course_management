@@ -62,3 +62,14 @@ def create_string_with_course_and_author_by_course_id(course_id, session):
         return f'{course.name} [{course.author.name}]'
 
 
+def get_all_active_students_by_telegram_id(telegram_id, session):
+    return session.query(Student).filter_by(deleted=0).filter_by(telegram_id=telegram_id).all()
+
+
+def get_all_active_courses_by_telegram_id(telegram_id, session):
+    return [i.course for i in get_all_active_students_by_telegram_id(telegram_id, session)]
+
+
+def print_available_courses_as_buttons_by_telegram_id(telegram_id, session):
+    pass
+
