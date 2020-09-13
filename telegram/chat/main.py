@@ -5,7 +5,8 @@ import telegram.chat.states as states
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from telegram.chat.helpers import get_telegram_session_or_create_new, print_available_courses_as_buttons, \
-    parse_callback_data, get_student_by_email_and_course_id, get_student_by_id
+    parse_callback_data, get_student_by_email_and_course_id, get_student_by_id, \
+    create_string_with_course_and_author_by_course_id
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
@@ -28,6 +29,18 @@ def help(message):
 
     chat_id = message.chat.id
     bot.send_message(chat_id, get_message('HELP_TEXT'))
+
+
+@bot.message_handler(commands=['current'])
+def current(message):
+    telegram_session = get_telegram_session_or_create_new(message.chat.id, session)
+    chat_id = message.chat.id
+    bot.send_message(chat_id, get_message('CURRENT_COURSE', create_string_with_course_and_author_by_course_id(telegram_session.current_course_id, session)))
+
+
+@bot.message_handler(commands=['checkout'])
+def checkout(message):
+    pass
 
 
 @bot.message_handler(commands=['register'])

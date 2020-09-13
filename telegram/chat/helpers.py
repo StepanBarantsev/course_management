@@ -50,3 +50,15 @@ def get_student_by_id(student_id, session):
     return session.query(Student).filter_by(id=int(student_id)).filter_by(deleted=0).first()
 
 
+def create_string_with_course_and_author_by_course_id(course_id, session):
+
+    if course_id is None:
+        return None
+
+    course = session.query(Course).filter_by(deleted=0).filter_by(id=int(course_id)).first()
+    if course is None:
+        return None
+    else:
+        return f'{course.name} [{course.author.name}]'
+
+
