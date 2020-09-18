@@ -8,6 +8,15 @@
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
+    <div id="block_select" style="position: relative; 45px; left: 920px">
+        <label> Курс
+            <select></select>
+        </label>
+
+        <label> Статус студента
+            <select></select>
+        </label>
+    </div>
     <a class="btn btn-success navbar-btn" href="{{ url_for('students.add', course_id=course_id) }}">Добавить студента</a>
     <div class="panel panel-default">
         <div class="panel-body">
