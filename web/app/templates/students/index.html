@@ -14,20 +14,20 @@
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <tr>
-                    <th>Имя</th>
-                    <th>Email</th>
-                    <th>Действия</th>
+                    <th style="border: 1px solid black;">Имя</th>
+                    <th style="border: 1px solid black;">Email</th>
+                    <th style="border: 1px solid black;">Действия</th>
                     </tr>
 
                     {% for student in students %}
                     <tr>
-                        <td bgcolor="{{ student.return_color_of_td() }}" id="td_name_{{ student.id }}">
+                        <td style="border: 1px solid black;" bgcolor="{{ student.return_color_of_td() }}" id="td_name_{{ student.id }}">
                         {{student.name}}
                         </td>
-                        <td>
+                        <td style="border: 1px solid black;">
                         {{student.email}}
                         </td>
-                        <td>
+                        <td style="border: 1px solid black;">
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('students.edit', student_id=student.id, course_id=course_id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
