@@ -1,6 +1,6 @@
 from web.app.students import bp
 from flask_login import login_required
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, current_app
 from web.app.models import Course, Student
 from web.app import db
 from web.app.students.forms import AddOrEditStudentForm
@@ -17,11 +17,15 @@ def index():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
 
+    page = request.args.get('page', 1, type=int)
+    students = course.get_all_not_delete_students().paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
+    next_url = url_for('students.index', page=students.next_num, course_id=course_id) if students.has_next else None
+    prev_url = url_for('students.index', page=students.prev_num, course_id=course_id) if students.has_prev else None
+
     if course.author.id == current_user.id:
         course_name = course.name
-        students = course.get_all_not_delete_students()
-        return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students,
-                               course_id=course_id)
+        return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students.items,
+                               course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
