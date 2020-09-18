@@ -8,17 +8,19 @@
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
-    <div id="block_select" align="right">
+    <div id="block_filters" align="right">
         <label align="left" class="control-label"> Курс
             <select class="form-control">
-                <option value="value2">Значениеgdfffffffffffffffffffffffffffffffffgfgfg</option>
-                <option value="value1">Значениеggffffffffffffffffffffffffffffff</option>
+                <option value="value2">Заглушка</option>
             </select>
         </label>
 
-        <label class="control-label"> Статус студента
+        <label align="left" class="control-label"> Статус студента
             <select class="form-control">
-                <option value="value1">Значение 1</option>
+                <option value="any">Любой</option>
+                <option value="active">Активный</option>
+                <option value="freezed">Замороженный</option>
+                <option value="finished">Завершивший курс</option>
             </select>
         </label>
     </div>
