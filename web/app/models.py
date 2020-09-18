@@ -73,6 +73,15 @@ class Course(db.Model):
     def get_all_not_delete_students(self):
         return self.students.filter_by(deleted=False)
 
+    def get_all_not_delete_active_students(self):
+        return self.get_all_not_delete_students().filter_by(freezed=False).filter_by(finished=False)
+
+    def get_all_not_delete_freezed_students(self):
+        return self.get_all_not_delete_students().filter_by(freezed=True).filter_by(finished=False)
+
+    def get_all_not_delete_finished_students(self):
+        return self.get_all_not_delete_students().filter_by(finished=True)
+
     @staticmethod
     def get_all_not_deleted_courses():
         return Course.query.filter_by(deleted=False)

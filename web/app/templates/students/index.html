@@ -16,11 +16,11 @@
         </label>
 
         <label align="left" class="control-label"> Статус студента
-            <select class="form-control">
-                <option value="any">Любой</option>
-                <option value="active">Активный</option>
-                <option value="freezed">Замороженный</option>
-                <option value="finished">Завершивший курс</option>
+            <select class="form-control" onchange="location = '{{ url_for('students.index', course_id=course_id) }}&student_filter=' + this.value;">
+                <option value="any" {% if student_filter  == "any" %} selected {% endif %}>Любой</option>
+                <option value="active" {% if student_filter  == "active" %} selected {% endif %}>Активный</option>
+                <option value="freezed" {% if student_filter  == "freezed" %} selected {% endif %}>Замороженный</option>
+                <option value="finished" {% if student_filter  == "finished" %} selected {% endif %}>Завершивший курс</option>
             </select>
         </label>
     </div>

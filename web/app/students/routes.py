@@ -17,15 +17,29 @@ def index():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
 
+    student_filter = request.args.get('student_filter', 'active')
+
     page = request.args.get('page', 1, type=int)
-    students = course.get_all_not_delete_students().paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
+
+    if student_filter == 'active':
+        students = course.get_all_not_delete_active_students()
+    elif student_filter == 'freezed':
+        students = course.get_all_not_delete_freezed_students()
+    elif student_filter == 'finished':
+        students = course.get_all_not_delete_finished_students()
+    elif student_filter == 'any':
+        students = course.get_all_not_delete_students()
+    else:
+        students = course.get_all_not_delete_active_students()
+
+    students = students.paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
     next_url = url_for('students.index', page=students.next_num, course_id=course_id) if students.has_next else None
     prev_url = url_for('students.index', page=students.prev_num, course_id=course_id) if students.has_prev else None
 
     if course.author.id == current_user.id:
-        course_name = course.name
-        return render_template('students/index.html', title="Список студентов", course_name=course_name, students=students.items,
-                               course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page)
+        return render_template('students/index.html', title="Список студентов", course_name=course.name, students=students.items,
+                               course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page,
+                               student_filter=student_filter)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
