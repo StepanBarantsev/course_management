@@ -67,7 +67,8 @@ def add():
                               registration_code=generate_random_registration_code(),
                               telegram_id=None,
                               deleted=False,
-                              course_id=course_id)
+                              course_id=course_id,
+                              finished=False)
 
         db.session.add(new_student)
         db.session.commit()
