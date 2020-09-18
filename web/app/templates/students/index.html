@@ -8,13 +8,18 @@
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
-    <div id="block_select" style="position: relative; 45px; left: 920px">
-        <label> Курс
-            <select></select>
+    <div id="block_select" align="right">
+        <label align="left" class="control-label"> Курс
+            <select class="form-control">
+                <option value="value2">Значениеgdfffffffffffffffffffffffffffffffffgfgfg</option>
+                <option value="value1">Значениеggffffffffffffffffffffffffffffff</option>
+            </select>
         </label>
 
-        <label> Статус студента
-            <select></select>
+        <label class="control-label"> Статус студента
+            <select class="form-control">
+                <option value="value1">Значение 1</option>
+            </select>
         </label>
     </div>
     <a class="btn btn-success navbar-btn" href="{{ url_for('students.add', course_id=course_id) }}">Добавить студента</a>
