@@ -9,7 +9,7 @@ from telegram.chat.helpers import get_telegram_session_or_create_new, print_avai
     create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id,\
     print_available_courses_as_buttons_by_telegram_id, get_current_course_by_id, get_student_by_telegram_id_and_course_id
 
-engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI)
+engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI, convert_unicode=True, connect_args=dict(use_unicode=True))
 Session = sessionmaker(bind=engine)
 session = Session()
 
