@@ -12,3 +12,19 @@ $(document).ready(function() {
             })
     });
 });
+
+
+$(document).ready(function() {
+    $("[name='finish']").click(function() {
+        let id = $(event.target).attr('data-id')
+
+        $.post(window.location.origin + '/students/finish', {
+                url: window.location.origin + '/students/finish',
+                type:"POST",
+                student_id: id
+            }).done(function(data) {
+                if (data["error"] === false) $("#td_name_" + id).attr("bgcolor", data["color"])
+                else location.reload()
+            })
+    });
+});

@@ -137,6 +137,10 @@ class Student(db.Model):
     def freeze_or_unfreeze_student_by_id(student_id):
         Student.query.filter_by(id=student_id).first().freezed = not Student.query.filter_by(id=student_id).first().freezed
 
+    @staticmethod
+    def finish_or_unfinish_student_by_id(student_id):
+        Student.query.filter_by(id=student_id).first().finished = not Student.query.filter_by(id=student_id).first().finished
+
     def return_color_of_td(self):
         if self.finished:
             return "9966cc"

@@ -156,5 +156,17 @@ def freeze():
         return {"error": True}
     Student.freeze_or_unfreeze_student_by_id(student_id)
     db.session.commit()
-    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(),
-                    "error": False})
+    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+
+
+@bp.route('/finish', methods=['POST'])
+@login_required
+def finish():
+    try:
+        student_id = int(request.form['student_id'])
+    except:
+        flash('Что-то пошло не так. Подождите несколько секунд и попробуйте завершить курс для студента снова.')
+        return {"error": True}
+    Student.finish_or_unfinish_student_by_id(student_id)
+    db.session.commit()
+    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
