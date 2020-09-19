@@ -35,8 +35,8 @@ def index():
         students = course.get_all_not_deleted_active_students()
 
     students = students.paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
-    next_url = url_for('students.index', page=students.next_num, course_id=course_id) if students.has_next else None
-    prev_url = url_for('students.index', page=students.prev_num, course_id=course_id) if students.has_prev else None
+    next_url = url_for('students.index', page=students.next_num, course_id=course_id, student_filter=student_filter) if students.has_next else None
+    prev_url = url_for('students.index', page=students.prev_num, course_id=course_id, student_filter=student_filter) if students.has_prev else None
 
     if course.author.id == current_user.id:
         return render_template('students/index.html', title="Список студентов", course_name=course.name, students=students.items,
@@ -81,15 +81,13 @@ def add():
         new_student = Student(name=info_about_student_from_lms['fullname'],
                               email=form.email.data,
                               lms_email=info_about_student_from_lms['email'],
-                              freezed=False,
                               number_of_days=form.days.data,
                               lms_id=lms_id,
                               registration_code=generate_random_registration_code(),
                               telegram_id=None,
                               deleted=False,
                               course_id=course_id,
-                              finished=False,
-                              dropped=False)
+                              status=Student.student_statuses["active"])
 
         db.session.add(new_student)
         db.session.commit()

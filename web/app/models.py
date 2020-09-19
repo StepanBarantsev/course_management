@@ -74,16 +74,17 @@ class Course(db.Model):
         return self.students.filter_by(deleted=False)
 
     def get_all_not_deleted_active_students(self):
-        return self.get_all_not_deleted_students().filter_by(freezed=False).filter_by(finished=False)
+        print(Student.student_statuses["active"])
+        return self.get_all_not_deleted_students().filter_by(status=Student.student_statuses["active"])
 
     def get_all_not_deleted_freezed_students(self):
-        return self.get_all_not_deleted_students().filter_by(freezed=True).filter_by(finished=False)
+        return self.get_all_not_deleted_students().filter_by(status=Student.student_statuses["freezed"])
 
     def get_all_not_deleted_finished_students(self):
-        return self.get_all_not_deleted_students().filter_by(finished=True)
+        return self.get_all_not_deleted_students().filter_by(status=Student.student_statuses["finished"])
 
     def get_all_not_deleted_dropped_students(self):
-        return self.get_all_not_deleted_students().filter_by(dropped=True)
+        return self.get_all_not_deleted_students().filter_by(status=Student.student_statuses["dropped"])
 
     @staticmethod
     def get_all_not_deleted_courses():
@@ -116,14 +117,15 @@ class CourseBlock(db.Model):
 
 
 class Student(db.Model):
+
+    student_statuses = {"active": "active", "finished": "finished", "dropped": "dropped", "freezed": "freezed"}
+
     __tablename__ = 'students'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     lms_email = db.Column(db.String(100), nullable=False)
-    freezed = db.Column(db.Boolean(), nullable=False, default=False)
-    finished = db.Column(db.Boolean(), nullable=False, default=False)
-    dropped = db.Column(db.Boolean(), nullable=False, default=False)
+    status = db.Column(db.String(100), nullable=False, default=student_statuses["active"])
     number_of_days = db.Column(db.Integer(), nullable=False)
     lms_id = db.Column(db.Integer(), nullable=False)
     registration_code = db.Column(db.String(100), nullable=False)
@@ -139,27 +141,40 @@ class Student(db.Model):
 
     @staticmethod
     def freeze_or_unfreeze_student_by_id(student_id):
-        Student.query.filter_by(id=student_id).first().freezed = not Student.query.filter_by(id=student_id).first().freezed
+        student = Student.query.filter_by(id=student_id).first()
+        if student.status == Student.student_statuses["freezed"]:
+            student.status = Student.student_statuses["active"]
+        else:
+            student.status = Student.student_statuses["freezed"]
 
     @staticmethod
     def finish_or_unfinish_student_by_id(student_id):
-        Student.query.filter_by(id=student_id).first().finished = not Student.query.filter_by(id=student_id).first().finished
+        student = Student.query.filter_by(id=student_id).first()
+        if student.status == Student.student_statuses["finished"]:
+            student.status = Student.student_statuses["active"]
+        else:
+            student.status = Student.student_statuses["finished"]
 
     @staticmethod
     def drop_or_undrop_student_by_id(student_id):
-        Student.query.filter_by(id=student_id).first().dropped = not Student.query.filter_by(id=student_id).first().dropped
+        student = Student.query.filter_by(id=student_id).first()
+        if student.status == Student.student_statuses["dropped"]:
+            student.status = Student.student_statuses["active"]
+        else:
+            student.status = Student.student_statuses["dropped"]
 
     def return_color_of_td(self):
-        if self.dropped:
+        if self.status == Student.student_statuses["dropped"]:
             return "gray"
-        if self.finished:
+        elif self.status == Student.student_statuses["finished"]:
             return "9966cc"
-        if self.freezed:
+        elif self.status == Student.student_statuses["freezed"]:
             return "aqua"
-        elif self.number_of_days < 0:
-            return "ffc0cb"
         else:
-            return "98ff98"
+            if self.number_of_days < 0:
+                return "ffc0cb"
+            else:
+                return "98ff98"
 
 
 class TelegramState(db.Model):
