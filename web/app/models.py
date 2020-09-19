@@ -70,17 +70,17 @@ class Course(db.Model):
     def delete_course_by_id(course_id):
         Course.query.filter_by(id=course_id).first().deleted = True
 
-    def get_all_not_delete_students(self):
+    def get_all_not_deleted_students(self):
         return self.students.filter_by(deleted=False)
 
-    def get_all_not_delete_active_students(self):
-        return self.get_all_not_delete_students().filter_by(freezed=False).filter_by(finished=False)
+    def get_all_not_deleted_active_students(self):
+        return self.get_all_not_deleted_students().filter_by(freezed=False).filter_by(finished=False)
 
-    def get_all_not_delete_freezed_students(self):
-        return self.get_all_not_delete_students().filter_by(freezed=True).filter_by(finished=False)
+    def get_all_not_deleted_freezed_students(self):
+        return self.get_all_not_deleted_students().filter_by(freezed=True).filter_by(finished=False)
 
-    def get_all_not_delete_finished_students(self):
-        return self.get_all_not_delete_students().filter_by(finished=True)
+    def get_all_not_deleted_finished_students(self):
+        return self.get_all_not_deleted_students().filter_by(finished=True)
 
     @staticmethod
     def get_all_not_deleted_courses():
@@ -95,10 +95,10 @@ class Course(db.Model):
         return Course.get_all_not_deleted_courses().filter_by(name=name).first()
 
     def get_not_deleted_student_by_email(self, email):
-        return self.get_all_not_delete_students().filter_by(email=email).first()
+        return self.get_all_not_deleted_students().filter_by(email=email).first()
 
     def get_not_deleted_student_by_lms_id(self, lms_id):
-        return self.get_all_not_delete_students().filter_by(lms_id=lms_id).first()
+        return self.get_all_not_deleted_students().filter_by(lms_id=lms_id).first()
 
 
 class CourseBlock(db.Model):

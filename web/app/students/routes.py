@@ -22,15 +22,15 @@ def index():
     page = request.args.get('page', 1, type=int)
 
     if student_filter == 'active':
-        students = course.get_all_not_delete_active_students()
+        students = course.get_all_not_deleted_active_students()
     elif student_filter == 'freezed':
-        students = course.get_all_not_delete_freezed_students()
+        students = course.get_all_not_deleted_freezed_students()
     elif student_filter == 'finished':
-        students = course.get_all_not_delete_finished_students()
+        students = course.get_all_not_deleted_finished_students()
     elif student_filter == 'any':
-        students = course.get_all_not_delete_students()
+        students = course.get_all_not_deleted_students()
     else:
-        students = course.get_all_not_delete_active_students()
+        students = course.get_all_not_deleted_active_students()
 
     students = students.paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
     next_url = url_for('students.index', page=students.next_num, course_id=course_id) if students.has_next else None
