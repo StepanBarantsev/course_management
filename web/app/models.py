@@ -82,6 +82,9 @@ class Course(db.Model):
     def get_all_not_deleted_finished_students(self):
         return self.get_all_not_deleted_students().filter_by(finished=True)
 
+    def get_all_not_deleted_dropped_students(self):
+        return self.get_all_not_deleted_students().filter_by(dropped=True)
+
     @staticmethod
     def get_all_not_deleted_courses():
         return Course.query.filter_by(deleted=False)
@@ -141,6 +144,10 @@ class Student(db.Model):
     @staticmethod
     def finish_or_unfinish_student_by_id(student_id):
         Student.query.filter_by(id=student_id).first().finished = not Student.query.filter_by(id=student_id).first().finished
+
+    @staticmethod
+    def drop_or_undrop_student_by_id(student_id):
+        Student.query.filter_by(id=student_id).first().dropped = not Student.query.filter_by(id=student_id).first().dropped
 
     def return_color_of_td(self):
         if self.dropped:

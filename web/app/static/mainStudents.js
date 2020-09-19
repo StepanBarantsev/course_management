@@ -28,3 +28,18 @@ $(document).ready(function() {
             })
     });
 });
+
+$(document).ready(function() {
+    $("[name='drop_course']").click(function() {
+        let id = $(event.target).attr('data-id')
+
+        $.post(window.location.origin + '/students/drop', {
+                url: window.location.origin + '/students/drop',
+                type:"POST",
+                student_id: id
+            }).done(function(data) {
+                if (data["error"] === false) $("#td_name_" + id).attr("bgcolor", data["color"])
+                else location.reload()
+            })
+    });
+});

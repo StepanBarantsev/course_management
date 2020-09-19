@@ -27,6 +27,8 @@ def index():
         students = course.get_all_not_deleted_freezed_students()
     elif student_filter == 'finished':
         students = course.get_all_not_deleted_finished_students()
+    elif student_filter == 'dropped':
+        students = course.get_all_not_deleted_dropped_students()
     elif student_filter == 'any':
         students = course.get_all_not_deleted_students()
     else:
@@ -169,5 +171,18 @@ def finish():
         flash('Что-то пошло не так. Подождите несколько секунд и попробуйте завершить курс для студента снова.')
         return {"error": True}
     Student.finish_or_unfinish_student_by_id(student_id)
+    db.session.commit()
+    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+
+
+@bp.route('/drop', methods=['POST'])
+@login_required
+def drop():
+    try:
+        student_id = int(request.form['student_id'])
+    except:
+        flash('Что-то пошло не так. Подождите несколько секунд и попробуйте выполнить действие снова.')
+        return {"error": True}
+    Student.drop_or_undrop_student_by_id(student_id)
     db.session.commit()
     return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
