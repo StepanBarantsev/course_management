@@ -120,6 +120,7 @@ class Student(db.Model):
     lms_email = db.Column(db.String(100), nullable=False)
     freezed = db.Column(db.Boolean(), nullable=False, default=False)
     finished = db.Column(db.Boolean(), nullable=False, default=False)
+    dropped = db.Column(db.Boolean(), nullable=False, default=False)
     number_of_days = db.Column(db.Integer(), nullable=False)
     lms_id = db.Column(db.Integer(), nullable=False)
     registration_code = db.Column(db.String(100), nullable=False)
