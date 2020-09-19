@@ -138,6 +138,8 @@ class Student(db.Model):
         Student.query.filter_by(id=student_id).first().freezed = not Student.query.filter_by(id=student_id).first().freezed
 
     def return_color_of_td(self):
+        if self.finished:
+            return "9966cc"
         if self.freezed:
             return "aqua"
         elif self.number_of_days < 0:
