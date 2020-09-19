@@ -143,6 +143,8 @@ class Student(db.Model):
         Student.query.filter_by(id=student_id).first().finished = not Student.query.filter_by(id=student_id).first().finished
 
     def return_color_of_td(self):
+        if self.dropped:
+            return "gray"
         if self.finished:
             return "9966cc"
         if self.freezed:
