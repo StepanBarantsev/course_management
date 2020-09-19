@@ -32,6 +32,9 @@
                     <tr>
                     <th style="border: 1px solid black;">Имя</th>
                     <th style="border: 1px solid black;">Email</th>
+                    {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any" %}
+                        <th style="border: 1px solid black;">Дней до конца курса</th>
+                    {% endif %}
                     <th style="border: 1px solid black;">Действия</th>
                     </tr>
 
@@ -43,6 +46,11 @@
                         <td style="border: 1px solid black;">
                         {{student.email}}
                         </td>
+                        {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any"%}
+                            <td style="border: 1px solid black;">
+                            {{student.number_of_days}}
+                            </td>
+                        {% endif %}
                         <td style="border: 1px solid black;">
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('students.edit', student_id=student.id, course_id=course_id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
