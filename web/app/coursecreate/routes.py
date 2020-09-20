@@ -1,7 +1,7 @@
 from flask_login import login_required
 from web.app.coursecreate import bp
 from web.app.models import Course
-from web.app.coursecreate.forms import CreateOrEditCourseForm
+from web.app.coursecreate.forms import CreateOrEditCourseForm, CreateOrEditCourseFormAdditional
 from flask_login import current_user
 from web.app import db
 from flask import render_template, redirect, url_for, flash, request, current_app
@@ -110,7 +110,7 @@ def edit_additional():
     course = db.session.query(Course).filter(Course.id == course_id).first()
 
     if course.author.id == current_user.id:
-        form = CreateOrEditCourseForm(current_user, course.name, course.lms_id)
+        form = CreateOrEditCourseFormAdditional()
         if form.validate_on_submit():
             return redirect(url_for('main.index'))
         elif request.method == 'GET':

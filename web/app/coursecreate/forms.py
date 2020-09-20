@@ -41,4 +41,9 @@ class CreateOrEditCourseForm(FlaskForm):
             raise ValidationError('Данное LMS ID уже занято!')
 
 
+class CreateOrEditCourseFormAdditional(FlaskForm):
+
+    submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
+
+
 
