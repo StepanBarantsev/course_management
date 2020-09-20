@@ -112,6 +112,8 @@ class CourseBlock(db.Model):
     number = db.Column(db.Integer(), nullable=False)
     # lms_id таски, которую нужно выполнить чтобы открылся блок. Если null, то блок открыт и так
     required_task_lms_id = db.Column(db.Integer())
+    # Материалы по блоку. Могут отсутствовать если их не настроить
+    link = db.Column(db.String(100))
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
