@@ -135,6 +135,8 @@ class Student(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     telegram_state_id = db.Column(db.Integer(), db.ForeignKey('telegram_states.id'))
 
+    checks = db.relationship('Check', backref='student', lazy='dynamic')
+
     @staticmethod
     def delete_student_by_id(student_id):
         Student.query.filter_by(id=student_id).first().deleted = True
@@ -192,5 +194,15 @@ class TelegramState(db.Model):
     # Создание отдельных студентов для кжадого курса очень сильно упрощает систему, но вот в данном месте это немного костыль
     # После верификации, экземпляр студента получает в свое поле телеграм id
     temp_course_student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
+
+
+class Check(db.Model):
+    __tablename__ = 'checks'
+    id = db.Column(db.Integer(), primary_key=True)
+    link = db.Column(db.String(100), nullable=False)
+
+    block_id = db.Column(db.Integer, db.ForeignKey('course_blocks.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
+
 
 
