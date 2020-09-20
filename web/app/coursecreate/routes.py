@@ -1,6 +1,6 @@
 from flask_login import login_required
 from web.app.coursecreate import bp
-from web.app.models import Course
+from web.app.models import Course, CourseBlock
 from web.app.coursecreate.forms import CreateOrEditCourseForm, CreateOrEditCourseFormAdditional
 from flask_login import current_user
 from web.app import db
@@ -31,6 +31,7 @@ def create():
 
         db.session.add(new_course)
         db.session.commit()
+        create_blocks(new_course, num_of_blocks, db)
         flash('Новый курс был успешно создан!')
         return redirect(url_for('main.index'))
 
@@ -64,6 +65,8 @@ def edit():
                     num_of_blocks = 1
                 else:
                     num_of_blocks = form.number_of_blocks.data
+
+            create_blocks(course, num_of_blocks, db)
 
             db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data,
                                                                                    trainer_lms_id=form.trainer_lms_id.data,
@@ -117,4 +120,18 @@ def edit_additional():
             return render_template('coursecreate/edit_additional.html', title='Дополнительные настройки курса', form=form)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
+
+
+def create_blocks(course, num, db):
+    if course.get_all_not_deleted_blocks().count() > num:
+        for i in range(course.get_all_not_deleted_blocks().count(), num, -1):
+            course.delete_block_by_num(i)
+    else:
+        for i in range(course.get_all_not_deleted_blocks().count() + 1, num + 1):
+            new_block = CourseBlock(number=i, course_id=course.id)
+            db.session.add(new_block)
+
+    db.session.commit()
+
+
 

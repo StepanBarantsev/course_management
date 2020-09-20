@@ -73,6 +73,9 @@ class Course(db.Model):
     def get_all_not_deleted_students(self):
         return self.students.filter_by(deleted=False)
 
+    def get_all_not_deleted_blocks(self):
+        return self.blocks.filter_by(deleted=False)
+
     def get_all_not_deleted_active_students(self):
         print(Student.student_statuses["active"])
         return self.get_all_not_deleted_students().filter_by(status=Student.student_statuses["active"])
@@ -104,6 +107,9 @@ class Course(db.Model):
     def get_not_deleted_student_by_lms_id(self, lms_id):
         return self.get_all_not_deleted_students().filter_by(lms_id=lms_id).first()
 
+    def delete_block_by_num(self, num):
+        self.get_all_not_deleted_blocks().filter_by(number=num).first().deleted = True
+
 
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'
@@ -114,6 +120,7 @@ class CourseBlock(db.Model):
     required_task_lms_id = db.Column(db.Integer())
     # Материалы по блоку. Могут отсутствовать если их не настроить
     link = db.Column(db.String(100))
+    deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
