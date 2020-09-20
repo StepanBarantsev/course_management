@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, BooleanField
+from wtforms import StringField, SubmitField, IntegerField, BooleanField, FieldList, FormField
 from wtforms.validators import ValidationError, DataRequired, Optional, NumberRange
 from web.app.models import Course
 
@@ -41,7 +41,14 @@ class CreateOrEditCourseForm(FlaskForm):
             raise ValidationError('Данное LMS ID уже занято!')
 
 
+class BlockForm(FlaskForm):
+    link = StringField('Ссылка на материал')
+    required_task = StringField('Lms id задания, которое нужно выполнить, чтобы блок открылся', validators=[Optional('Введите число')])
+
+
 class CreateOrEditCourseFormAdditional(FlaskForm):
+
+    blocks = FieldList(FormField(BlockForm), min_entries=1)
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
