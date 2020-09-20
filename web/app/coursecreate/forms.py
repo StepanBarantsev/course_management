@@ -43,7 +43,7 @@ class CreateOrEditCourseForm(FlaskForm):
 
 class BlockForm(FlaskForm):
     link = StringField('Ссылка на материал')
-    required_task = StringField('Lms id задания, которое нужно выполнить, чтобы блок открылся', validators=[Optional('Введите число')])
+    required_task = StringField('Lms id задания (для открытия блока)', validators=[Optional('Введите число')])
 
 
 class CreateOrEditCourseFormAdditional(FlaskForm):

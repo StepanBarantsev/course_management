@@ -14,6 +14,17 @@
             <form action="" method="post">
                 <div class="form-group">
                     {{ form.hidden_tag() }}
+                    <details>
+                        <summary style="font-size:20px">Описание блоков</summary>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                            {% for block_entry_form in form.blocks %}
+                                {{ block_entry_form.hidden_tag() }}
+                                {% with %} {% set  specificform1 = block_entry_form.link %} {% set  specificform2 = block_entry_form.required_task %} {% include "helpers/two_inputs_in_one_line.html" %} {% endwith %}
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
                 <p class="control-label">{{ form.submit() }}</p>

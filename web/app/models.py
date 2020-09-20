@@ -110,6 +110,9 @@ class Course(db.Model):
     def delete_block_by_num(self, num):
         self.get_all_not_deleted_blocks().filter_by(number=num).first().deleted = True
 
+    def get_block_by_num(self, num):
+        return self.get_all_not_deleted_blocks().filter_by(number=num).first()
+
 
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'

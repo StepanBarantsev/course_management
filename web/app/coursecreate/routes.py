@@ -113,8 +113,15 @@ def edit_additional():
     course = db.session.query(Course).filter(Course.id == course_id).first()
 
     if course.author.id == current_user.id:
-        form = CreateOrEditCourseFormAdditional()
+        blocks = course.get_all_not_deleted_blocks()
+        form = CreateOrEditCourseFormAdditional(blocks=[{"link": block.link, "required_task": block.required_task_lms_id} for block in blocks])
         if form.validate_on_submit():
+            for index, block in enumerate(form.blocks):
+                database_block = course.get_block_by_num(index + 1)
+                database_block.link = block.link.data if block.link.data is not '' else None
+                database_block.required_task_lms_id = block.required_task.data if block.required_task.data is not '' else None
+                db.session.commit()
+            flash('Данные успешно обновлены')
             return redirect(url_for('main.index'))
         elif request.method == 'GET':
             return render_template('coursecreate/edit_additional.html', title='Дополнительные настройки курса', form=form)
