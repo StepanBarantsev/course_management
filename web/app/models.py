@@ -145,7 +145,6 @@ class Student(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
-    telegram_state_id = db.Column(db.Integer(), db.ForeignKey('telegram_states.id'))
 
     checks = db.relationship('Check', backref='student', lazy='dynamic')
 
