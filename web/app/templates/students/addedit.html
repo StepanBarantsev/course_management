@@ -21,7 +21,7 @@
 
                         {% if for_edit == True %}
                             <label>Не рекомендуется использовать эту опцию.</label><br/>
-                            <a class="btn btn-success navbar-btn" id="unlock_fields">Разрешить менять заблокированные поля</a>
+                            <a class="btn btn-success navbar-btn" id="unlock_fields" data-flag="True">Разрешить менять заблокированные поля</a>
                             <br/><br/>
                             {% set specificform = form.lms_email_locked %} {% include "helpers/locked_field_form.html" %}
                             {% set specificform = form.telegram_id_locked %} {% include "helpers/locked_field_form.html" %}
