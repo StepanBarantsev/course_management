@@ -21,6 +21,8 @@ def index():
 
     page = request.args.get('page', 1, type=int)
 
+    all_courses = current_user.get_all_not_deleted_courses()
+
     if student_filter == 'active':
         students = course.get_all_not_deleted_active_students()
     elif student_filter == 'freezed':
@@ -41,7 +43,7 @@ def index():
     if course.author.id == current_user.id:
         return render_template('students/index.html', title="Список студентов", course_name=course.name, students=students.items,
                                course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page,
-                               student_filter=student_filter)
+                               student_filter=student_filter, all_courses=all_courses)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 

@@ -10,8 +10,10 @@
     <br>
     <div id="block_filters" align="right">
         <label align="left" class="control-label"> Курс
-            <select class="form-control">
-                <option value="value2">Заглушка</option>
+            <select class="form-control" onchange="location = '{{ url_for('students.index', student_filter=student_filter) }}&course_id=' + this.value;">
+                {% for local_course in all_courses %}
+                    <option value="{{ local_course.id }}" {% if course_id  == local_course.id %} selected {% endif %}> {{ local_course.name }} </option>
+                {% endfor %}
             </select>
         </label>
 
