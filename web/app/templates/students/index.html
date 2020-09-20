@@ -5,6 +5,11 @@
      <script type="text/javascript" src="{{ url_for('static', filename = 'mainStudents.js') }}"></script>
 {% endblock %}
 
+{% block styles %}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    {{super()}}
+{% endblock %}
+
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
@@ -32,10 +37,10 @@
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <tr>
-                    <th style="border: 1px solid black;">Имя</th>
+                    <th style="border: 1px solid black;">Имя<i id="sort_name" class="fa fa-fw fa-sort"></i></th>
                     <th style="border: 1px solid black;">Email</th>
                     {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any" %}
-                        <th style="border: 1px solid black;">Дней до конца курса</th>
+                        <th style="border: 1px solid black;">Дней до конца курса<i id="sort_days" class="fa fa-fw fa-sort"></i></th>
                     {% endif %}
                     <th style="border: 1px solid black;">Действия</th>
                     </tr>
