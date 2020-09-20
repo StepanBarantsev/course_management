@@ -21,6 +21,8 @@ def index():
 
     page = request.args.get('page', 1, type=int)
 
+    sort_type = request.args.get('sort_type', "default")
+
     all_courses = current_user.get_all_not_deleted_courses()
 
     if student_filter == 'active':
@@ -36,6 +38,18 @@ def index():
     else:
         students = course.get_all_not_deleted_active_students()
 
+    if sort_type == 'name':
+        students = students.order_by(Student.name)
+
+    if sort_type == 'name_reversed':
+        students = students.order_by(Student.name.desc())
+
+    if sort_type == 'days':
+        students = students.order_by(Student.number_of_days)
+
+    if sort_type == 'days_reversed':
+        students = students.order_by(Student.number_of_days.desc())
+
     students = students.paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
     next_url = url_for('students.index', page=students.next_num, course_id=course_id, student_filter=student_filter) if students.has_next else None
     prev_url = url_for('students.index', page=students.prev_num, course_id=course_id, student_filter=student_filter) if students.has_prev else None
@@ -43,7 +57,7 @@ def index():
     if course.author.id == current_user.id:
         return render_template('students/index.html', title="Список студентов", course_name=course.name, students=students.items,
                                course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page,
-                               student_filter=student_filter, all_courses=all_courses)
+                               student_filter=student_filter, all_courses=all_courses, sort_type=sort_type)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
