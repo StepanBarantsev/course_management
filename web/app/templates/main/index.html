@@ -37,7 +37,7 @@
                             <a title="Редактировать основные настройки" class="btn btn-primary" href="{{ url_for('coursecreate.edit', course_id=course.id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
-                            <a title="Дополнительные настройки" type="button" class="btn btn-primary" data-toggle="modal" href="#">
+                            <a title="Дополнительные настройки" type="button" class="btn btn-primary" data-toggle="modal" href="{{ url_for('coursecreate.edit_additional', course_id=course.id) }}">
                                 <i class="glyphicon glyphicon-list-alt"></i>
                             </a>
                             <a title="Студенты" type="button" class="btn btn-primary" data-toggle="modal" href="{{ url_for('students.index', course_id=course.id) }}">

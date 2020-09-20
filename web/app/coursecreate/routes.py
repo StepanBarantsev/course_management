@@ -102,3 +102,19 @@ def delete():
     flash('Курс успешно удален!')
     return redirect(url_for('main.index'))
 
+
+@bp.route('/edit_additional', methods=['GET', 'POST'])
+@login_required
+def edit_additional():
+    course_id = request.args.get('course_id', 1, type=int)
+    course = db.session.query(Course).filter(Course.id == course_id).first()
+
+    if course.author.id == current_user.id:
+        form = CreateOrEditCourseForm(current_user, course.name, course.lms_id)
+        if form.validate_on_submit():
+            return redirect(url_for('main.index'))
+        elif request.method == 'GET':
+            return render_template('coursecreate/edit_additional.html', title='Дополнительные настройки курса', form=form)
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
+
