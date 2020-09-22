@@ -207,6 +207,7 @@ def drop():
 def autocomplete():
     try:
         course_id = request.args.get('course_id', type=int)
+        q = request.args.get('q')
     except:
         flash('Что-то пошло не так. Подождите несколько секунд и попробуйте выполнить действие снова.')
         return {"error": True}
@@ -214,9 +215,9 @@ def autocomplete():
     course = Course.get_course_by_id(course_id)
     students = course.get_all_not_deleted_students()
 
-    lst = [student.lms_email + ' (lms email)' for student in students] + \
-          [student.email + ' (email)' for student in students] + \
-          [student.name + ' (имя)' for student in students] + \
-          [str(student.telegram_id) + ' (telegram id)' for student in students if student.telegram_id is not None]
+    lst = [student.lms_email + ' (lms email)' for student in students if student.lms_email.startswith(q)] + \
+          [student.email + ' (email)' for student in students if student.email.startswith(q)] + \
+          [student.name + ' (имя)' for student in students if student.name.startswith(q)] + \
+          [str(student.telegram_id) + ' (telegram id)' for student in students if (student.telegram_id is not None and str(student.telegram_id).startswith(q))]
 
     return jsonify(lst)
