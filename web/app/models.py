@@ -70,6 +70,10 @@ class Course(db.Model):
     def delete_course_by_id(course_id):
         Course.query.filter_by(id=course_id).first().deleted = True
 
+    @staticmethod
+    def get_course_by_id(course_id):
+        return Course.query.filter_by(id=course_id).first()
+
     def get_all_not_deleted_students(self):
         return self.students.filter_by(deleted=False)
 

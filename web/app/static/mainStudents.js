@@ -43,3 +43,5 @@ $(document).ready(function() {
             })
     });
 });
+
+$('.basicAutoComplete').autoComplete();

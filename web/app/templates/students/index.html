@@ -2,7 +2,8 @@
 
 {% block scripts %}
     {{super()}}
-     <script type="text/javascript" src="{{ url_for('static', filename = 'mainStudents.js') }}"></script>
+    <script src="bootstrap-autocomplete.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'mainStudents.js') }}"></script>
 {% endblock %}
 
 {% block styles %}
@@ -13,6 +14,7 @@
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
+    <input class="form-control basicAutoComplete" type="text" data-url="{{ url_for('students.autocomplete', course_id=course_id) }}" autocomplete="off" style="width:50%">
     <div id="block_filters" align="right">
         <label align="left" class="control-label"> Курс
             <select class="form-control" onchange="location = '{{ url_for('students.index', student_filter=student_filter, sort_type=sort_type) }}&course_id=' + this.value;">
