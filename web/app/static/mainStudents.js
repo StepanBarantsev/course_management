@@ -48,4 +48,10 @@ $('.basicAutoComplete').autoComplete({
     delay: 0,
 });
 
+$(".basicAutoComplete").focusout(function () {
+    $(".bootstrap-autocomplete").addClass("hidden")
+});
 
+$(".basicAutoComplete").on("click", function () {
+    $(".bootstrap-autocomplete").removeClass("hidden")
+});
