@@ -18,14 +18,12 @@ Session = sessionmaker(bind=engine)
 @contextmanager
 def session_scope():
     session = Session()
-    print('Сессия открыта')
     try:
         yield session
     except:
         session.rollback()
         raise
     finally:
-        print('Сессия закрыта')
         session.close()
 
 
