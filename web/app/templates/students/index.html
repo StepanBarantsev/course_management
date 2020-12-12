@@ -17,7 +17,7 @@
     <input class="form-control basicAutoComplete" type="text" data-url="{{ url_for('students.autocomplete', course_id=course_id) }}" autocomplete="off" style="width:50%">
     <div id="block_filters" align="right">
         <label align="left" class="control-label"> Курс
-            <select class="form-control" onchange="location = '{{ url_for('students.index', student_filter=student_filter, sort_type=sort_type) }}&course_id=' + this.value;">
+            <select class="form-control" onchange="location = '{{ url_for('students.index', student_filter=student_filter, sort_type=sort_type, student_search=student_search) }}&course_id=' + this.value;">
                 {% for local_course in all_courses %}
                     <option value="{{ local_course.id }}" {% if course_id  == local_course.id %} selected {% endif %}> {{ local_course.name }} </option>
                 {% endfor %}
@@ -25,7 +25,7 @@
         </label>
 
         <label align="left" class="control-label"> Статус студента
-            <select class="form-control" onchange="location = '{{ url_for('students.index', course_id=course_id, sort_type=sort_type) }}&student_filter=' + this.value;">
+            <select class="form-control" onchange="location = '{{ url_for('students.index', course_id=course_id, sort_type=sort_type, student_search=student_search) }}&student_filter=' + this.value;">
                 <option value="any" {% if student_filter  == "any" %} selected {% endif %}>Любой</option>
                 <option value="active" {% if student_filter  == "active" %} selected {% endif %}>Активный</option>
                 <option value="freezed" {% if student_filter  == "freezed" %} selected {% endif %}>Замороженный</option>
@@ -40,16 +40,16 @@
                 <table class="table table-striped table-bordered">
                     <tr>
                     {% if sort_type == "name" %}
-                        <th style="border: 1px solid black;">Имя<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='name_reversed', student_filter=student_filter) }}'"></i></th>
+                        <th style="border: 1px solid black;">Имя<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='name_reversed', student_filter=student_filter, student_search=student_search) }}'"></i></th>
                     {% else %}
-                        <th style="border: 1px solid black;">Имя<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='name', student_filter=student_filter) }}'"></i></th>
+                        <th style="border: 1px solid black;">Имя<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='name', student_filter=student_filter, student_search=student_search) }}'"></i></th>
                     {% endif %}
                     <th style="border: 1px solid black;">Email</th>
                     {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any" %}
                         {% if sort_type == "days" %}
-                            <th style="border: 1px solid black;">Дни<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='days_reversed', student_filter=student_filter) }}'"></i></th>
+                            <th style="border: 1px solid black;">Дни<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='days_reversed', student_filter=student_filter, student_search=student_search) }}'"></i></th>
                         {% else %}
-                            <th style="border: 1px solid black;">Дни<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='days', student_filter=student_filter) }}'"></i></th>
+                            <th style="border: 1px solid black;">Дни<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='days', student_filter=student_filter, student_search=student_search) }}'"></i></th>
                         {% endif %}
                     {% endif %}
                     <th style="border: 1px solid black;">Действия</th>

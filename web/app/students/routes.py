@@ -18,10 +18,9 @@ def index():
     course = db.session.query(Course).filter(Course.id == course_id).first()
 
     student_filter = request.args.get('student_filter', 'active')
-
     page = request.args.get('page', 1, type=int)
-
     sort_type = request.args.get('sort_type', "default")
+    student_search = request.args.get('student_search', None)
 
     all_courses = current_user.get_all_not_deleted_courses()
 
@@ -57,7 +56,7 @@ def index():
     if course.author.id == current_user.id:
         return render_template('students/index.html', title="Список студентов", course_name=course.name, students=students.items,
                                course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page,
-                               student_filter=student_filter, all_courses=all_courses, sort_type=sort_type)
+                               student_filter=student_filter, all_courses=all_courses, sort_type=sort_type, student_search=student_search)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 

@@ -55,3 +55,13 @@ $(".basicAutoComplete").focusout(function () {
 $(".basicAutoComplete").on("click", function () {
     $(".bootstrap-autocomplete").removeClass("hidden")
 });
+
+$('.basicAutoComplete').keypress(function(event){
+  if(event.keyCode == 13){
+    let url = window.location.href
+    let val = $('.basicAutoComplete').val()
+    let data = {"student_search": val}
+    url = url.replace(/&student_search=.+?&/, "").replace(/&student_search=.+?$/, "") + "&" + jQuery.param(data)
+    window.location.href = url
+  }
+});
