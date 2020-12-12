@@ -44,4 +44,8 @@ $(document).ready(function() {
     });
 });
 
-$('.basicAutoComplete').autoComplete();
+$('.basicAutoComplete').autoComplete({
+    delay: 0,
+});
+
+
