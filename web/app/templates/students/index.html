@@ -14,7 +14,12 @@
 {% block app_content %}
     <h1> Список студентов курса <b>{{ course_name }}</b></h1>
     <br>
-        <input class="form-control basicAutoComplete" type="text" data-url="{{ url_for('students.autocomplete', course_id=course_id) }}" autocomplete="off" style="width:50%; display: inline-block" value="{{ student_search }}">
+        <x-field>
+            <input class="form-control basicAutoComplete" type="search" data-url="{{ url_for('students.autocomplete', course_id=course_id) }}" autocomplete="off" style="width:50%; display: inline-block" value="{{ student_search }}">
+            <span class="close" onclick="this.previousElementSibling.value = ''; location = '{{ url_for('students.index', course_id=course_id, sort_type=sort_type, student_filter=student_filter, student_search='') }}'">
+                &times;
+            </span>
+        </x-field>
         <button class="btn btn-primary" id="search_student">Найти</button>
     <div id="block_filters" align="right">
         <label align="left" class="control-label"> Курс

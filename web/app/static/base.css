@@ -32,3 +32,15 @@
 ul.bootstrap-autocomplete.dropdown-menu{
     display: block;
 }
+
+x-field{
+    display:inline;
+    position:relative;
+}
+
+x-field .close {
+    position:absolute;
+    padding:0 10px;
+    right:0;
+    top: 0px;
+}

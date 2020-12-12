@@ -2,7 +2,7 @@ function generateNewUrlForStudentsSearch() {
     let url = window.location.href
     let val = $('.basicAutoComplete').val()
     let data = {"student_search": val}
-    url = url.replace(/student_search=.+?&/, "").replace(/&student_search=.+?$/, "").replace("#!", "") + "&" + jQuery.param(data)
+    url = url.replace(/student_search=.+?&?/, "").replace("#!", "") + "&" + jQuery.param(data)
     window.location.href = url
 }
 
