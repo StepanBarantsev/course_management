@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from web.app import login_manager
 import telegram.chat.states as states
+from sqlalchemy import or_
 
 
 @login_manager.user_loader
@@ -110,6 +111,10 @@ class Course(db.Model):
 
     def get_not_deleted_student_by_lms_id(self, lms_id):
         return self.get_all_not_deleted_students().filter_by(lms_id=lms_id).first()
+
+    @staticmethod
+    def find_students_by_search_param(students, search_param):
+        return students.filter(or_(Student.name == search_param, Student.email == search_param, Student.lms_email == search_param, Student.telegram_id == search_param))
 
     def delete_block_by_num(self, num):
         self.get_all_not_deleted_blocks().filter_by(number=num).first().deleted = True

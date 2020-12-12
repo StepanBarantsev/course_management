@@ -20,7 +20,7 @@ def index():
     student_filter = request.args.get('student_filter', 'active')
     page = request.args.get('page', 1, type=int)
     sort_type = request.args.get('sort_type', "default")
-    student_search = request.args.get('student_search', None)
+    student_search = request.args.get('student_search', "")
 
     all_courses = current_user.get_all_not_deleted_courses()
 
@@ -37,6 +37,9 @@ def index():
     else:
         students = course.get_all_not_deleted_active_students()
 
+    if student_search != "":
+        students = course.find_students_by_search_param(students, student_search)
+
     if sort_type == 'name':
         students = students.order_by(Student.name)
 
@@ -48,6 +51,7 @@ def index():
 
     if sort_type == 'days_reversed':
         students = students.order_by(Student.number_of_days.desc())
+
 
     students = students.paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
     next_url = url_for('students.index', page=students.next_num, course_id=course_id, student_filter=student_filter) if students.has_next else None
@@ -214,9 +218,9 @@ def autocomplete():
     course = Course.get_course_by_id(course_id)
     students = course.get_all_not_deleted_students()
 
-    lst = [student.lms_email + ' (lms email)' for student in students if student.lms_email.startswith(q)] + \
-          [student.email + ' (email)' for student in students if student.email.startswith(q)] + \
-          [student.name + ' (имя)' for student in students if student.name.startswith(q)] + \
-          [str(student.telegram_id) + ' (telegram id)' for student in students if (student.telegram_id is not None and str(student.telegram_id).startswith(q))]
+    lst = [student.lms_email for student in students if student.lms_email.startswith(q)] + \
+          [student.email for student in students if student.email.startswith(q)] + \
+          [student.name for student in students if student.name.startswith(q)] + \
+          [str(student.telegram_id) for student in students if (student.telegram_id is not None and str(student.telegram_id).startswith(q))]
 
     return jsonify(lst)

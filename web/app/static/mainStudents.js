@@ -1,3 +1,11 @@
+function generateNewUrlForStudentsSearch() {
+    let url = window.location.href
+    let val = $('.basicAutoComplete').val()
+    let data = {"student_search": val}
+    url = url.replace(/student_search=.+?&/, "").replace(/&student_search=.+?$/, "").replace("#!", "") + "&" + jQuery.param(data)
+    window.location.href = url
+}
+
 $(document).ready(function() {
     $("[name='freeze']").click(function() {
         let id = $(event.target).attr('data-id')
@@ -48,20 +56,13 @@ $('.basicAutoComplete').autoComplete({
     delay: 0,
 });
 
-$(".basicAutoComplete").focusout(function () {
-    $(".bootstrap-autocomplete").addClass("hidden")
-});
-
-$(".basicAutoComplete").on("click", function () {
-    $(".bootstrap-autocomplete").removeClass("hidden")
-});
 
 $('.basicAutoComplete').keypress(function(event){
   if(event.keyCode == 13){
-    let url = window.location.href
-    let val = $('.basicAutoComplete').val()
-    let data = {"student_search": val}
-    url = url.replace(/&student_search=.+?&/, "").replace(/&student_search=.+?$/, "") + "&" + jQuery.param(data)
-    window.location.href = url
+    generateNewUrlForStudentsSearch()
   }
+});
+
+$('#search_student').click(function(event){
+  generateNewUrlForStudentsSearch()
 });
