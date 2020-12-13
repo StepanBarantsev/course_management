@@ -60,7 +60,8 @@ def index():
     if course.author.id == current_user.id:
         return render_template('students/index.html', title="Список студентов", course_name=course.name, students=students.items,
                                course_id=course_id, next_url=next_url, prev_url=prev_url, current_page=page,
-                               student_filter=student_filter, all_courses=all_courses, sort_type=sort_type, student_search=student_search)
+                               student_filter=student_filter, all_courses=all_courses, sort_type=sort_type,
+                               student_search=student_search, course_default_num_days=course.default_num_days)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
@@ -203,6 +204,19 @@ def drop():
     Student.drop_or_undrop_student_by_id(student_id)
     db.session.commit()
     return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+
+
+@bp.route('/add_days', methods=['POST'])
+@login_required
+def add_days():
+    try:
+        student_id = int(request.form['student_id'])
+    except:
+        flash('Что-то пошло не так. Подождите несколько секунд и попробуйте выполнить действие снова.')
+        return {"error": True}
+    number_of_days = Student.add_days_to_student(student_id)
+    db.session.commit()
+    return jsonify({"error": False, "num_days": number_of_days})
 
 
 @bp.route('/autocomplete', methods=['GET'])

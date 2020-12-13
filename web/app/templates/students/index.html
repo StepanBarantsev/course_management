@@ -70,13 +70,16 @@
                         {{student.email}}
                         </td>
                         {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any"%}
-                            <td style="border: 1px solid black;">
+                            <td style="border: 1px solid black;" id="td_days_{{ student.id }}">
                             {{student.number_of_days}}
                             </td>
                         {% endif %}
                         <td style="border: 1px solid black;">
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('students.edit', student_id=student.id, course_id=course_id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
+                            </a>
+                             <a title="Добавить дни (+{{ course_default_num_days}})" class="btn btn-primary" name="add_days" data-id="{{ student.id }}">
+                                <i class="glyphicon glyphicon-plus" data-id="{{ student.id }}"></i>
                             </a>
                             <a title="Заморозить" class="btn btn-primary" name="freeze" data-id="{{ student.id }}">
                                 <i class="glyphicon glyphicon-time" data-id="{{ student.id }}"></i>

@@ -52,6 +52,24 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    $("[name='add_days']").click(function() {
+        let id = $(event.target).attr('data-id')
+
+        $.post(window.location.origin + '/students/add_days', {
+                url: window.location.origin + '/students/add_days',
+                type:"POST",
+                student_id: id
+            }).done(function(data) {
+                if (data["error"] === false) {
+                    $("#td_days_" + id).attr("bgcolor", "yellow")
+                    $("#td_days_" + id).text(data["num_days"])
+                }
+                else location.reload()
+            })
+    });
+});
+
 $('.basicAutoComplete').autoComplete({
     delay: 0,
 });

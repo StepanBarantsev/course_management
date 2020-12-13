@@ -185,6 +185,13 @@ class Student(db.Model):
         else:
             student.status = Student.student_statuses["dropped"]
 
+    @staticmethod
+    def add_days_to_student(student_id):
+        student = Student.query.filter_by(id=student_id).first()
+        course = Course.get_course_by_id(student.course_id)
+        student.number_of_days += course.default_num_days
+        return student.number_of_days
+
     def return_color_of_td(self):
         if self.status == Student.student_statuses["dropped"]:
             return "gray"
