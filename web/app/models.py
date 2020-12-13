@@ -5,6 +5,9 @@ from flask_login import UserMixin
 from web.app import login_manager
 import telegram.chat.states as states
 from sqlalchemy import or_
+from time import time
+import jwt
+from flask import current_app
 
 
 @login_manager.user_loader
@@ -44,6 +47,17 @@ class User(db.Model, UserMixin):
 
     def get_course_by_lms_id(self, lms_id):
         return self.get_all_not_deleted_courses().filter_by(lms_id=lms_id).first()
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode({'reset_password': self.id, 'exp': time() + expires_in},current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
 
 class Course(db.Model):
