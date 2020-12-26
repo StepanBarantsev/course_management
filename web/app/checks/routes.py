@@ -13,6 +13,13 @@ def index():
     student = db.session.query(Student).filter(Student.id == student_id).first()
 
     if student.course.author.id == current_user.id:
-        return render_template('checks/index.html', title=f"Список чеков студента {student.name}", student_name=student.name)
+        return render_template('checks/index.html', title=f"Список чеков студента {student.name}",
+                               student_name=student.name, student_id=student.id)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
+
+
+@bp.route('/add', methods=['GET', 'POST'])
+@login_required
+def add():
+    pass
