@@ -11,11 +11,12 @@ from flask_login import current_user
 def index():
     student_id = request.args.get('student_id', type=int)
     student = db.session.query(Student).filter(Student.id == student_id).first()
+    checks = student.checks
 
     if student.course.author.id == current_user.id:
         return render_template('checks/index.html', title=f"Список чеков студента {student.name}",
                                student_name=student.name, student_id=student.id, course_id=student.course.id,
-                               course_name=student.course.name)
+                               course_name=student.course.name, checks=checks)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
