@@ -78,6 +78,9 @@
                             <a title="Редактировать" class="btn btn-primary" href="{{ url_for('students.edit', student_id=student.id, course_id=course_id) }}">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
+                            <a title="Список чеков" class="btn btn-primary" href="{{ url_for('checks.index', student_id=student.id) }}">
+                                <i class="glyphicon glyphicon-barcode"></i>
+                            </a>
                              <a title="Добавить дни (+{{ course_default_num_days}})" class="btn btn-primary" name="add_days" data-id="{{ student.id }}">
                                 <i class="glyphicon glyphicon-plus" data-id="{{ student.id }}"></i>
                             </a>

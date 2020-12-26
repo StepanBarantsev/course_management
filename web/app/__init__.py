@@ -42,6 +42,9 @@ def create_app():
     from web.app.students import bp as students_bp
     app.register_blueprint(students_bp, url_prefix='/students')
 
+    from web.app.checks import bp as checks_bp
+    app.register_blueprint(checks_bp, url_prefix='/checks')
+
     return app
 
 
