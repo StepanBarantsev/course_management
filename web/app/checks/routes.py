@@ -14,7 +14,8 @@ def index():
 
     if student.course.author.id == current_user.id:
         return render_template('checks/index.html', title=f"Список чеков студента {student.name}",
-                               student_name=student.name, student_id=student.id)
+                               student_name=student.name, student_id=student.id, course_id=student.course.id,
+                               course_name=student.course.name)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
