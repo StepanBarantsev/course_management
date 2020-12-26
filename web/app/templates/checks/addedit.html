@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1> Добавление чека студенту {{ student_name }}</h1>
+
+    <hr align="left" width="600" class="hr" />
+
+        <div class="row">
+            <div class="col-md-6">
+                <form action="" method="post">
+                    <div class="form-group">
+                        {{ form.hidden_tag() }}
+                        {% with %} {% set  specificform = form.block_number %} {% include "helpers/field_form.html" %} {% endwith %}
+                        {% with %} {% set  specificform = form.link %} {% include "helpers/field_form.html" %} {% endwith %}
+                    </div>
+                    <p class="control-label">{{ form.submit() }}</p>
+                </form>
+            </div>
+        </div>
+{% endblock %}

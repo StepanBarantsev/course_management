@@ -1,9 +1,10 @@
 from web.app.checks import bp
 from flask_login import login_required
-from flask import render_template, request
-from web.app.models import Student
+from flask import render_template, request, flash, redirect, url_for
+from web.app.models import Student, Check
 from web.app import db
 from flask_login import current_user
+from web.app.checks.forms import AddOrEditCheckForm
 
 
 @bp.route('/', methods=['GET'])
@@ -11,7 +12,7 @@ from flask_login import current_user
 def index():
     student_id = request.args.get('student_id', type=int)
     student = db.session.query(Student).filter(Student.id == student_id).first()
-    checks = student.checks
+    checks = student.get_all_not_deleted_checks()
 
     if student.course.author.id == current_user.id:
         return render_template('checks/index.html', title=f"Список чеков студента {student.name}",
@@ -24,4 +25,29 @@ def index():
 @bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
-    pass
+    student_id = request.args.get('student_id', type=int)
+    student = db.session.query(Student).filter(Student.id == student_id).first()
+    if student.course.author.id == current_user.id:
+        checks = student.get_all_not_deleted_checks()
+        blocks = student.course.get_all_not_deleted_blocks()
+        payed_block_numbers = {check.block.number for check in checks}
+        block_numbers = [str(block.number) for block in blocks if block.number not in payed_block_numbers] + ['Консультация']
+        form = AddOrEditCheckForm(block_numbers)
+
+        if form.validate_on_submit():
+            specific_block_number = form.block_number.data
+            print(specific_block_number)
+            specific_block = list(filter(lambda block: str(block.number) == specific_block_number, blocks))[0]
+            link = form.link.data
+
+            new_check = Check(link=link, block_id=specific_block.id, student_id=student_id)
+
+            db.session.add(new_check)
+            db.session.commit()
+            flash('Новый чек был успешно добавлен!')
+            return redirect(url_for('checks.index', student_id=student_id))
+
+        return render_template('checks/addedit.html', title="Добавление чека студенту", student_name=student.name,
+                               checks=checks, form=form)
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')

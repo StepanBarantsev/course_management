@@ -149,6 +149,7 @@ class CourseBlock(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    check = db.relationship('Check', backref='block', uselist=False)
 
 
 class Student(db.Model):
@@ -206,6 +207,9 @@ class Student(db.Model):
         student.number_of_days += course.default_num_days
         return student.number_of_days
 
+    def get_all_not_deleted_checks(self):
+        return self.checks.filter_by(deleted=False)
+
     def return_color_of_td(self):
         if self.status == Student.student_statuses["dropped"]:
             return "gray"
@@ -244,6 +248,7 @@ class Check(db.Model):
 
     block_id = db.Column(db.Integer, db.ForeignKey('course_blocks.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
+    deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
 
 
