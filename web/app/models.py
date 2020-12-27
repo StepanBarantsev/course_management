@@ -72,6 +72,8 @@ class Course(db.Model):
     num_of_blocks = db.Column(db.Integer(), nullable=False, default=1)
     is_certificate_needed = db.Column(db.Boolean(), nullable=False, default=False)
     default_num_days = db.Column(db.Integer(), nullable=False, default=30)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -167,6 +169,8 @@ class Student(db.Model):
     registration_code = db.Column(db.String(100), nullable=False)
     telegram_id = db.Column(db.Integer())
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
@@ -245,6 +249,8 @@ class Check(db.Model):
     __tablename__ = 'checks'
     id = db.Column(db.Integer(), primary_key=True)
     link = db.Column(db.String(100), nullable=False)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Оплата может быть за блок или другую услугу
     another = db.Column(db.String(50), nullable=True)
