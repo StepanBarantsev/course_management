@@ -249,6 +249,7 @@ class Check(db.Model):
     __tablename__ = 'checks'
     id = db.Column(db.Integer(), primary_key=True)
     link = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.Integer(), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 

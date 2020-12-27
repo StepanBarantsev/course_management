@@ -1,12 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
+from wtforms import StringField, SubmitField, SelectField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
 
 
 class AddOrEditCheckForm(FlaskForm):
 
     block_number = SelectField('Номер блока', validators=[DataRequired('Поле не должно быть пустым')])
-    link = StringField('Сслыка на чек', validators=[DataRequired('Поле не должно быть пустым')])
+    link = StringField('Ссылка на чек', validators=[DataRequired('Поле не должно быть пустым')])
+    amount = IntegerField('Сумма чека', validators=[DataRequired('Поле не должно быть пустым')])
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
