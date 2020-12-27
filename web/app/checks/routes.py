@@ -120,7 +120,12 @@ def edit():
 def delete():
     student_id = int(request.form['student_id'])
     check_id = int(request.form['check_id'])
-    Check.delete_check_by_id(check_id)
-    db.session.commit()
-    flash('Чек успешно удален!')
-    return redirect(url_for('checks.index', student_id=student_id))
+    check = db.session.query(Check).filter(Check.id == check_id).first()
+
+    if check.student.course.author.id == current_user.id:
+        Check.delete_check_by_id(check_id)
+        db.session.commit()
+        flash('Чек успешно удален!')
+        return redirect(url_for('checks.index', student_id=student_id))
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')

@@ -100,10 +100,15 @@ def edit():
 @login_required
 def delete():
     course_id = int(request.form['course_id'])
-    Course.delete_course_by_id(course_id)
-    db.session.commit()
-    flash('Курс успешно удален!')
-    return redirect(url_for('main.index'))
+    course = db.session.query(Course).filter(Course.id == course_id).first()
+
+    if course.author.id == current_user.id:
+        Course.delete_course_by_id(course_id)
+        db.session.commit()
+        flash('Курс успешно удален!')
+        return redirect(url_for('main.index'))
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
 
 
 @bp.route('/edit_additional', methods=['GET', 'POST'])

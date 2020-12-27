@@ -71,10 +71,15 @@ def index():
 def delete():
     course_id = int(request.form['course_id'])
     student_id = int(request.form['student_id'])
-    Student.delete_student_by_id(student_id)
-    db.session.commit()
-    flash('Студент успешно удален!')
-    return redirect(url_for('students.index', course_id=course_id))
+    student = db.session.query(Student).filter(Student.id == student_id).first()
+
+    if student.course.author.id == current_user.id:
+        Student.delete_student_by_id(student_id)
+        db.session.commit()
+        flash('Студент успешно удален!')
+        return redirect(url_for('students.index', course_id=course_id))
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
 
 
 @bp.route('/add', methods=['GET', 'POST'])
