@@ -40,9 +40,14 @@ def add():
 
             if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
                 new_check = Check(link=link, block_id=None, student_id=student_id, another=specific_block_number)
+                if specific_block_number == 'Продление':
+                    student.number_of_days += student.course.default_num_days
+                    flash(f'Время поддержки студента было увеличено на {student.course.default_num_days} дней!')
             else:
                 specific_block = list(filter(lambda block: str(block.number) == specific_block_number, blocks))[0]
                 new_check = Check(link=link, block_id=specific_block.id, student_id=student_id)
+                student.number_of_days += student.course.default_num_days
+                flash(f'Время поддержки студента было увеличено на {student.course.default_num_days} дней!')
 
             db.session.add(new_check)
             db.session.commit()
