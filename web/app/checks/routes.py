@@ -5,6 +5,7 @@ from web.app.models import Student, Check
 from web.app import db
 from flask_login import current_user
 from web.app.checks.forms import AddOrEditCheckForm
+from sqlalchemy import update
 
 
 @bp.route('/', methods=['GET'])
@@ -64,7 +65,54 @@ def add():
 @bp.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
-    pass
+    student_id = request.args.get('student_id', type=int)
+    check_id = request.args.get('check_id', type=int)
+
+    check = db.session.query(Check).filter(Check.id == check_id).first()
+    student = db.session.query(Student).filter(Student.id == student_id).first()
+
+    if student.course.author.id == current_user.id:
+        checks = student.get_all_not_deleted_checks()
+        blocks = student.course.get_all_not_deleted_blocks()
+        payed_block_numbers = {check.block.number for check in checks if check.block is not None}
+        block_numbers = [str(block.number) for block in blocks if block.number not in payed_block_numbers] + ['Консультация'] + ['Продление']
+
+        if check.block is not None:
+            block_numbers.append(str(check.block.number))
+
+        form = AddOrEditCheckForm(block_numbers)
+
+        if form.validate_on_submit():
+            specific_block_number = form.block_number.data
+            link = form.link.data
+            amount = form.amount.data
+
+            check.amount = amount
+            check.link = link
+
+            if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
+                check.block_id = None
+                check.another = specific_block_number
+            else:
+                specific_block = list(filter(lambda block: str(block.number) == specific_block_number, blocks))[0]
+                check.block_id = specific_block.id
+                check.another = None
+
+            db.session.commit()
+            flash('Чек был успешно отредактирован!')
+            return redirect(url_for('checks.index', student_id=student_id))
+        elif request.method == 'GET':
+            form.amount.data = check.amount
+            form.link.data = check.link
+            if check.block is not None:
+                form.block_number.data = str(check.block.number)
+            else:
+                form.block_number.data = check.another
+
+        return render_template('checks/addedit.html', title="Редактирование чека студента", student_name=student.name,
+                               checks=checks, form=form)
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
 
 
 @bp.route('/delete', methods=['GET', 'POST'])
