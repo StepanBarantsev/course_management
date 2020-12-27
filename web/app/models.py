@@ -246,7 +246,10 @@ class Check(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     link = db.Column(db.String(100), nullable=False)
 
-    block_id = db.Column(db.Integer, db.ForeignKey('course_blocks.id'), nullable=False)
+    # Оплата может быть за блок или другую услугу
+    another = db.Column(db.String(50), nullable=True)
+    block_id = db.Column(db.Integer, db.ForeignKey('course_blocks.id'), nullable=True)
+
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
 

@@ -30,17 +30,19 @@ def add():
     if student.course.author.id == current_user.id:
         checks = student.get_all_not_deleted_checks()
         blocks = student.course.get_all_not_deleted_blocks()
-        payed_block_numbers = {check.block.number for check in checks}
-        block_numbers = [str(block.number) for block in blocks if block.number not in payed_block_numbers] + ['Консультация']
+        payed_block_numbers = {check.block.number for check in checks if check.block is not None}
+        block_numbers = [str(block.number) for block in blocks if block.number not in payed_block_numbers] + ['Консультация'] + ['Продление']
         form = AddOrEditCheckForm(block_numbers)
 
         if form.validate_on_submit():
             specific_block_number = form.block_number.data
-            print(specific_block_number)
-            specific_block = list(filter(lambda block: str(block.number) == specific_block_number, blocks))[0]
             link = form.link.data
 
-            new_check = Check(link=link, block_id=specific_block.id, student_id=student_id)
+            if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
+                new_check = Check(link=link, block_id=None, student_id=student_id, another=specific_block_number)
+            else:
+                specific_block = list(filter(lambda block: str(block.number) == specific_block_number, blocks))[0]
+                new_check = Check(link=link, block_id=specific_block.id, student_id=student_id)
 
             db.session.add(new_check)
             db.session.commit()
