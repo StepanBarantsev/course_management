@@ -51,6 +51,7 @@
                         <th style="border: 1px solid black;">Имя<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='name', student_filter=student_filter, student_search=student_search) }}'"></i></th>
                     {% endif %}
                     <th style="border: 1px solid black;">Email</th>
+                    <th style="border: 1px solid black;">Telegram id</th>
                     {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any" %}
                         {% if sort_type == "days" %}
                             <th style="border: 1px solid black;">Дни<i id="sort_name" class="fa fa-fw fa-sort" onClick="location = '{{ url_for('students.index', course_id=course_id, sort_type='days_reversed', student_filter=student_filter, student_search=student_search) }}'"></i></th>
@@ -68,6 +69,13 @@
                         </td>
                         <td style="border: 1px solid black;">
                         {{student.email}}
+                        </td>
+                        <td style="border: 1px solid black;">
+                            {% if student.telegram_id is none %}
+                                Не зарегистрирован
+                            {% else %}
+                                {{ student.telegram_id }}
+                            {% endif %}
                         </td>
                         {% if student_filter  == "active" or student_filter == "freezed" or student_filter == "any"%}
                             <td style="border: 1px solid black;" id="td_days_{{ student.id }}">
