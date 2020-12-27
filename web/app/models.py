@@ -259,6 +259,11 @@ class Check(db.Model):
 
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
+    
+    @staticmethod
+    def delete_check_by_id(check_id):
+        Check.query.filter_by(id=check_id).first().deleted = True
+
 
 
 

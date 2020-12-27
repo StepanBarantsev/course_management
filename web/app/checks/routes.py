@@ -70,4 +70,9 @@ def edit():
 @bp.route('/delete', methods=['GET', 'POST'])
 @login_required
 def delete():
-    pass
+    student_id = int(request.form['student_id'])
+    check_id = int(request.form['check_id'])
+    Check.delete_check_by_id(check_id)
+    db.session.commit()
+    flash('Чек успешно удален!')
+    return redirect(url_for('checks.index', student_id=student_id))
