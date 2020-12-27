@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
 
 class AddOrEditCheckForm(FlaskForm):
@@ -12,4 +12,9 @@ class AddOrEditCheckForm(FlaskForm):
 
     def __init__(self, block_numbers, *args, **kwargs):
         super(AddOrEditCheckForm, self).__init__(*args, **kwargs)
+        self.block_numbers = block_numbers
         self.block_number.choices = [[block_number, block_number] for block_number in block_numbers]
+
+    def validate_block_number(self, block_number):
+        if block_number.data not in self.block_numbers:
+            raise ValidationError('Чек для данного блока уже выбит!')
