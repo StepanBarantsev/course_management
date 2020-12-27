@@ -59,3 +59,15 @@ def add():
                                checks=checks, form=form)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
+
+
+@bp.route('/edit', methods=['GET', 'POST'])
+@login_required
+def edit():
+    pass
+
+
+@bp.route('/delete', methods=['GET', 'POST'])
+@login_required
+def delete():
+    pass
