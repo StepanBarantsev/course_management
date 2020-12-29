@@ -6,6 +6,8 @@ import json
 class LmsApiHelper:
 
     lms_key = api_helper.config.ConfigApi.lms_key
+    # Мой id, так как для некоторых запросов нужен id студента. В целом подойдет любой, вот указываю мой
+    config_student_id = 10622
 
     @staticmethod
     def get_student_by_lms_id(lms_id):

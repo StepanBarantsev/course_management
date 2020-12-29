@@ -6,6 +6,7 @@ from flask_login import current_user
 from web.app import db
 from flask import render_template, redirect, url_for, flash, request, current_app
 from sqlalchemy import update
+from api_helper.lms_api_helper import LmsApiHelper
 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -120,6 +121,13 @@ def edit_additional():
     if course.author.id == current_user.id:
         blocks = course.get_all_not_deleted_blocks()
         form = CreateOrEditCourseFormAdditional(blocks=[{"link": block.link, "required_task": block.required_task_lms_id} for block in blocks])
+
+        for index, block in enumerate(form.blocks):
+            if block.required_task.data is None:
+                task = LmsApiHelper.get_task_by_fullname(f'Оплата блока {index + 1}', LmsApiHelper.config_student_id, course.lms_id)
+                if task is not None:
+                    block.required_task.data = task['activityid']
+
         if form.validate_on_submit():
             for index, block in enumerate(form.blocks):
                 database_block = course.get_block_by_num(index + 1)
