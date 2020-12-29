@@ -25,6 +25,14 @@
     <p class="profile_text"> LMS Id: {{ current_user.lms_id }} </p>
     {% endif %}
 
+    <p class="profile_text"> Автоматическая отправка писем с почты {{ default_mail }}:
+    {% if current_user.flag_emails_from_default_mail == false %}
+        Нет
+    {% else %}
+         Да
+    {% endif %}
+    </p>
+
     <a style="font-size: 2rem;" href="{{ url_for('profile.reset_password') }}">{{ 'Изменить пароль' }}</a>
 
 {% endblock %}

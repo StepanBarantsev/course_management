@@ -3,13 +3,13 @@ from flask_login import login_required
 from web.app.profile.forms import EditProfileForm, ResetPasswordForm
 from flask_login import current_user
 from web.app import db
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app
 
 
 @bp.route('/profile', methods=['GET'])
 @login_required
 def profile():
-    return render_template('profile/profile.html', title='Профиль')
+    return render_template('profile/profile.html', title='Профиль', default_mail=current_app.config['ADMINS'][0])
 
 
 @bp.route('/editprofile', methods=['GET', 'POST'])
