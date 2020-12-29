@@ -22,6 +22,7 @@ def editprofile():
         current_user.name = form.name.data
         current_user.telegram_id = form.telegram_id.data
         current_user.lms_id = form.lms_id.data
+        current_user.flag_emails_from_default_mail = form.flag_emails_from_default_mail.data
         db.session.commit()
         flash('Изменения были успешно сохранены')
         return redirect(url_for('profile.profile'))
@@ -31,7 +32,8 @@ def editprofile():
         form.name.data = current_user.name
         form.lms_id.data = current_user.lms_id
         form.telegram_id.data = current_user.telegram_id
-    return render_template('profile/edit.html', title='Редактирование профиля', form=form)
+        form.flag_emails_from_default_mail.data = current_user.flag_emails_from_default_mail
+    return render_template('profile/edit.html', title='Редактирование профиля', form=form, default_mail=current_app.config['ADMINS'][0])
 
 
 @bp.route('/reset_password', methods=['GET', 'POST'])

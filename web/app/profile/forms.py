@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, IntegerField
+from wtforms import StringField, SubmitField, PasswordField, IntegerField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
 from web.app.models import User
 
@@ -11,6 +11,7 @@ class EditProfileForm(FlaskForm):
     name = StringField('Имя')
     lms_id = IntegerField('LMS Id', validators=[Optional('Введите число')])
     telegram_id = IntegerField('Telegram Id', validators=[Optional('Введите число')])
+    flag_emails_from_default_mail = BooleanField('Включить отпраку писем с почты?')
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
     def __init__(self, current_user, *args, **kwargs):
