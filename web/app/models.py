@@ -171,6 +171,7 @@ class Student(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    flag_emails_from_default_mail = db.Column(db.Boolean(), nullable=False, default=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
