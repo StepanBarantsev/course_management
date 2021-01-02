@@ -5,7 +5,7 @@ from web.app.models import Student, Check
 from web.app import db
 from flask_login import current_user
 from web.app.checks.forms import AddOrEditCheckForm
-from sqlalchemy import update
+from web.app.messages import send_message_to_telegram_and_mail_or_outlook
 
 
 @bp.route('/', methods=['GET'])
@@ -54,6 +54,9 @@ def add():
             db.session.add(new_check)
             db.session.commit()
             flash('Новый чек был успешно добавлен!')
+            send_message_to_telegram_and_mail_or_outlook(current_user, student, "Сообщение студенту", 'Заголовок',
+                                                         render_template('email/payed_block.txt'),
+                                                         render_template('email/payed_block.html'))
             return redirect(url_for('checks.index', student_id=student_id))
 
         return render_template('checks/addedit.html', title="Добавление чека студенту", student_name=student.name,

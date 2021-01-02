@@ -1,4 +1,3 @@
-import telebot
 import telegram.config
 from telegram.chat.messages import get_message
 import telegram.chat.states as states
@@ -10,6 +9,7 @@ from telegram.chat.helpers import print_available_courses_as_buttons, \
     print_available_courses_as_buttons_by_telegram_id, get_student_by_telegram_id_and_course_id
 from contextlib import contextmanager
 from web.app.models import TelegramState
+from telegram.chat.singleton_bot import bot
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI, convert_unicode=True, connect_args=dict(use_unicode=True))
 Session = sessionmaker(bind=engine)
@@ -25,9 +25,6 @@ def session_scope():
         raise
     finally:
         session.close()
-
-
-bot = telebot.TeleBot(telegram.config.ConfigTelegram.TOKEN)
 
 
 ################

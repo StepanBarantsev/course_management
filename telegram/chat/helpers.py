@@ -80,3 +80,9 @@ def print_available_courses_as_buttons_by_telegram_id(telegram_id, session):
 def get_current_course_by_id(course_id, session):
     return session.query(Course).filter_by(id=course_id).first()
 
+
+# Отправляет сообщение студенту, если тот зарегистрирован у телеграм бота
+def try_to_send_message_to_student(student, message, bot):
+    if student.telegram_id is not None:
+        bot.send_message(student.telegram_id, message)
+
