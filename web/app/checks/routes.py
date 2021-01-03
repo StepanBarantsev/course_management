@@ -37,6 +37,11 @@ def add():
         block_numbers = [str(block.number) for block in blocks if block.number not in payed_block_numbers] + ['Консультация'] + ['Продление']
         form = AddOrEditCheckForm(block_numbers)
 
+        if list(checks) == []:
+            form.is_first_payment.data = True
+        else:
+            form.is_first_payment.data = False
+
         if form.validate_on_submit():
             specific_block_number = form.block_number.data
             link = form.link.data
@@ -64,7 +69,7 @@ def add():
         return render_template('checks/addedit.html', title="Добавление чека студенту",
                                student=student, checks=checks, form=form,
                                flag_emails_from_default_mail=current_user.flag_emails_from_default_mail,
-                               email_subject=subject, message=message)
+                               email_subject=subject, message=message, add_or_edit="add")
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
@@ -118,7 +123,7 @@ def edit():
 
         return render_template('checks/addedit.html', title="Редактирование чека студента", student=student,
                                checks=checks, form=form, flag_emails_from_default_mail=True, email_subject=None,
-                               message=None)
+                               message=None, add_or_edit="edit")
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
