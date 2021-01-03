@@ -60,6 +60,7 @@
                         {% with %} {% set  specificform = form.block_number %} {% include "helpers/field_form.html" %} {% endwith %}
                         {% with %} {% set  specificform = form.link %} {% include "helpers/field_form.html" %} {% endwith %}
                         {% with %} {% set  specificform = form.amount %} {% include "helpers/field_form.html" %} {% endwith %}
+                        {% with %} {% set  specificform_boolean = form.is_first_payment %} {% include "helpers/boolean_field.html" %} {% endwith %}
                     </div>
                     <p id="save_check" class="control-label">{{ form.submit() }}</p>
                 </form>

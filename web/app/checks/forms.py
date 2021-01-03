@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, IntegerField
+from wtforms import StringField, SubmitField, SelectField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, ValidationError, InputRequired
 
 
@@ -8,6 +8,7 @@ class AddOrEditCheckForm(FlaskForm):
     block_number = SelectField('Номер блока', validators=[DataRequired('Поле не должно быть пустым')])
     link = StringField('Ссылка на чек', validators=[DataRequired('Поле не должно быть пустым')])
     amount = IntegerField('Сумма чека', validators=[InputRequired('Поле не должно быть пустым')])
+    is_first_payment = BooleanField('Это первая оплата студента?')
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 
