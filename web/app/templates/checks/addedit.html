@@ -1,7 +1,54 @@
 {% extends "base.html" %}
 
+{% block scripts %}
+    {{super()}}
+     <script type="text/javascript">
+        // Генерация OutLook файла, который потом можно будет открыть
+        function generate_draft(){
+          var mail = "{{ message }}"
+          var email = "{{ student.email }}"
+          var combining = /[\u0300-\u036F]/g;
+          var mailHtm =`<p> ${mail} <p>`;
+          var emailTo = email;
+          var emailsubject = `{{ email_subject}}`;
+          var emlCont = 'To: '+ emailTo + '\n';
+          emlCont += 'Subject: ' + emailsubject + '\n';
+          emlCont += 'X-Unsent: 1'+'\n';
+          emlCont += 'Content-Type: text/html; charset=utf-8;'+'\n';
+          emlCont += ''+'\n';
+          emlCont += "<!DOCTYPE html><html><head></head><body>" + mailHtm + "</body></html>";
+          var textFile = null;
+          var data = new Blob([emlCont], {type: 'text/plain'});
+          if (textFile !== null) {
+              window.URL.revokeObjectURL(textFile);
+          }
+          textFile = window.URL.createObjectURL(data);
+          // Для загрузки файла создаем ссылку и кликаем на нее
+          // Однако если за раз нужно загрузить несколько писем, ссылку создавать не нужно, нужно просто изменить ее href и возможно название
+          if (document.getElementById('fileLink') == undefined){
+          var a = document.createElement('a');
+          var linkText = document.createTextNode("fileLink");
+          a.appendChild(linkText);
+          a.id = 'fileLink';
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+        }
+        document.getElementById('fileLink').href = textFile;
+        document.getElementById('fileLink').download = emailsubject+".eml";
+        // В конце кликаем
+        document.getElementById('fileLink').click();
+        }
+
+     {% if not flag_emails_from_default_mail %}
+     $('#save_check>input').click(function(event){
+       generate_draft()
+     });
+     {% endif %}
+     </script>
+{% endblock %}
+
 {% block app_content %}
-    <h1> Добавление чека студенту {{ student_name }}</h1>
+    <h1> Добавление чека студенту {{ student.name }}</h1>
 
     <hr align="left" width="600" class="hr" />
 
@@ -14,7 +61,7 @@
                         {% with %} {% set  specificform = form.link %} {% include "helpers/field_form.html" %} {% endwith %}
                         {% with %} {% set  specificform = form.amount %} {% include "helpers/field_form.html" %} {% endwith %}
                     </div>
-                    <p class="control-label">{{ form.submit() }}</p>
+                    <p id="save_check" class="control-label">{{ form.submit() }}</p>
                 </form>
             </div>
         </div>

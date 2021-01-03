@@ -5,7 +5,7 @@ from web.app.models import Student, Check
 from web.app import db
 from flask_login import current_user
 from web.app.checks.forms import AddOrEditCheckForm
-from web.app.messages import send_message_to_telegram_and_mail_or_outlook
+from web.app.messages import send_message_to_telegram_and_mail
 
 
 @bp.route('/', methods=['GET'])
@@ -28,6 +28,8 @@ def index():
 def add():
     student_id = request.args.get('student_id', type=int)
     student = db.session.query(Student).filter(Student.id == student_id).first()
+    subject = 'Заголовок'
+    message = "Сообщение студенту"
     if student.course.author.id == current_user.id:
         checks = student.get_all_not_deleted_checks()
         blocks = student.course.get_all_not_deleted_blocks()
@@ -54,13 +56,15 @@ def add():
             db.session.add(new_check)
             db.session.commit()
             flash('Новый чек был успешно добавлен!')
-            send_message_to_telegram_and_mail_or_outlook(current_user, student, "Сообщение студенту", 'Заголовок',
-                                                         render_template('email/payed_block.txt'),
-                                                         render_template('email/payed_block.html'))
+            send_message_to_telegram_and_mail(current_user, student, message, subject,
+                                              render_template('email/payed_block.txt'),
+                                              render_template('email/payed_block.html'))
             return redirect(url_for('checks.index', student_id=student_id))
 
-        return render_template('checks/addedit.html', title="Добавление чека студенту", student_name=student.name,
-                               checks=checks, form=form)
+        return render_template('checks/addedit.html', title="Добавление чека студенту",
+                               student=student, checks=checks, form=form,
+                               flag_emails_from_default_mail=current_user.flag_emails_from_default_mail,
+                               email_subject=subject, message=message)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
@@ -112,8 +116,9 @@ def edit():
             else:
                 form.block_number.data = check.another
 
-        return render_template('checks/addedit.html', title="Редактирование чека студента", student_name=student.name,
-                               checks=checks, form=form)
+        return render_template('checks/addedit.html', title="Редактирование чека студента", student=student,
+                               checks=checks, form=form, flag_emails_from_default_mail=True, email_subject=None,
+                               message=None)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
