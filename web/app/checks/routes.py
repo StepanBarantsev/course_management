@@ -6,6 +6,7 @@ from web.app import db
 from flask_login import current_user
 from web.app.checks.forms import AddOrEditCheckForm
 from web.app.messages import send_message_to_telegram_and_mail
+from telegram.chat.messages import get_message
 
 
 @bp.route('/', methods=['GET'])
@@ -28,8 +29,6 @@ def index():
 def add():
     student_id = request.args.get('student_id', type=int)
     student = db.session.query(Student).filter(Student.id == student_id).first()
-    subject = 'Заголовок'
-    message = "Сообщение студенту"
     if student.course.author.id == current_user.id:
         checks = student.get_all_not_deleted_checks()
         blocks = student.course.get_all_not_deleted_blocks()
@@ -38,14 +37,33 @@ def add():
         form = AddOrEditCheckForm(block_numbers)
 
         if list(checks) == []:
-            form.is_first_payment.data = True
+            is_first_payment = True
         else:
-            form.is_first_payment.data = False
+            is_first_payment = False
+
+        if request.method == 'GET':
+            form.is_first_payment.data = is_first_payment
 
         if form.validate_on_submit():
             specific_block_number = form.block_number.data
             link = form.link.data
             amount = form.amount.data
+            is_first_payment = form.is_first_payment.data
+
+            if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
+                if specific_block_number == "Консультация":
+                    text_block = 'консультацию'
+                else:
+                    text_block = 'продление'
+            else:
+                text_block = f'блок {specific_block_number}'
+
+            subject = f'{student.course.name}. Оплата за {text_block} получена.'
+
+            if is_first_payment:
+                message = get_message("FIRST_PAYMENT", link, student.course.lms_id, 'Заглушка')
+            else:
+                message = get_message("NO_FIRST_PAYMENT", text_block, link)
 
             if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
                 new_check = Check(link=link, block_id=None, student_id=student_id, another=specific_block_number, amount=amount)
@@ -61,15 +79,30 @@ def add():
             db.session.add(new_check)
             db.session.commit()
             flash('Новый чек был успешно добавлен!')
-            send_message_to_telegram_and_mail(current_user, student, message, subject,
-                                              render_template('email/payed_block.txt'),
-                                              render_template('email/payed_block.html'))
+            if not is_first_payment:
+                send_message_to_telegram_and_mail(current_user, student, message, subject,
+                                                  render_template('email/payed_block.txt',
+                                                                  block_txt=text_block,
+                                                                  check_link=link),
+                                                  render_template('email/payed_block.html',
+                                                                  block_txt=text_block,
+                                                                  check_link=link))
+            else:
+                send_message_to_telegram_and_mail(current_user, student, message, subject,
+                                                  render_template('email/payed_first_time.txt',
+                                                                  course_id=student.course.lms_id,
+                                                                  check_link=link,
+                                                                  telegram_nickname='Заглушка'),
+                                                  render_template('email/payed_first_time.html',
+                                                                  course_id=student.course.lms_id,
+                                                                  check_link=link,
+                                                                  telegram_nickname='Заглушка'))
             return redirect(url_for('checks.index', student_id=student_id))
 
         return render_template('checks/addedit.html', title="Добавление чека студенту",
                                student=student, checks=checks, form=form,
                                flag_emails_from_default_mail=current_user.flag_emails_from_default_mail,
-                               email_subject=subject, message=message, add_or_edit="add")
+                               add_or_edit="add")
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
@@ -122,8 +155,7 @@ def edit():
                 form.block_number.data = check.another
 
         return render_template('checks/addedit.html', title="Редактирование чека студента", student=student,
-                               checks=checks, form=form, flag_emails_from_default_mail=True, email_subject=None,
-                               message=None, add_or_edit="edit")
+                               checks=checks, form=form, flag_emails_from_default_mail=True, add_or_edit="edit")
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 

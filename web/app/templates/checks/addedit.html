@@ -5,12 +5,12 @@
      <script type="text/javascript">
         // Генерация OutLook файла, который потом можно будет открыть
         function generate_draft(){
-          var mail = "{{ message }}"
+          var mail = "Пока сообщение заглушка"
           var email = "{{ student.email }}"
           var combining = /[\u0300-\u036F]/g;
           var mailHtm =`<p> ${mail} <p>`;
           var emailTo = email;
-          var emailsubject = `{{ email_subject}}`;
+          var emailsubject = `Пока тема заглушка`;
           var emlCont = 'To: '+ emailTo + '\n';
           emlCont += 'Subject: ' + emailsubject + '\n';
           emlCont += 'X-Unsent: 1'+'\n';
