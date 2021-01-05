@@ -9,8 +9,32 @@
          $('#save_check>input').click(function(event){
             let obj = createObjectWithParamsForOutlook()
             let subject = '{{ student.course.name }}. ' + 'Оплата за ' + obj.text_block  + ' получена.'
-            let msg_first_payment = "Первая оплата"
-            let msg_not_first_payment = "Не первая оплата"
+            let msg_first_payment = `Добрый день! <br/><br/>
+
+Оплата была успешно получена. Вы успешно были подключены к курсу. <br/><br/>
+
+Ссылка на электронный чек: <a href="${obj.check_link}">${obj.check_link}<a/> <br/><br/>
+
+Все материалы (в том числе записи занятий и домашние задания) будут публиковаться в системе дистанционного обучения (для краткости - СДО). <br/><br/>
+
+Ссылка на курс: <a href="http://software-testing.ru/lms/course/view.php?id={{ course_id }}">http://software-testing.ru/lms/course/view.php?id={{ course_id }}<a/> <br/><br/>
+
+Не забудьте связаться со мной в одном из нижеперечисленных мессенджеров. Там Вы сможете задать любые вопросы касательно содержимого курса. <br/><br/>
+
+Telegram: <a href="https://t.me/{{ telegram_nickname }}">https://t.me/{{ telegram_nickname }}<a/> <br/><br/>
+
+Если Вы не имеете возможности использовать Telegram, то связь может осуществляться в другом мессенджере (по договоренности), например в скайпе. Однако желательно все же осуществлять связь именно в Telegram. <br/><br/>
+
+Дальнейшие инструкции находятся в СДО (Правила участия) <br/><br/>
+
+С уважением, Баранцев Степан`
+            let msg_not_first_payment = `Добрый день. <br/><br/>
+
+Оплата за ${obj.text_block} была успешно получена. <br/><br/>
+
+Ссылка на электронный чек: <a href="${obj.check_link}">${obj.check_link}<a/> <br/><br/>
+
+С уважением, Баранцев Степан`
             if ($("#is_first_payment").prop("checked")) {
                 generate_draft(subject, "{{ student.email }}", msg_first_payment)
             }
