@@ -102,7 +102,7 @@ def add():
         return render_template('checks/addedit.html', title="Добавление чека студенту",
                                student=student, checks=checks, form=form,
                                flag_emails_from_default_mail=current_user.flag_emails_from_default_mail,
-                               add_or_edit="add")
+                               add_or_edit="add", telegram_nickname='Заглушка', course_id=student.course.lms_id)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 

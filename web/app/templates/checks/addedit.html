@@ -2,15 +2,20 @@
 
 {% block scripts %}
     {{super()}}
+     <script type="text/javascript" src="{{ url_for('static', filename = 'addEditChecks.js') }}"></script>
      <script type="text/javascript">
 
      {% if not flag_emails_from_default_mail %}
          $('#save_check>input').click(function(event){
+            let obj = createObjectWithParamsForOutlook()
+            let subject = '{{ student.course.name }}. ' + 'Оплата за ' + obj.text_block  + ' получена.'
+            let msg_first_payment = "Первая оплата"
+            let msg_not_first_payment = "Не первая оплата"
             if ($("#is_first_payment").prop("checked")) {
-                generate_draft("Первая оплата", "stepan.barantsev@gmail.com", "Первая оплата")
+                generate_draft(subject, "{{ student.email }}", msg_first_payment)
             }
             else {
-                generate_draft("НЕ первая оплата", "stepan.barantsev@gmail.com", "НЕ первая оплата")
+                generate_draft(subject, "{{ student.email }}", msg_not_first_payment)
             }
          });
      {% endif %}
