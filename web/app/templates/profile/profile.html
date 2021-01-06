@@ -9,27 +9,27 @@
     </div>
     <hr align="left" width="400" class="hr" />
 
-    <p class="profile_text"> Логин: {{ current_user.username }} </p>
+    <p class="profile_text"> <b>Логин:</b> {{ current_user.username }} </p>
 
-    <p class="profile_text"> E-mail: {{ current_user.email }} </p>
+    <p class="profile_text"> <b>E-mail:</b> {{ current_user.email }} </p>
 
     {% if current_user.name is not none and current_user.name != "" %}
-    <p class="profile_text"> Имя: {{ current_user.name }} </p>
+    <p class="profile_text"> <b>Имя (показывается в письме в качестве отправителя):</b> {{ current_user.name }} </p>
     {% endif %}
 
     {% if current_user.telegram_id is not none %}
-    <p class="profile_text"> Telegram Id: {{ current_user.telegram_id }} </p>
+    <p class="profile_text"> <b>Telegram Id:</b> {{ current_user.telegram_id }} </p>
     {% endif %}
 
     {% if current_user.telegram_nickname is not none %}
-    <p class="profile_text"> Telegram Nickname: {{ current_user.telegram_nickname }} </p>
+    <p class="profile_text"> <b>Telegram Nickname:</b> {{ current_user.telegram_nickname }} </p>
     {% endif %}
 
     {% if current_user.lms_id is not none %}
-    <p class="profile_text"> LMS Id: {{ current_user.lms_id }} </p>
+    <p class="profile_text"> <b>LMS Id:</b> {{ current_user.lms_id }} </p>
     {% endif %}
 
-    <p class="profile_text"> Автоматическая отправка писем с почты {{ default_mail }}:
+    <p class="profile_text"> <b>Автоматическая отправка писем с почты</b> {{ default_mail }}:
     {% if current_user.flag_emails_from_default_mail == false %}
         Нет
     {% else %}

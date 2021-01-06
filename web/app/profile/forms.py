@@ -8,7 +8,7 @@ class EditProfileForm(FlaskForm):
 
     username = StringField('Логин', validators=[DataRequired('Поле не должно быть пустым')])
     email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым'), Email('Некорректный для e-mail формат')])
-    name = StringField('Имя')
+    name = StringField('Имя (показывается в письме в качестве отправителя)')
     lms_id = IntegerField('LMS Id', validators=[Optional('Введите число')])
     telegram_id = IntegerField('Telegram Id', validators=[Optional('Введите число')])
     telegram_nickname = StringField('Ник в Telegram', validators=[DataRequired('Поле не должно быть пустым')])
