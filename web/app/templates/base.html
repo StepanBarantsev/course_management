@@ -18,36 +18,39 @@
 {% block navbar %}
     <nav class="navbar bg-primary">
         {% if current_user.is_authenticated %}
-        <div class="container">
-            <div class="navbar-header">
-                <a class="btn btn-success navbar-btn" href="{{ url_for('main.index') }}">Курсы</a>
-                <a class="btn btn-success navbar-btn" href="{{ url_for('coursecreate.create') }}">Добавить курс</a>
-            </div>
-            <div class="nav navbar-nav navbar-right">
-                <div class="btn-group">
-                    <a class="btn btn-success navbar-btn" href="{{ url_for('profile.profile') }}">
-                    <i class="glyphglyphicon glyphicon-user glyphicon"></i>
-                    </a>
-                    <div class="btn-group pull-right ml-20">
-                        <a class="btn dropdown-toggle btn-success navbar-btn" data-toggle="dropdown"> <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="btn btn-success navbar-btn" href="{{ url_for('main.index') }}">Курсы</a>
+                    <a class="btn btn-success navbar-btn" href="{{ url_for('coursecreate.create') }}">Добавить курс</a>
+                    {% if current_user.name == none or current_user.name == '' or current_user.telegram_id == none or current_user.telegram_id == '' or current_user.telegram_nickname == none or current_user.telegram_nickname == '' or current_user.lms_id == none or current_user.lms_id == '' %}
+                        <p style="color: white">Для корректной работы системы заполните данные <a style="color: white; text-decoration: underline;" href="{{ url_for('profile.editprofile') }}">профиля!</a></p>
+                    {% endif %}
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                    <div class="btn-group">
+                        <a class="btn btn-success navbar-btn" href="{{ url_for('profile.profile') }}">
+                        <i class="glyphglyphicon glyphicon-user glyphicon"></i>
+                        </a>
+                        <div class="btn-group pull-right ml-20">
+                            <a class="btn dropdown-toggle btn-success navbar-btn" data-toggle="dropdown"> <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
 
-                            <li><a href="{{ url_for('profile.profile') }}">
-                            <i class="glyphglyphicon glyphicon-user glyphicon"></i>
-                                Профиль
-                            </a></li>
+                                <li><a href="{{ url_for('profile.profile') }}">
+                                <i class="glyphglyphicon glyphicon-user glyphicon"></i>
+                                    Профиль
+                                </a></li>
 
-                            <li class="divider"></li>
+                                <li class="divider"></li>
 
-                            <li><a href="{{ url_for('auth.logout') }}">
-                            <i class="glyphicon glyphglyphicon glyphicon-off"></i>
-                                Выход
-                            </a></li>
-                        </ul>
+                                <li><a href="{{ url_for('auth.logout') }}">
+                                <i class="glyphicon glyphglyphicon glyphicon-off"></i>
+                                    Выход
+                                </a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         {% endif %}
     </nav>
 {% endblock %}
