@@ -11,6 +11,7 @@ class EditProfileForm(FlaskForm):
     name = StringField('Имя')
     lms_id = IntegerField('LMS Id', validators=[Optional('Введите число')])
     telegram_id = IntegerField('Telegram Id', validators=[Optional('Введите число')])
+    telegram_nickname = StringField('Ник в Telegram', validators=[DataRequired('Поле не должно быть пустым')])
     flag_emails_from_default_mail = BooleanField('Включить отпраку писем с почты?')
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 

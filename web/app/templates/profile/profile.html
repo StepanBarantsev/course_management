@@ -21,6 +21,10 @@
     <p class="profile_text"> Telegram Id: {{ current_user.telegram_id }} </p>
     {% endif %}
 
+    {% if current_user.telegram_nickname is not none %}
+    <p class="profile_text"> Telegram Nickname: {{ current_user.telegram_nickname }} </p>
+    {% endif %}
+
     {% if current_user.lms_id is not none %}
     <p class="profile_text"> LMS Id: {{ current_user.lms_id }} </p>
     {% endif %}
