@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, current_app
 from flask_login import login_user, current_user, logout_user
 from web.app import db
 from web.app.auth import bp
@@ -37,12 +37,16 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Регистрация прошла успешно')
-        return redirect(url_for('auth.login'))
+        # По идее отсекать это на этапе валидации полей низя, потому что ее (валидацию) можно отключить
+        if form.registration_code.data == current_app.config['CODE_FOR_REGISTRATION']:
+            user = User(username=form.username.data, email=form.email.data)
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            flash('Регистрация прошла успешно')
+            return redirect(url_for('auth.login'))
+        else:
+            return render_template('error/403.html', title='Неверный код регистрации')
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
