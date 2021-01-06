@@ -26,6 +26,7 @@ class User(db.Model, UserMixin):
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
     telegram_id = db.Column(db.Integer())
+    telegram_nickname = db.Column(db.String(100))
     lms_id = db.Column(db.Integer())
     flag_emails_from_default_mail = db.Column(db.Boolean(), nullable=False, default=False)
 
