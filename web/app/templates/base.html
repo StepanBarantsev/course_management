@@ -64,6 +64,8 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
-        {% block app_content %}{% endblock %}
+        {% if not(current_user.name == none or current_user.name == '' or current_user.telegram_id == none or current_user.telegram_id == '' or current_user.telegram_nickname == none or current_user.telegram_nickname == '' or current_user.lms_id == none or current_user.lms_id == '') or edit_profile_flag %}
+            {% block app_content %}{% endblock %}
+        {% endif %}
     </div>
 {% endblock %}

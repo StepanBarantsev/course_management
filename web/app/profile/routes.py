@@ -35,7 +35,8 @@ def editprofile():
         form.telegram_id.data = current_user.telegram_id
         form.telegram_nickname.data = current_user.telegram_nickname
         form.flag_emails_from_default_mail.data = current_user.flag_emails_from_default_mail
-    return render_template('profile/edit.html', title='Редактирование профиля', form=form, default_mail=current_app.config['ADMINS'][0])
+    return render_template('profile/edit.html', title='Редактирование профиля', form=form, default_mail=current_app.config['ADMINS'][0],
+                           edit_profile_flag=True)
 
 
 @bp.route('/reset_password', methods=['GET', 'POST'])
