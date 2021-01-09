@@ -13,7 +13,7 @@ def print_available_courses_as_buttons(session):
     markup = types.InlineKeyboardMarkup()
 
     for i in courses_list:
-        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_id: {i.id}, course_name_with_author: {i.name} [{i.author.name}]'))
+        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_id: {i.id}'))
 
     return markup
 
@@ -71,8 +71,7 @@ def print_available_courses_as_buttons_by_telegram_id(telegram_id, session):
     markup = types.InlineKeyboardMarkup()
 
     for i in courses_list:
-        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]',
-                                              callback_data=f'course_id: {i.id}, course_name_with_author: {i.name} [{i.author.name}]'))
+        markup.add(types.InlineKeyboardButton(text=f'{i.name} [{i.author.name}]', callback_data=f'course_id: {i.id}'))
 
     return markup
 

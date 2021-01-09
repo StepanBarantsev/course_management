@@ -7,6 +7,7 @@ from telegram.chat.helpers import print_available_courses_as_buttons, \
     parse_callback_data, get_student_by_email_and_course_id, get_student_by_id, \
     create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id,\
     print_available_courses_as_buttons_by_telegram_id, get_student_by_telegram_id_and_course_id
+
 from contextlib import contextmanager
 from web.app.models import TelegramState
 from telegram.chat.singleton_bot import bot
@@ -196,11 +197,13 @@ def handle_query(call):
             ids_courses = [course.id for course in courses]
 
             if int(callback_data['course_id']) not in ids_courses:
-                telegram_session.temp_course_register_id = int(callback_data['course_id'])
+                course_id = int(callback_data['course_id'])
+                telegram_session.temp_course_register_id = course_id
                 telegram_session.state = states.WAITING_FOR_EMAIL_REGISTER
                 session.commit()
 
-                bot.send_message(call.message.chat.id, get_message('ENTER_EMAIL', callback_data['course_name_with_author']))
+                course_name_with_author = create_string_with_course_and_author_by_course_id(course_id, session)
+                bot.send_message(call.message.chat.id, get_message('ENTER_EMAIL', course_name_with_author))
             else:
                 bot.send_message(call.message.chat.id, get_message('YOU_ARE_ALREADY_REGISTERED'))
 
