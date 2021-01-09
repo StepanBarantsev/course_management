@@ -27,14 +27,14 @@ Telegram: <a href="https://t.me/{{ telegram_nickname }}">https://t.me/{{ telegra
 
 Дальнейшие инструкции находятся в СДО (Правила участия) <br/><br/>
 
-С уважением, Баранцев Степан`
+С уважением, {{ trainer_name }}`
             let msg_not_first_payment = `Добрый день. <br/><br/>
 
 Оплата за ${obj.text_block} была успешно получена. <br/><br/>
 
 Ссылка на электронный чек: <a href="${obj.check_link}">${obj.check_link}<a/> <br/><br/>
 
-С уважением, Баранцев Степан`
+С уважением, {{ trainer_name }}`
             if ($("#is_first_payment").prop("checked")) {
                 generate_draft(subject, "{{ student.email }}", msg_first_payment)
             }
