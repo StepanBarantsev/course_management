@@ -1,31 +1,13 @@
-import telegram.config
-from telegram.chat.messages import get_message
+from telegram.chat.messages import get_message_with_course_prefix
 import telegram.chat.states as states
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from telegram.chat.helpers import print_available_courses_as_buttons, \
     parse_callback_data, get_student_by_email_and_course_id, get_student_by_id, \
     create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id,\
     print_available_courses_as_buttons_by_telegram_id, get_student_by_telegram_id_and_course_id
-
-from contextlib import contextmanager
-from web.app.models import TelegramState
 from telegram.chat.singleton_bot import bot
-
-engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI, convert_unicode=True, connect_args=dict(use_unicode=True))
-Session = sessionmaker(bind=engine)
+from telegram.chat.db_session import session_scope, get_telegram_session_or_create_new, get_telegram_session_or_create_new_with_existing_db_session
 
 
-@contextmanager
-def session_scope():
-    session = Session()
-    try:
-        yield session
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
 
 
 ################
@@ -40,27 +22,9 @@ def no_current_course_decorator(f):
             if telegram_session.current_course_id is not None:
                 f(message)
             else:
-                bot.send_message(chat_id, get_message('NO_CURRENT_COURSE'))
+                bot.send_message(chat_id, get_message_with_course_prefix('NO_CURRENT_COURSE', chat_id))
 
     return func
-
-
-def get_telegram_session_or_create_new(telegram_id):
-    with session_scope() as session:
-        return get_telegram_session_or_create_new_with_existing_db_session(telegram_id, session)
-
-
-def get_telegram_session_or_create_new_with_existing_db_session(telegram_id, session):
-    element = session.query(TelegramState).filter_by(telegram_id=telegram_id).first()
-
-    if element is not None:
-        return element
-
-    new_element = TelegramState(telegram_id=telegram_id)
-    session.add(new_element)
-    session.commit()
-
-    return session.query(TelegramState).filter_by(telegram_id=telegram_id).first()
 
 
 ##############
@@ -74,7 +38,7 @@ def hello(message):
         get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
 
         chat_id = message.chat.id
-        bot.send_message(chat_id, get_message('HELP_TEXT'))
+        bot.send_message(chat_id, get_message_with_course_prefix('HELP_TEXT', chat_id))
 
 
 @bot.message_handler(commands=['help'])
@@ -83,7 +47,7 @@ def help(message):
         get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
 
         chat_id = message.chat.id
-        bot.send_message(chat_id, get_message('HELP_TEXT'))
+        bot.send_message(chat_id, get_message_with_course_prefix('HELP_TEXT', chat_id))
 
 
 @bot.message_handler(commands=['current'])
@@ -91,7 +55,7 @@ def current(message):
     with session_scope() as session:
         telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
         chat_id = message.chat.id
-        bot.send_message(chat_id, get_message('CURRENT_COURSE', create_string_with_course_and_author_by_course_id(telegram_session.current_course_id, session)))
+        bot.send_message(chat_id, get_message_with_course_prefix('CURRENT_COURSE', chat_id, create_string_with_course_and_author_by_course_id(telegram_session.current_course_id, session)))
 
 
 @bot.message_handler(commands=['checkout'])
@@ -115,8 +79,8 @@ def getdays(message):
         telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
         chat_id = message.chat.id
 
-        bot.send_message(chat_id, get_message('NUM_OF_DAYS', create_string_with_course_and_author_by_course_id(telegram_session.current_course_id, session),
-                                              get_student_by_telegram_id_and_course_id(telegram_session.current_course_id, message.chat.id, session).number_of_days))
+        bot.send_message(chat_id, get_message_with_course_prefix('NUM_OF_DAYS', chat_id,
+                                                                 get_student_by_telegram_id_and_course_id(telegram_session.current_course_id, message.chat.id, session).number_of_days))
 
 
 @bot.message_handler(commands=['register'])
@@ -143,17 +107,17 @@ def waiting_for_email(message):
         student = get_student_by_email_and_course_id(telegram_session.temp_course_register_id, email, session)
 
         if student is None:
-            bot.send_message(message.chat.id, get_message('EMAIL_ERROR'))
+            bot.send_message(message.chat.id, get_message_with_course_prefix('EMAIL_ERROR', message.chat.id))
             return
         else:
             if student.telegram_id is None:
-                bot.send_message(message.chat.id, get_message('EMAIL_SUCCESS'))
+                bot.send_message(message.chat.id, get_message_with_course_prefix('EMAIL_SUCCESS', message.chat.id))
                 telegram_session.temp_lms_email = email
                 telegram_session.temp_course_student_id = student.id
                 telegram_session.state = states.WAITING_FOR_AUTHCODE_REGISTER
                 session.commit()
             else:
-                bot.send_message(message.chat.id, get_message('ANOTHER_USER_ALREADY_REGISTERED'))
+                bot.send_message(message.chat.id, get_message_with_course_prefix('ANOTHER_USER_ALREADY_REGISTERED', message.chat.id))
 
 
 @bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id).state == states.WAITING_FOR_AUTHCODE_REGISTER)
@@ -166,17 +130,17 @@ def waiting_for_authcode(message):
         student = get_student_by_id(telegram_session.temp_course_student_id, session)
 
         if student is None:
-            bot.send_message(message.chat.id, get_message('UNKNOWN_ERROR'))
+            bot.send_message(message.chat.id, get_message_with_course_prefix('UNKNOWN_ERROR', message.chat.id))
             return
         else:
             if student.registration_code == authcode:
-                bot.send_message(message.chat.id, get_message('AUTHCODE_SUCCESS'))
+                bot.send_message(message.chat.id, get_message_with_course_prefix('AUTHCODE_SUCCESS', message.chat.id))
                 telegram_session.current_course_id = telegram_session.temp_course_register_id
                 student.telegram_id = telegram_session.telegram_id
                 telegram_session.state = states.REGISTERED
                 session.commit()
             else:
-                bot.send_message(message.chat.id, get_message('AUTHCODE_ERROR'))
+                bot.send_message(message.chat.id, get_message_with_course_prefix('AUTHCODE_ERROR', message.chat.id))
                 return
 
 
@@ -203,9 +167,9 @@ def handle_query(call):
                 session.commit()
 
                 course_name_with_author = create_string_with_course_and_author_by_course_id(course_id, session)
-                bot.send_message(call.message.chat.id, get_message('ENTER_EMAIL', course_name_with_author))
+                bot.send_message(call.message.chat.id, get_message_with_course_prefix('ENTER_EMAIL', call.message.chat.id, course_name_with_author))
             else:
-                bot.send_message(call.message.chat.id, get_message('YOU_ARE_ALREADY_REGISTERED'))
+                bot.send_message(call.message.chat.id, get_message_with_course_prefix('YOU_ARE_ALREADY_REGISTERED', call.message.chat.id))
 
 
 @bot.callback_query_handler(func=lambda call: get_telegram_session_or_create_new(call.message.chat.id).state == states.WAITING_FOR_COURSE_NAME)
@@ -217,8 +181,8 @@ def handle_query(call):
             telegram_session.current_course_id = int(callback_data['course_id'])
             telegram_session.state = states.REGISTERED
             session.commit()
-            bot.send_message(call.message.chat.id, get_message('CHECKOUT_SUCCESS',
-                                                               create_string_with_course_and_author_by_course_id(callback_data['course_id'], session)))
+            bot.send_message(call.message.chat.id, get_message_with_course_prefix('CHECKOUT_SUCCESS', call.message.chat.id,
+                                                                                  create_string_with_course_and_author_by_course_id(callback_data['course_id'], session)))
 
 
 ##################

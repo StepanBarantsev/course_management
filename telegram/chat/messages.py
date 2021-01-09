@@ -1,3 +1,27 @@
+from telegram.chat.db_session import session_scope
+from telegram.chat.db_session import get_telegram_session_or_create_new_with_existing_db_session
+from web.app.models import Course
+from telegram.chat.helpers import create_string_with_course_and_author_by_course_id
+
+
+def get_message_with_course_prefix(name, telegram_id, *args):
+    with session_scope() as session:
+        message = get_message(name, *args)
+
+        names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT']
+
+        if name in names_required_course_prefix:
+            if telegram_id is not None:
+                current_telegram_session = get_telegram_session_or_create_new_with_existing_db_session(telegram_id, session)
+
+                if current_telegram_session.current_course_id is not None:
+                    course = session.query(Course).filter_by(id=int(current_telegram_session.current_course_id)).first()
+                    course_name_and_author = create_string_with_course_and_author_by_course_id(course.id, session)
+                    message = f'Курс: {course_name_and_author}\n\n{message}'
+
+        return message
+
+
 def get_message(name, *args):
 
     if name == 'HELP_TEXT':
@@ -49,9 +73,7 @@ def get_message(name, *args):
         return f'''Вы успешно переключились на курс {args[0]}'''
 
     if name == 'NUM_OF_DAYS':
-        return f'''Курс {args[0]}
-
-Оставшееся количество дней: {args[1]}'''
+        return f'''Оставшееся количество дней: {args[0]}'''
 
     if name == 'NO_CURRENT_COURSE':
         return '''У Вас на данный момент нет активного курса.

@@ -6,7 +6,7 @@ from web.app import db
 from flask_login import current_user
 from web.app.checks.forms import AddOrEditCheckForm
 from web.app.messages import send_message_to_telegram_and_mail
-from telegram.chat.messages import get_message
+from telegram.chat.messages import get_message_with_course_prefix
 
 
 @bp.route('/', methods=['GET'])
@@ -61,9 +61,9 @@ def add():
             subject = f'{student.course.name}. Оплата за {text_block} получена.'
 
             if is_first_payment:
-                message = get_message("FIRST_PAYMENT", link, student.course.lms_id, 'Заглушка')
+                message = get_message_with_course_prefix("FIRST_PAYMENT", student.telegram_id, link, student.course.lms_id, 'Заглушка')
             else:
-                message = get_message("NO_FIRST_PAYMENT", text_block, link)
+                message = get_message_with_course_prefix("NO_FIRST_PAYMENT", student.telegram_id, text_block, link)
 
             if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
                 new_check = Check(link=link, block_id=None, student_id=student_id, another=specific_block_number, amount=amount)
