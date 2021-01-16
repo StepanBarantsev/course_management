@@ -62,7 +62,7 @@ def add():
 
             if is_first_payment:
                 message = get_message_with_course_prefix("FIRST_PAYMENT", student.telegram_id, link, student.course.lms_id,
-                                                         current_user.telegram_nickname, current_user.name)
+                                                         current_user.telegram_nickname, student.registration_code, current_user.name)
             else:
                 message = get_message_with_course_prefix("NO_FIRST_PAYMENT", student.telegram_id, text_block, link, current_user.name)
 
@@ -96,19 +96,21 @@ def add():
                                                                   course_id=student.course.lms_id,
                                                                   check_link=link,
                                                                   telegram_nickname=current_user.telegram_nickname,
-                                                                  trainer_name=current_user.name),
+                                                                  trainer_name=current_user.name,
+                                                                  registration_code=student.registration_code),
                                                   render_template('email/payed_first_time.html',
                                                                   course_id=student.course.lms_id,
                                                                   check_link=link,
                                                                   telegram_nickname=current_user.telegram_nickname,
-                                                                  trainer_name=current_user.name))
+                                                                  trainer_name=current_user.name,
+                                                                  registration_code=student.registration_code))
             return redirect(url_for('checks.index', student_id=student_id))
 
         return render_template('checks/addedit.html', title="Добавление чека студенту",
                                student=student, checks=checks, form=form,
                                flag_emails_from_default_mail=current_user.flag_emails_from_default_mail,
                                add_or_edit="add", telegram_nickname=current_user.telegram_nickname, course_id=student.course.lms_id,
-                               trainer_name=current_user.name)
+                               trainer_name=current_user.name, registration_code=student.registration_code)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
 
