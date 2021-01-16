@@ -8,7 +8,7 @@ def get_message_with_course_prefix(name, telegram_id, *args):
     with session_scope() as session:
         message = get_message(name, *args)
 
-        names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT']
+        names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT', 'NUM_OF_DAYS_SCHEDULED', 'CERTIFICATE']
 
         if name in names_required_course_prefix:
             if telegram_id is not None:
@@ -74,6 +74,18 @@ def get_message(name, *args):
 
     if name == 'NUM_OF_DAYS':
         return f'''Оставшееся количество дней: {args[0]}'''
+
+    if name == 'NUM_OF_DAYS_SCHEDULED':
+        return f'''Добрый день.
+        
+Напоминаю, что до конца курса у Вас осталось {args[0]} дней.'''
+
+    if name == 'CERTIFICATE':
+        return f'''Добрый день.
+
+Поздравляю с успешным окончанием курса!
+
+Ссылка на сертификат: {args[0]}'''
 
     if name == 'NO_CURRENT_COURSE':
         return '''У Вас на данный момент нет активного курса.
