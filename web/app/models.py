@@ -173,6 +173,7 @@ class Student(db.Model):
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    cert_link = db.Column(db.String(100))
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
