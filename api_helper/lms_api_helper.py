@@ -78,6 +78,3 @@ class LmsApiHelper:
                 if task['grades'][0]['grade'] < task['gradepass']:
                     return False
         return True
-
-
-print(LmsApiHelper.can_we_give_certificate_to_student(13733, 1040))

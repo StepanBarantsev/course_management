@@ -5,6 +5,8 @@ from telegram.chat.db_session import session_scope
 from web.app.models import Course
 from telegram.chat.messages import get_message_with_course_prefix
 from telebot.apihelper import ApiTelegramException
+from api_helper.lms_api_helper import LmsApiHelper
+from api_helper.fauna_helper import FaunaHelper
 
 
 def job():
@@ -47,6 +49,8 @@ def send_message_about_certificate(telegram_id, cert_link):
 
 
 def try_to_generate_cert_to_student(student):
+    if LmsApiHelper.can_we_give_certificate_to_student(student.lms_id, student.course.lms_id):
+        FaunaHelper.create_certify(student)
     return 'Заглушечная ссылка на сертификат'
 
 
