@@ -1,5 +1,5 @@
 from faunadb import query as q
-import os
+import datetime
 from faunadb.client import FaunaClient
 from api_helper.config import ConfigApi
 
@@ -18,3 +18,6 @@ class FaunaHelper:
                                               "course_name": student.course.name,
                                               "otl": False}
                                            })))
+    @staticmethod
+    def create_current_date_in_specific_format():
+        current_date = None
