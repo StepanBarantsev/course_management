@@ -66,3 +66,16 @@ class LmsApiHelper:
             for i in range(2, num_of_blocks + 1):
                 if not LmsApiHelper.get_task_by_fullname(f'Оплата блока {i}', student_lms_id, course_id)['grades'][0]['grade'] == 5:
                     return i - 1
+
+    @staticmethod
+    def can_we_give_certificate_to_student(student_lms_id, course_id):
+        tasks = LmsApiHelper.get_all_tasks_for_student(student_lms_id, course_id)
+        for task in tasks:
+            # По соглашению считаем что задание с звездочкой в названии -- это необязательное задание
+            if '*' not in task['name']:
+                if task['grades'][0]['grade'] < task['gradepass']:
+                    return False
+        return True
+
+
+LmsApiHelper.can_we_give_certificate_to_student(10622, 1040)
