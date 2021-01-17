@@ -69,7 +69,10 @@ class LmsApiHelper:
 
     @staticmethod
     def can_we_give_certificate_to_student(student_lms_id, course_id):
-        tasks = LmsApiHelper.get_all_tasks_for_student(student_lms_id, course_id)
+        try:
+            tasks = LmsApiHelper.get_all_tasks_for_student(student_lms_id, course_id)
+        except KeyError:
+            return False
         for task in tasks:
             # По соглашению считаем что задание с gradepass == 0 является необязательным
             if task['gradepass'] != 0:

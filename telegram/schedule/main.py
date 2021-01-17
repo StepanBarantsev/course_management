@@ -22,6 +22,7 @@ def job():
                 message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней.\n'
                 send_message_about_days_to_student(student)
                 if course.is_certificate_needed:
+                    print(student)
                     if student.cert_link is None:
                         cert_link = try_to_generate_cert_to_student(student)
                         send_message_about_certificate(student.telegram_id, cert_link)
@@ -42,16 +43,17 @@ def send_message_about_days_to_student(student):
 def send_message_about_certificate(telegram_id, cert_link):
     try:
         if cert_link is not None:
-            pass
-            # bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', telegram_id, cert_link))
+            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', telegram_id, cert_link))
     except ApiTelegramException:
         pass
 
 
 def try_to_generate_cert_to_student(student):
     if LmsApiHelper.can_we_give_certificate_to_student(student.lms_id, student.course.lms_id):
-        FaunaHelper.create_certify(student)
-    return 'Заглушечная ссылка на сертификат'
+        cert_link = 'http://cert.software-testing.ru/' + FaunaHelper.create_certify(student)
+        student.cert_link = cert_link
+        return cert_link
+    return None
 
 
 schedule.every(10).seconds.do(job)
