@@ -19,9 +19,11 @@ def job():
                 student.number_of_days -= 1
                 message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней.\n'
                 send_message_about_days_to_student(student)
-                cert_link = try_to_generate_cert_to_student(student)
-                send_message_about_certificate(student.telegram_id, cert_link)
-                send_message_about_certificate(course.author.telegram_id, cert_link)
+                if course.is_certificate_needed:
+                    if student.cert_link is None:
+                        cert_link = try_to_generate_cert_to_student(student)
+                        send_message_about_certificate(student.telegram_id, cert_link)
+                        send_message_about_certificate(course.author.telegram_id, cert_link)
 
             bot.send_message(course.author.telegram_id, message_about_days)
             session.commit()
