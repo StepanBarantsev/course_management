@@ -71,8 +71,8 @@ class LmsApiHelper:
     def can_we_give_certificate_to_student(student_lms_id, course_id):
         tasks = LmsApiHelper.get_all_tasks_for_student(student_lms_id, course_id)
         for task in tasks:
-            # По соглашению считаем что задание с звездочкой в названии -- это необязательное задание
-            if '*' not in task['name']:
+            # По соглашению считаем что задание с gradepass == 0 является необязательным
+            if task['gradepass'] != 0:
                 if task['grades'][0]['grade'] is None:
                     return False
                 if task['grades'][0]['grade'] < task['gradepass']:
@@ -80,4 +80,4 @@ class LmsApiHelper:
         return True
 
 
-print(LmsApiHelper.can_we_give_certificate_to_student(10622, 1040))
+print(LmsApiHelper.can_we_give_certificate_to_student(13733, 1040))
