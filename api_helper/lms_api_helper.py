@@ -73,9 +73,11 @@ class LmsApiHelper:
         for task in tasks:
             # По соглашению считаем что задание с звездочкой в названии -- это необязательное задание
             if '*' not in task['name']:
+                if task['grades'][0]['grade'] is None:
+                    return False
                 if task['grades'][0]['grade'] < task['gradepass']:
                     return False
         return True
 
 
-LmsApiHelper.can_we_give_certificate_to_student(10622, 1040)
+print(LmsApiHelper.can_we_give_certificate_to_student(10622, 1040))
