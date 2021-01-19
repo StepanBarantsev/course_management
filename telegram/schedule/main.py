@@ -7,6 +7,9 @@ from telegram.chat.messages import get_message_with_course_prefix
 from telebot.apihelper import ApiTelegramException
 from api_helper.lms_api_helper import LmsApiHelper
 from api_helper.fauna_helper import FaunaHelper
+from web.app.email import send_email
+from telegram.config import ConfigTelegram
+from flask import render_template
 
 
 def job():
@@ -26,9 +29,19 @@ def job():
                         cert_link = try_to_generate_cert_to_student(student)
                         send_message_about_certificate(student.telegram_id, cert_link)
                         send_message_about_certificate(course.author.telegram_id, cert_link)
+                        if course.author.flag_emails_from_default_mail:
+                            send_message_about_certificate_to_mail(student, cert_link)
 
             bot.send_message(course.author.telegram_id, message_about_days)
             session.commit()
+
+
+def send_message_about_certificate_to_mail(student, cert_link):
+    send_email(f'Сертификат по курсу {student.course.name}',
+               sender=ConfigTelegram.DEFAULT_MAIL,
+               recipients=[student.email],
+               text_body=render_template('email/certificate.txt', cert_link=cert_link, trainer_name=student.course.author.name),
+               html_body=render_template('email/certificate.html', cert_link=cert_link, trainer_name=student.course.author.name))
 
 
 def send_message_about_days_to_student(student):
