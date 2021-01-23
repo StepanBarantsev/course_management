@@ -76,6 +76,7 @@ class Course(db.Model):
     default_num_days = db.Column(db.Integer(), nullable=False, default=30)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    review_link = db.Column(db.String(300), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
