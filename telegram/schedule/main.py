@@ -29,8 +29,8 @@ def job():
                 if course.is_certificate_needed:
                     if student.cert_link is None:
                         cert_link = try_to_generate_cert_to_student(student)
-                        send_message_about_certificate(student.telegram_id, cert_link, discount_coupon)
-                        send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon)
+                        send_message_about_certificate(student.telegram_id, cert_link, discount_coupon, student)
+                        send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon, student)
                         if course.author.flag_emails_from_default_mail:
                             send_message_about_certificate_to_mail(student, cert_link, discount_coupon)
 
@@ -49,15 +49,17 @@ def send_message_about_certificate_to_mail(student, cert_link, discount_coupon):
 def send_message_about_days_to_student(student):
     try:
         if student.number_of_days % 10 == 0:
-            bot.send_message(student.telegram_id, get_message_with_course_prefix('NUM_OF_DAYS_SCHEDULED', student.telegram_id, student.number_of_days))
+            course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
+            bot.send_message(student.telegram_id, get_message_with_course_prefix('NUM_OF_DAYS_SCHEDULED', None, student.number_of_days, course_name=course_name_and_author))
     except ApiTelegramException:
         pass
 
 
-def send_message_about_certificate(telegram_id, cert_link, discount_coupon):
+def send_message_about_certificate(telegram_id, cert_link, discount_coupon, student):
     try:
         if cert_link is not None:
-            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', telegram_id, cert_link, discount_coupon))
+            course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
+            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, course_name=course_name_and_author))
     except ApiTelegramException:
         pass
 

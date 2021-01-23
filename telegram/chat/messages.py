@@ -4,7 +4,7 @@ from web.app.models import Course
 from telegram.chat.helpers import create_string_with_course_and_author_by_course_id
 
 
-def get_message_with_course_prefix(name, telegram_id, *args):
+def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
     with session_scope() as session:
         message = get_message(name, *args)
 
@@ -18,6 +18,9 @@ def get_message_with_course_prefix(name, telegram_id, *args):
                     course = session.query(Course).filter_by(id=int(current_telegram_session.current_course_id)).first()
                     course_name_and_author = create_string_with_course_and_author_by_course_id(course.id, session)
                     message = f'Курс: {course_name_and_author}\n\n{message}'
+
+            elif course_name is not None:
+                message = f'Курс: {course_name}\n\n{message}'
 
         return message
 
