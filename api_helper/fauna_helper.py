@@ -7,6 +7,7 @@ from api_helper.config import ConfigApi
 class FaunaHelper:
 
     clientf = FaunaClient(ConfigApi.fauna_key)
+    discount_coupon_id = 236782992568091143
 
     @staticmethod
     def create_certify(student):
@@ -42,3 +43,7 @@ class FaunaHelper:
             "12": "декабря"
         }
         return d[number_date]
+
+    @staticmethod
+    def get_discount_coupon():
+        return FaunaHelper.clientf.query(q.get(q.ref(q.collection("Info"), FaunaHelper.discount_coupon_id)))['data']['Купон_скидка']
