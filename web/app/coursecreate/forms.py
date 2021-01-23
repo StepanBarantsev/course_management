@@ -10,6 +10,7 @@ class CreateOrEditCourseForm(FlaskForm):
     lms_id = IntegerField('LMS ID курса', validators=[DataRequired('Введите число')])
     trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
     trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
+    review_link = StringField('Где оставить отзыв?', validators=[DataRequired('Поле не должно быть пустым')])
 
     default_number_of_days = IntegerField('Количество дней поддержки за блок',
                                           validators=[Optional('Введите число'),

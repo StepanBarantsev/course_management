@@ -28,7 +28,8 @@ def create():
                             trainer_lms_id=form.trainer_lms_id.data,
                             trainer_telegram_id=form.trainer_telegram_id.data,
                             num_of_blocks=num_of_blocks, is_certificate_needed=form.is_certificate_needed.data,
-                            default_num_days=form.default_number_of_days.data)
+                            default_num_days=form.default_number_of_days.data,
+                            review_link = form.review_link.data)
 
         db.session.add(new_course)
         db.session.commit()
@@ -74,7 +75,8 @@ def edit():
                                                                                    trainer_telegram_id=form.trainer_telegram_id.data,
                                                                                    num_of_blocks=num_of_blocks,
                                                                                    is_certificate_needed=form.is_certificate_needed.data,
-                                                                                   default_num_days=form.default_number_of_days.data))
+                                                                                   default_num_days=form.default_number_of_days.data,
+                                                                                   review_link=form.review_link.data))
             db.session.commit()
             flash('Данные курса были успешно изменены!')
             return redirect(url_for('main.index'))
@@ -85,6 +87,7 @@ def edit():
             form.trainer_telegram_id.data = course.trainer_telegram_id
             form.is_certificate_needed.data = course.is_certificate_needed
             form.default_number_of_days.data = course.default_num_days
+            form.review_link.data = course.review_link
 
             if course.num_of_blocks == 1:
                 form.is_more_then_one_block.data = False
