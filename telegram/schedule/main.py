@@ -15,6 +15,7 @@ from flask import render_template
 def job():
     with session_scope() as session:
         courses = session.query(Course).filter_by(deleted=0).all()
+        discount_coupon = FaunaHelper.get_discount_coupon()
 
         for course in courses:
             students = course.get_all_not_deleted_students()
@@ -27,21 +28,21 @@ def job():
                 if course.is_certificate_needed:
                     if student.cert_link is None:
                         cert_link = try_to_generate_cert_to_student(student)
-                        send_message_about_certificate(student.telegram_id, cert_link)
-                        send_message_about_certificate(course.author.telegram_id, cert_link)
+                        send_message_about_certificate(student.telegram_id, cert_link, discount_coupon)
+                        send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon)
                         if course.author.flag_emails_from_default_mail:
-                            send_message_about_certificate_to_mail(student, cert_link)
+                            send_message_about_certificate_to_mail(student, cert_link, discount_coupon)
 
             bot.send_message(course.author.telegram_id, message_about_days)
             session.commit()
 
 
-def send_message_about_certificate_to_mail(student, cert_link):
+def send_message_about_certificate_to_mail(student, cert_link, discount_coupon):
     send_email(f'Сертификат по курсу {student.course.name}',
                sender=ConfigTelegram.DEFAULT_MAIL,
                recipients=[student.email],
-               text_body=render_template('email/certificate.txt', cert_link=cert_link, trainer_name=student.course.author.name),
-               html_body=render_template('email/certificate.html', cert_link=cert_link, trainer_name=student.course.author.name))
+               text_body=render_template('email/certificate.txt', cert_link=cert_link, trainer_name=student.course.author.name, discount_coupon=discount_coupon),
+               html_body=render_template('email/certificate.html', cert_link=cert_link, trainer_name=student.course.author.name, discount_coupon=discount_coupon))
 
 
 def send_message_about_days_to_student(student):
@@ -52,10 +53,10 @@ def send_message_about_days_to_student(student):
         pass
 
 
-def send_message_about_certificate(telegram_id, cert_link):
+def send_message_about_certificate(telegram_id, cert_link, discount_coupon):
     try:
         if cert_link is not None:
-            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', telegram_id, cert_link))
+            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', telegram_id, cert_link, discount_coupon))
     except ApiTelegramException:
         pass
 
