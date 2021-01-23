@@ -57,16 +57,6 @@ class LmsApiHelper:
         result = requests.get(request, headers={"User-Agent": "Mozilla/5.0"})
         return result.json()['items'][1:]
 
-    # Соглашение -- все задания с оплатой (если они есть) должны быть названы "Оплата блока {i}"
-    @staticmethod
-    def return_max_payed_block(student_lms_id, course_id, num_of_blocks):
-        if num_of_blocks == 1:
-            return 1
-        else:
-            for i in range(2, num_of_blocks + 1):
-                if not LmsApiHelper.get_task_by_fullname(f'Оплата блока {i}', student_lms_id, course_id)['grades'][0]['grade'] == 5:
-                    return i - 1
-
     @staticmethod
     def can_we_give_certificate_to_student(student_lms_id, course_id):
         try:
