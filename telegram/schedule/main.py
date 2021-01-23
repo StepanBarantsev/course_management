@@ -20,7 +20,7 @@ def job():
 
         for course in courses:
             students = course.get_all_not_deleted_students()
-            message_about_days = f'Курс {course.name}\n\nДата: {datetime.today()}\n\n'
+            message_about_days = f'Курс {course.name}\n\nДата: {datetime.today().strftime("%d.%m.%Y")}\n\n'
 
             for student in students:
                 student.number_of_days -= 1
