@@ -10,6 +10,7 @@ from api_helper.fauna_helper import FaunaHelper
 from web.app.email import send_email
 from telegram.config import ConfigTelegram
 from flask import render_template
+from datetime import datetime
 
 
 def job():
@@ -19,7 +20,7 @@ def job():
 
         for course in courses:
             students = course.get_all_not_deleted_students()
-            message_about_days = f'Курс {course.name}\n\n'
+            message_about_days = f'Курс {course.name}\n\nДата: {datetime.today()}\n\n'
 
             for student in students:
                 student.number_of_days -= 1
