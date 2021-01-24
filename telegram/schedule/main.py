@@ -27,7 +27,7 @@ def job():
                 message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней.\n'
                 send_message_about_days_to_student(student)
                 if course.is_certificate_needed:
-                    if student.cert_link is None:
+                    if student.cert_link is None and student.status != 'finished':
                         cert_link = try_to_generate_cert_to_student(student)
                         send_message_about_certificate(student.telegram_id, cert_link, discount_coupon, student)
                         send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon, student)
