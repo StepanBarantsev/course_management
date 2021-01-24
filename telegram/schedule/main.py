@@ -39,11 +39,12 @@ def job():
 
 
 def send_message_about_certificate_to_mail(student, cert_link, discount_coupon):
-    send_email(f'Сертификат по курсу {student.course.name}',
-               sender=ConfigTelegram.DEFAULT_MAIL,
-               recipients=[student.email],
-               text_body=render_template('email/certificate.txt', cert_link=cert_link, trainer_name=student.course.author.name, discount_coupon=discount_coupon),
-               html_body=render_template('email/certificate.html', cert_link=cert_link, trainer_name=student.course.author.name, discount_coupon=discount_coupon))
+    if cert_link is not None:
+        send_email(f'Сертификат по курсу {student.course.name}',
+                   sender=ConfigTelegram.DEFAULT_MAIL,
+                   recipients=[student.email],
+                   text_body=render_template('email/certificate.txt', cert_link=cert_link, trainer_name=student.course.author.name, discount_coupon=discount_coupon),
+                   html_body=render_template('email/certificate.html', cert_link=cert_link, trainer_name=student.course.author.name, discount_coupon=discount_coupon))
 
 
 def send_message_about_days_to_student(student):
@@ -68,6 +69,7 @@ def try_to_generate_cert_to_student(student):
     if LmsApiHelper.can_we_give_certificate_to_student(student.lms_id, student.course.lms_id):
         cert_link = 'http://cert.software-testing.ru/' + FaunaHelper.create_certify(student)
         student.cert_link = cert_link
+        student.status = 'finished'
         return cert_link
     return None
 
