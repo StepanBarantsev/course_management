@@ -17,7 +17,7 @@ def job():
 
         for course in courses:
             students = course.get_all_not_deleted_students()
-            message_about_days = f'Курс {course.name}\n\nДата: {datetime.today().strftime("%d.%m.%Y")}\n\n'
+            message_about_days = f'Курс: {course.name}\n\nДата: {datetime.today().strftime("%d.%m.%Y")}\n\n'
 
             for student in students:
                 student.number_of_days -= 1
@@ -64,12 +64,12 @@ def send_message_about_certificate(telegram_id, cert_link, discount_coupon, stud
                 bot.send_message(telegram_id,
                                  get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
                                                                 student.course.review_link,
-                                                                course_name=course_name_and_author) + ' (Доставлено)')
+                                                                course_name=course_name_and_author) + '\n\n(Доставлено)')
             else:
                 bot.send_message(telegram_id,
                                  get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
                                                                 student.course.review_link,
-                                                                course_name=course_name_and_author) + ' (Не доставлено)')
+                                                                course_name=course_name_and_author) + '\n\n(Не доставлено)')
         return True
     except ApiTelegramException:
         return False
