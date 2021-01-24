@@ -119,7 +119,7 @@ def add():
         flash('Новый студент был успешно добавлен!')
         return redirect(url_for('students.index', course_id=course_id))
     elif request.method == 'GET':
-        form.days.data = course.default_num_days
+        form.days.data = 0
 
     return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ",
                            form=form, for_edit=False)

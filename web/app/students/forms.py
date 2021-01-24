@@ -8,7 +8,7 @@ class AddOrEditStudentForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired('Поле не должно быть пустым'),
                                              Email('Формат Email некорректный')])
     lms_id = IntegerField('Lms Id', validators=[DataRequired('Поле не должно быть пустым')])
-    days = IntegerField('Количество дней', validators=[InputRequired('Поле не должно быть пустым')])
+    days = IntegerField('Количество дней (увеличивается при добавлении чека!)', validators=[InputRequired('Поле не должно быть пустым')])
 
     # Тут заблокированные формы
     lms_email_locked = StringField('Lms Email')
