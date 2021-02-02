@@ -1,0 +1,24 @@
+{% block myform %}
+     <p style="display:inline-block;width:30%">
+        {{ specificform1.label(class_="control-label") }}<br>
+        {{ specificform1(class_="form-control") }}<br>
+        {% for error in specificform1.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p style="display:inline-block;width:30%">
+        {{ specificform2.label(class_="control-label") }}<br>
+        {{ specificform2(class_="form-control") }}<br>
+        {% for error in specificform2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p style="display:inline-block;width:30%">
+        {{ specificform3.label(class_="control-label") }}<br>
+        {{ specificform3(class_="form-control") }}<br>
+        {% for error in specificform3.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <br/>
+{% endblock %}

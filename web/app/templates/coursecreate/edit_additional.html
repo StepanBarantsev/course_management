@@ -26,6 +26,19 @@
                             </div>
                         </div>
                     </details>
+                    <details>
+                        <summary style="font-size:20px">Домашние задания</summary>
+                        <br/>
+                        <div class="panel panel-default" style="width:200%">
+                            <div class="panel-body">
+                            {% for homework_entry_form in form.homeworks %}
+                                {{ homework_entry_form.hidden_tag() }}
+                                Домашнее задание {{ loop.index }} <br/>
+                                {% with %} {% set  specificform1 = homework_entry_form.shortname %} {% set  specificform2 = homework_entry_form.lms_id %} {% set  specificform3 = homework_entry_form.answer_link %} {% include "helpers/three_inputs_in_one_line.html" %} {% endwith %}
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
                 <p class="control-label">{{ form.submit() }}</p>

@@ -48,12 +48,19 @@ class CreateOrEditCourseForm(FlaskForm):
 
 class BlockForm(FlaskForm):
     link = StringField('Ссылка на материал')
-    required_task = StringField('Lms id задания (для открытия блока)', validators=[Optional('Введите число')])
+    required_task = IntegerField('Lms id задания (для открытия блока)', validators=[Optional('Введите число')])
+
+
+class HomeworkForm(FlaskForm):
+    lms_id = IntegerField('Lms id задания', validators=[Optional('Введите число')])
+    shortname = StringField('Краткое название')
+    answer_link = StringField('Ссылка на решение')
 
 
 class CreateOrEditCourseFormAdditional(FlaskForm):
 
     blocks = FieldList(FormField(BlockForm), min_entries=1)
+    homeworks = FieldList(FormField(HomeworkForm), min_entries=1)
 
     submit = SubmitField('Сохранить', render_kw={'class': "btn btn-success"})
 

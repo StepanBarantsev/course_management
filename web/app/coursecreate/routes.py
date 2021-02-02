@@ -128,7 +128,11 @@ def edit_additional():
 
     if course.author.id == current_user.id:
         blocks = course.get_all_not_deleted_blocks()
-        form = CreateOrEditCourseFormAdditional(blocks=[{"link": block.link, "required_task": block.required_task_lms_id} for block in blocks])
+        homeworks = course.get_all_not_deleted_homeworks()
+        form = CreateOrEditCourseFormAdditional(
+            blocks=[{"link": block.link, "required_task": block.required_task_lms_id} for block in blocks],
+            homeworks=[{"lms_id": homework.lms_id, "shortname": homework.short_name, "answer_link": homework.answer_link} for homework in homeworks]
+        )
 
         for index, block in enumerate(form.blocks):
             if block.required_task.data is None:
