@@ -128,51 +128,60 @@ def edit_additional():
 
     if course.author.id == current_user.id:
         blocks = course.get_all_not_deleted_blocks()
-        homeworks = course.get_all_not_deleted_homeworks()
+        homeworks_from_database = course.get_all_not_deleted_homeworks()
         form = CreateOrEditCourseFormAdditional(
             blocks=[{"link": block.link, "required_task": block.required_task_lms_id} for block in blocks],
-            homeworks=[{"lms_id": homework.lms_id, "shortname": homework.short_name, "answer_link": homework.answer_link} for homework in homeworks]
+            homeworks=[{"lms_id": homework.lms_id, "shortname": homework.short_name, "answer_link": homework.answer_link} for homework in homeworks_from_database]
         )
-
-        for index, block in enumerate(form.blocks):
-            if block.required_task.data is None:
-                task = LmsApiHelper.get_task_by_fullname(f'Оплата блока {index + 1}', LmsApiHelper.config_student_id, course.lms_id)
-                if task is not None:
-                    block.required_task.data = task['activityid']
-
-        flag_is_data_already_in_homeworks = False
-
-        for homework in form.homeworks:
-            if homework.answer_link.data is None:
-                homework.answer_link.data = "Ссылка отсутствует. Обратитесь к тренеру."
-
-                if homework.lms_id.data is not None or homework.shortname.data is not None:
-                    flag_is_data_already_in_homeworks = True
-
-        if not flag_is_data_already_in_homeworks:
-            all_tasks = LmsApiHelper.get_all_tasks_for_student(course.trainer_lms_id, course.lms_id)
-            all_tasks_array = []
-
-            for task in all_tasks:
-                if 'оплата' not in task['name'].lower():
-                    all_tasks_array.append({'lms_id': task['activityid'], 'name': LmsApiHelper.delete_symbols_except_dots_and_digits(task['name'])})
-
-            for index, homework in enumerate(form.homeworks):
-                try:
-                    homework.shortname.data = all_tasks_array[index]['name']
-                    homework.lms_id.data = all_tasks_array[index]['lms_id']
-                except:
-                    break
 
         if form.validate_on_submit():
             for index, block in enumerate(form.blocks):
                 database_block = course.get_block_by_num(index + 1)
                 database_block.link = block.link.data if block.link.data is not '' else None
                 database_block.required_task_lms_id = block.required_task.data if block.required_task.data is not '' else None
-                db.session.commit()
+
+            for index, homework in enumerate(form.homeworks):
+                db_homework = course.get_homework_by_num(index + 1)
+                db_homework.short_name = homework.shortname.data if homework.shortname.data is not '' else None
+                db_homework.answer_link = homework.answer_link.data if homework.answer_link.data is not '' else None
+                db_homework.lms_id = homework.lms_id.data if homework.lms_id.data is not '' else None
+
+            db.session.commit()
             flash('Данные успешно обновлены')
             return redirect(url_for('main.index'))
         elif request.method == 'GET':
+            for index, block in enumerate(form.blocks):
+                if block.required_task.data is None:
+                    task = LmsApiHelper.get_task_by_fullname(f'Оплата блока {index + 1}',
+                                                             LmsApiHelper.config_student_id, course.lms_id)
+                    if task is not None:
+                        block.required_task.data = task['activityid']
+
+            flag_is_data_already_in_homeworks = False
+
+            for homework in form.homeworks:
+                if homework.answer_link.data is None:
+                    homework.answer_link.data = "Ссылка отсутствует. Обратитесь к тренеру."
+                if homework.lms_id.data is not None or homework.shortname.data is not None:
+                    flag_is_data_already_in_homeworks = True
+
+            if not flag_is_data_already_in_homeworks:
+                all_tasks = LmsApiHelper.get_all_tasks_for_student(course.trainer_lms_id, course.lms_id)
+                all_tasks_array = []
+
+                for task in all_tasks:
+                    if 'оплата' not in task['name'].lower():
+                        all_tasks_array.append({'lms_id': task['activityid'],
+                                                'name': LmsApiHelper.delete_symbols_except_dots_and_digits(
+                                                    task['name'])})
+
+                for index, homework in enumerate(form.homeworks):
+                    try:
+                        homework.shortname.data = all_tasks_array[index]['name']
+                        homework.lms_id.data = all_tasks_array[index]['lms_id']
+                    except:
+                        break
+
             return render_template('coursecreate/edit_additional.html', title='Дополнительные настройки курса', form=form)
     else:
         return render_template('error/403.html', title='Ошибка доступа')
