@@ -72,6 +72,7 @@ class Course(db.Model):
     trainer_telegram_id = db.Column(db.Integer(), nullable=False)
     trainer_lms_id = db.Column(db.Integer(), nullable=False)
     num_of_blocks = db.Column(db.Integer(), nullable=False, default=1)
+    number_of_homeworks = db.Column(db.Integer(), nullable=False)
     is_certificate_needed = db.Column(db.Boolean(), nullable=False, default=False)
     default_num_days = db.Column(db.Integer(), nullable=False, default=30)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -155,6 +156,18 @@ class CourseBlock(db.Model):
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     check = db.relationship('Check', backref='block', uselist=False)
+
+
+class Homework(db.Model):
+    __tablename__ = 'homeworks'
+    id = db.Column(db.Integer(), primary_key=True)
+
+    lms_id = db.Column(db.Integer())
+    short_name = db.Column(db.String(100))
+    answer_link = db.Column(db.String(100))
+    deleted = db.Column(db.Boolean(), nullable=False, default=False)
+
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
 
 class Student(db.Model):
