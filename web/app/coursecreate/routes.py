@@ -1,6 +1,6 @@
 from flask_login import login_required
 from web.app.coursecreate import bp
-from web.app.models import Course, CourseBlock
+from web.app.models import Course, CourseBlock, Homework
 from web.app.coursecreate.forms import CreateOrEditCourseForm, CreateOrEditCourseFormAdditional
 from flask_login import current_user
 from web.app import db
@@ -29,12 +29,13 @@ def create():
                             trainer_telegram_id=form.trainer_telegram_id.data,
                             num_of_blocks=num_of_blocks, is_certificate_needed=form.is_certificate_needed.data,
                             default_num_days=form.default_number_of_days.data,
-                            review_link = form.review_link.data,
-                            number_of_homeworks=form.number_homeworks)
+                            review_link=form.review_link.data,
+                            number_of_homeworks=form.number_homeworks.data)
 
         db.session.add(new_course)
         db.session.commit()
         create_blocks(new_course, num_of_blocks, db)
+        create_homeworks(new_course, form.number_homeworks.data, db)
         flash('Новый курс был успешно создан!')
         return redirect(url_for('main.index'))
 
@@ -70,6 +71,7 @@ def edit():
                     num_of_blocks = form.number_of_blocks.data
 
             create_blocks(course, num_of_blocks, db)
+            create_homeworks(course, form.number_homeworks.data, db)
 
             db.session.execute(update(Course).where(Course.id == course_id).values(name=form.name.data, lms_id=form.lms_id.data,
                                                                                    trainer_lms_id=form.trainer_lms_id.data,
@@ -78,7 +80,7 @@ def edit():
                                                                                    is_certificate_needed=form.is_certificate_needed.data,
                                                                                    default_num_days=form.default_number_of_days.data,
                                                                                    review_link=form.review_link.data,
-                                                                                   number_of_homeworks=form.number_homeworks))
+                                                                                   number_of_homeworks=form.number_homeworks.data))
             db.session.commit()
             flash('Данные курса были успешно изменены!')
             return redirect(url_for('main.index'))
@@ -90,7 +92,7 @@ def edit():
             form.is_certificate_needed.data = course.is_certificate_needed
             form.default_number_of_days.data = course.default_num_days
             form.review_link.data = course.review_link
-            form.number_homeworks = course.number_of_homeworks
+            form.number_homeworks.data = course.number_of_homeworks
 
             if course.num_of_blocks == 1:
                 form.is_more_then_one_block.data = False
@@ -159,5 +161,16 @@ def create_blocks(course, num, db):
 
     db.session.commit()
 
+
+def create_homeworks(course, num, db):
+    if course.get_all_not_deleted_homeworks().count() > num:
+        for i in range(course.get_all_not_deleted_homeworks().count(), num, -1):
+            course.delete_homework_by_num(i)
+    else:
+        for i in range(course.get_all_not_deleted_homeworks().count() + 1, num + 1):
+            new_homework = Homework(number=i, course_id=course.id)
+            db.session.add(new_homework)
+
+    db.session.commit()
 
 

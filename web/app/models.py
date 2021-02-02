@@ -82,6 +82,7 @@ class Course(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     blocks = db.relationship('CourseBlock', backref='course', lazy='dynamic')
+    homeworks = db.relationship('Homework', backref='course', lazy='dynamic')
     students = db.relationship('Student', backref='course', lazy='dynamic')
 
     def __repr__(self):
@@ -142,6 +143,15 @@ class Course(db.Model):
     def get_block_by_num(self, num):
         return self.get_all_not_deleted_blocks().filter_by(number=num).first()
 
+    def get_all_not_deleted_homeworks(self):
+        return self.homeworks.filter_by(deleted=False)
+
+    def delete_homework_by_num(self, num):
+        self.get_all_not_deleted_homeworks().filter_by(number=num).first().deleted = True
+
+    def get_homework_by_num(self, num):
+        return self.get_all_not_deleted_homeworks().filter_by(number=num).first()
+
 
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'
@@ -166,6 +176,9 @@ class Homework(db.Model):
     short_name = db.Column(db.String(100))
     answer_link = db.Column(db.String(100))
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
+
+    # Невидимое поле нужное для корректного удаления и добавления из при изменении их количества
+    number = db.Column(db.Integer(), nullable=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
