@@ -140,6 +140,30 @@ def edit_additional():
                 if task is not None:
                     block.required_task.data = task['activityid']
 
+        flag_is_data_already_in_homeworks = False
+
+        for homework in form.homeworks:
+            if homework.answer_link.data is None:
+                homework.answer_link.data = "Ссылка отсутствует. Обратитесь к тренеру."
+
+                if homework.lms_id.data is not None or homework.shortname.data is not None:
+                    flag_is_data_already_in_homeworks = True
+
+        if not flag_is_data_already_in_homeworks:
+            all_tasks = LmsApiHelper.get_all_tasks_for_student(course.trainer_lms_id, course.lms_id)
+            all_tasks_array = []
+
+            for task in all_tasks:
+                if 'оплата' not in task['name'].lower():
+                    all_tasks_array.append({'lms_id': task['activityid'], 'name': LmsApiHelper.delete_symbols_except_dots_and_digits(task['name'])})
+
+            for index, homework in enumerate(form.homeworks):
+                try:
+                    homework.shortname.data = all_tasks_array[index]['name']
+                    homework.lms_id.data = all_tasks_array[index]['lms_id']
+                except:
+                    break
+
         if form.validate_on_submit():
             for index, block in enumerate(form.blocks):
                 database_block = course.get_block_by_num(index + 1)
