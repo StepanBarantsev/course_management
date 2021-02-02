@@ -78,6 +78,7 @@ class Course(db.Model):
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
     review_link = db.Column(db.String(300), nullable=False)
+    help = db.Column(db.Text(), nullable=False, default="К сожалению, к данному курсу отсутствуют какие-либо вспомогательные материалы.")
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
