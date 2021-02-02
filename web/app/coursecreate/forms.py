@@ -13,8 +13,12 @@ class CreateOrEditCourseForm(FlaskForm):
     review_link = StringField('Где оставить отзыв?', validators=[DataRequired('Поле не должно быть пустым')])
 
     default_number_of_days = IntegerField('Количество дней поддержки за блок',
-                                          validators=[Optional('Введите число'),
+                                          validators=[DataRequired('Поле не должно быть пустым'), Optional('Введите число'),
                                                       NumberRange(1, 1000, "Число должно быть не больше 1000 и не меньше 1")])
+
+    number_homeworks = IntegerField('Количество домашних заданий',
+                                    validators=[DataRequired('Поле не должно быть пустым'), Optional('Введите число'),
+                                                NumberRange(1, 1000, "Число должно быть не больше 1000 и не меньше 1")])
 
     is_more_then_one_block = BooleanField('Курс разделяется на блоки?')
     number_of_blocks = IntegerField('Количество блоков', validators=[Optional('Введите число'),
