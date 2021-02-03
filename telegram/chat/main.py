@@ -8,8 +8,6 @@ from telegram.chat.singleton_bot import bot
 from telegram.chat.db_session import session_scope, get_telegram_session_or_create_new, get_telegram_session_or_create_new_with_existing_db_session
 
 
-
-
 ################
 #  DECORATORS  #
 ################
