@@ -38,6 +38,9 @@ def job():
 
             try:
                 bot.send_message(course.author.telegram_id, message_about_days)
+                trainer = get_trainer_by_telegram_id(course.author.telegram_id, session)
+                trainer.flag_is_messages_from_bot_is_delivered = True
+                session.commit()
             except:
                 trainer = get_trainer_by_telegram_id(course.author.telegram_id, session)
                 trainer.flag_is_messages_from_bot_is_delivered = False
@@ -82,6 +85,9 @@ def send_message_about_certificate(telegram_id, cert_link, discount_coupon, stud
                                                                     student.course.review_link,
                                                                     date_after_month,
                                                                     course_name=course_name_and_author) + '\n\n(Не доставлено)')
+                trainer = get_trainer_by_telegram_id(telegram_id, session)
+                trainer.flag_is_messages_from_bot_is_delivered = True
+                session.commit()
             except ApiTelegramException:
                 trainer = get_trainer_by_telegram_id(telegram_id, session)
                 trainer.flag_is_messages_from_bot_is_delivered = False
