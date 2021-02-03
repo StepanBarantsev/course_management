@@ -10,7 +10,7 @@ def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
 
         names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT', 'NUM_OF_DAYS_SCHEDULED', 'CERTIFICATE',
                                         'HOMEWORK_SOLUTION', 'MESSAGE_ABOUT_HOMEWORK_SOLUTION', 'HOMEWORK_IS_NOT_COMPLETED', 'HOMEWORK_NOT_EXIST',
-                                        'HELP_COURSE']
+                                        'HELP_COURSE', 'BLOCKS_MESSAGE']
 
         if name in names_required_course_prefix:
             if telegram_id is not None:
