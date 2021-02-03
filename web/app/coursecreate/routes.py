@@ -30,7 +30,8 @@ def create():
                             num_of_blocks=num_of_blocks, is_certificate_needed=form.is_certificate_needed.data,
                             default_num_days=form.default_number_of_days.data,
                             review_link=form.review_link.data,
-                            number_of_homeworks=form.number_homeworks.data)
+                            number_of_homeworks=form.number_homeworks.data,
+                            help=form.help_field.data)
 
         db.session.add(new_course)
         db.session.commit()
@@ -47,6 +48,7 @@ def create():
         if current_user.lms_id is not None:
             form.trainer_lms_id.data = current_user.lms_id
 
+        form.help_field.data = "Вспомогательная информация по курсу отсутствует"
         form.default_number_of_days.data = current_app.config['DEFAULT_NUM_OF_DAYS']
 
     return render_template('coursecreate/editcreate.html', title='Создать курс', form=form)
@@ -80,7 +82,8 @@ def edit():
                                                                                    is_certificate_needed=form.is_certificate_needed.data,
                                                                                    default_num_days=form.default_number_of_days.data,
                                                                                    review_link=form.review_link.data,
-                                                                                   number_of_homeworks=form.number_homeworks.data))
+                                                                                   number_of_homeworks=form.number_homeworks.data,
+                                                                                   help=form.help_field.data))
             db.session.commit()
             flash('Данные курса были успешно изменены!')
             return redirect(url_for('main.index'))
@@ -93,6 +96,7 @@ def edit():
             form.default_number_of_days.data = course.default_num_days
             form.review_link.data = course.review_link
             form.number_homeworks.data = course.number_of_homeworks
+            form.help_field.data = course.help
 
             if course.num_of_blocks == 1:
                 form.is_more_then_one_block.data = False

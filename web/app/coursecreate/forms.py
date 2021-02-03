@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, BooleanField, FieldList, FormField
+from wtforms import StringField, SubmitField, IntegerField, BooleanField, FieldList, FormField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Optional, NumberRange
 from web.app.models import Course
 
@@ -11,6 +11,7 @@ class CreateOrEditCourseForm(FlaskForm):
     trainer_lms_id = IntegerField('LMS ID Тренера', validators=[DataRequired('Введите число')])
     trainer_telegram_id = IntegerField('Telegram ID тренера', validators=[DataRequired('Введите число')])
     review_link = StringField('Где оставить отзыв?', validators=[DataRequired('Поле не должно быть пустым')])
+    help_field = TextAreaField('Вспомогательная информация о курсе', validators=[DataRequired('Поле не должно быть пустым')])
 
     default_number_of_days = IntegerField('Количество дней поддержки за блок',
                                           validators=[DataRequired('Поле не должно быть пустым'), Optional('Введите число'),

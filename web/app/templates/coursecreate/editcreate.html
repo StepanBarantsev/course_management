@@ -20,6 +20,7 @@
                     {% with %} {% set  specificform = form.trainer_telegram_id %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.trainer_lms_id %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.review_link %} {% include "helpers/field_form.html" %} {% endwith %}
+                    {% with %} {% set  specificform = form.help_field %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.number_homeworks %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform = form.default_number_of_days %} {% include "helpers/field_form.html" %} {% endwith %}
                     {% with %} {% set  specificform_boolean = form.is_more_then_one_block %} {% set  specificform_hidden = form.number_of_blocks %} {% include "helpers/boolean_and_hidden_field.html" %} {% endwith %}
