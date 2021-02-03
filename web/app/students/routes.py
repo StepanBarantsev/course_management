@@ -145,6 +145,11 @@ def edit():
             else:
                 telegram_id = form.telegram_id_locked.data
 
+            if form.cert_link_locked.data == "":
+                cert_link = None
+            else:
+                cert_link = form.cert_link_locked.data
+
             db.session.execute(update(Student).where(Student.id == student_id).values(
                               name=form.name_locked.data,
                               email=form.email.data,
@@ -152,7 +157,8 @@ def edit():
                               number_of_days=form.days.data,
                               lms_id=form.lms_id.data,
                               registration_code=form.registration_code_locked.data,
-                              telegram_id=telegram_id))
+                              telegram_id=telegram_id,
+                              cert_link=cert_link))
             db.session.commit()
             flash('Данные о студенте были успешно изменены!')
             return redirect(url_for('students.index', course_id=course_id))
@@ -164,6 +170,7 @@ def edit():
             form.lms_id.data = student.lms_id
             form.registration_code_locked.data = student.registration_code
             form.telegram_id_locked.data = student.telegram_id
+            form.cert_link_locked.data = student.cert_link
 
         return render_template('students/addedit.html', title="Редактировние информации о студенте",
                                course_name=course_name, header="Редактирование студента, обучающегося на курсе ",

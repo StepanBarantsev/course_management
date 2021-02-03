@@ -7,6 +7,7 @@ $(document).ready(function() {
             $("#telegram_id_locked").removeAttr("readonly")
             $("#name_locked").removeAttr("readonly")
             $("#registration_code_locked").removeAttr("readonly")
+            $("#cert_link_locked").removeAttr("readonly")
         }
         else {
             $("#unlock_fields").attr("data-flag", "True")
@@ -15,6 +16,7 @@ $(document).ready(function() {
             $("#telegram_id_locked").prop("readonly",true)
             $("#name_locked").prop("readonly",true)
             $("#registration_code_locked").prop("readonly",true)
+            $("#cert_link_locked").prop("readonly",true)
         }
     });
 });
