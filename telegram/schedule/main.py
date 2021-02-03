@@ -94,7 +94,6 @@ def send_message_about_certificate(telegram_id, cert_link, discount_coupon, stud
                 session.commit()
 
 
-
 def try_to_generate_cert_to_student(student):
     if LmsApiHelper.can_we_give_certificate_to_student(student.lms_id, student.course.lms_id):
         cert_link = 'http://cert.software-testing.ru/' + FaunaHelper.create_certify(student)
