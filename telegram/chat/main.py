@@ -3,9 +3,11 @@ import telegram.chat.states as states
 from telegram.chat.helpers import print_available_courses_as_buttons, \
     parse_callback_data, get_student_by_email_and_course_id, get_student_by_id, \
     create_string_with_course_and_author_by_course_id, get_all_active_courses_by_telegram_id,\
-    print_available_courses_as_buttons_by_telegram_id, get_student_by_telegram_id_and_course_id
+    print_available_courses_as_buttons_by_telegram_id, get_student_by_telegram_id_and_course_id, \
+    get_course_by_id
 from telegram.chat.singleton_bot import bot
 from telegram.chat.db_session import session_scope, get_telegram_session_or_create_new, get_telegram_session_or_create_new_with_existing_db_session
+from api_helper.lms_api_helper import LmsApiHelper
 
 
 ################
@@ -81,6 +83,17 @@ def getdays(message):
                                                                  get_student_by_telegram_id_and_course_id(telegram_session.current_course_id, message.chat.id, session).number_of_days))
 
 
+@bot.message_handler(commands=['getsolution'])
+@no_current_course_decorator
+def getsolution(message):
+    with session_scope() as session:
+        telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
+        chat_id = message.chat.id
+        bot.send_message(chat_id, get_message_with_course_prefix('MESSAGE_ABOUT_HOMEWORK_SOLUTION', chat_id))
+        telegram_session.state = states.WAITING_FOR_HOMEWORK_NUMBER
+        session.commit()
+
+
 @bot.message_handler(commands=['register'])
 def register(message):
     with session_scope() as session:
@@ -140,6 +153,33 @@ def waiting_for_authcode(message):
             else:
                 bot.send_message(message.chat.id, get_message_with_course_prefix('AUTHCODE_ERROR', message.chat.id))
                 return
+
+
+@bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id).state == states.WAITING_FOR_HOMEWORK_NUMBER)
+def waiting_for_homework_number(message):
+    with session_scope() as session:
+
+        homework_short_name = message.text
+        telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
+        course_id = telegram_session.current_course_id
+        course = get_course_by_id(course_id, session)
+        student = get_student_by_telegram_id_and_course_id(course_id, message.chat.id, session)
+        homework = student.course.get_homework_by_short_name(homework_short_name)
+
+        if student is None:
+            bot.send_message(message.chat.id, get_message_with_course_prefix('UNKNOWN_ERROR', message.chat.id))
+        else:
+            try:
+                if LmsApiHelper.is_task_completed(student.lms_id, homework_short_name, course.lms_id):
+                    bot.send_message(message.chat.id, get_message_with_course_prefix('HOMEWORK_SOLUTION', message.chat.id, homework.answer_link))
+                    telegram_session.state = states.REGISTERED
+                    session.commit()
+                else:
+                    bot.send_message(message.chat.id, get_message_with_course_prefix('HOMEWORK_IS_NOT_COMPLETED', message.chat.id))
+            except TypeError:
+                bot.send_message(message.chat.id, get_message_with_course_prefix('HOMEWORK_NOT_EXIST', message.chat.id))
+            except AttributeError:
+                bot.send_message(message.chat.id, get_message_with_course_prefix('HOMEWORK_SOLUTION', message.chat.id, "Решение к данному заданию не найдено. Обратитесь к тренеру с этим вопросом."))
 
 
 #################

@@ -50,11 +50,15 @@ def create_string_with_course_and_author_by_course_id(course_id, session):
     if course_id is None:
         return None
 
-    course = session.query(Course).filter_by(deleted=0).filter_by(id=int(course_id)).first()
+    course = get_course_by_id(course_id, session)
     if course is None:
         return None
     else:
         return f'{course.name} [{course.author.name}]'
+
+
+def get_course_by_id(course_id, session):
+    return session.query(Course).filter_by(deleted=0).filter_by(id=int(course_id)).first()
 
 
 def get_all_active_students_by_telegram_id(telegram_id, session):

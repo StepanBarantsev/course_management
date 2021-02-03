@@ -153,6 +153,9 @@ class Course(db.Model):
     def get_homework_by_num(self, num):
         return self.get_all_not_deleted_homeworks().filter_by(number=num).first()
 
+    def get_homework_by_short_name(self, short_name):
+        return self.get_all_not_deleted_homeworks().filter_by(short_name=short_name).first()
+
 
 class CourseBlock(db.Model):
     __tablename__ = 'course_blocks'
