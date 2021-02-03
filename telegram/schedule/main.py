@@ -8,6 +8,7 @@ from telebot.apihelper import ApiTelegramException
 from api_helper.lms_api_helper import LmsApiHelper
 from api_helper.fauna_helper import FaunaHelper
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 def job():
@@ -55,20 +56,23 @@ def send_message_about_days_to_student(student):
 
 def send_message_about_certificate(telegram_id, cert_link, discount_coupon, student, is_delivered=None):
     try:
+        date_after_month = (datetime.today() + relativedelta(months=1)).strftime("%d.%m.%Y")
         course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
         if is_delivered is None:
-            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, course_name=course_name_and_author))
+            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, course_name=course_name_and_author))
         # Сообщение для теренера о том, доставлено ли студенту сообщение
         else:
             if is_delivered:
                 bot.send_message(telegram_id,
                                  get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
                                                                 student.course.review_link,
+                                                                date_after_month,
                                                                 course_name=course_name_and_author) + '\n\n(Доставлено)')
             else:
                 bot.send_message(telegram_id,
                                  get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
                                                                 student.course.review_link,
+                                                                date_after_month,
                                                                 course_name=course_name_and_author) + '\n\n(Не доставлено)')
         return True
     except ApiTelegramException:
