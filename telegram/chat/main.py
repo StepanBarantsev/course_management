@@ -85,6 +85,32 @@ def getsolution(message):
         session.commit()
 
 
+@bot.message_handler(commands=['getavailableblocks'])
+@no_current_course_decorator
+def getavailableblocks(message):
+    with session_scope() as session:
+        telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
+        course_id = telegram_session.current_course_id
+        chat_id = message.chat.id
+        student = get_student_by_telegram_id_and_course_id(course_id, message.chat.id, session)
+        checks = student.get_all_not_deleted_checks()
+
+        final_string = ''
+        for check in checks:
+            # Блок может быть None если была консультация
+            if check.block is not None:
+                if check.block.link is None:
+                    final_string += f'Блок {check.block.number}: Ссылка на блок отсутствует. Уточните данный вопрос у тренера!\n'
+                else:
+                    final_string += f'Блок {check.block.number}: {check.block.link}\n'
+
+        if final_string == '':
+            final_string = "У Вас отсутствуют приобретенные блоки!"
+
+        bot.send_message(chat_id, get_message_with_course_prefix('BLOCKS_MESSAGE', chat_id, final_string))
+        session.commit()
+
+
 @bot.message_handler(commands=['register'])
 def register(message):
     with session_scope() as session:
