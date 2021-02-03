@@ -1,4 +1,4 @@
-from web.app.models import TelegramState, Course, Student
+from web.app.models import Course, Student, User
 from telebot import types
 
 
@@ -89,3 +89,6 @@ def try_to_send_message_to_student(student, message, bot):
     if student.telegram_id is not None:
         bot.send_message(student.telegram_id, message)
 
+
+def get_trainer_by_telegram_id(telegram_id, session):
+    return session.query(User).filter_by(telegram_id=telegram_id).first()

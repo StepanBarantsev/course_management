@@ -9,6 +9,7 @@ from api_helper.lms_api_helper import LmsApiHelper
 from api_helper.fauna_helper import FaunaHelper
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from telegram.chat.helpers import get_trainer_by_telegram_id
 
 
 def job():
@@ -38,7 +39,9 @@ def job():
             try:
                 bot.send_message(course.author.telegram_id, message_about_days)
             except:
-                pass
+                trainer = get_trainer_by_telegram_id(course.author.telegram_id, session)
+                trainer.flag_is_messages_from_bot_is_delivered = False
+                session.commit()
 
             session.commit()
 
@@ -55,28 +58,35 @@ def send_message_about_days_to_student(student):
 
 
 def send_message_about_certificate(telegram_id, cert_link, discount_coupon, student, is_delivered=None):
-    try:
+    with session_scope() as session:
         date_after_month = (datetime.today() + relativedelta(months=1)).strftime("%d.%m.%Y")
         course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
         if is_delivered is None:
-            bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, course_name=course_name_and_author))
+            try:
+                bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, course_name=course_name_and_author))
+                return True
+            except ApiTelegramException:
+                return False
         # Сообщение для теренера о том, доставлено ли студенту сообщение
         else:
-            if is_delivered:
-                bot.send_message(telegram_id,
-                                 get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
-                                                                student.course.review_link,
-                                                                date_after_month,
-                                                                course_name=course_name_and_author) + '\n\n(Доставлено)')
-            else:
-                bot.send_message(telegram_id,
-                                 get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
-                                                                student.course.review_link,
-                                                                date_after_month,
-                                                                course_name=course_name_and_author) + '\n\n(Не доставлено)')
-        return True
-    except ApiTelegramException:
-        return False
+            try:
+                if is_delivered:
+                    bot.send_message(telegram_id,
+                                     get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
+                                                                    student.course.review_link,
+                                                                    date_after_month,
+                                                                    course_name=course_name_and_author) + '\n\n(Доставлено)')
+                else:
+                    bot.send_message(telegram_id,
+                                     get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
+                                                                    student.course.review_link,
+                                                                    date_after_month,
+                                                                    course_name=course_name_and_author) + '\n\n(Не доставлено)')
+            except ApiTelegramException:
+                trainer = get_trainer_by_telegram_id(telegram_id, session)
+                trainer.flag_is_messages_from_bot_is_delivered = False
+                session.commit()
+
 
 
 def try_to_generate_cert_to_student(student):
