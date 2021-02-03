@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     telegram_nickname = db.Column(db.String(100))
     lms_id = db.Column(db.Integer())
     flag_emails_from_default_mail = db.Column(db.Boolean(), nullable=False, default=False)
+    flag_is_messages_from_bot_is_delivered = db.Column(db.Boolean(), nullable=False, default=True)
 
     courses = db.relationship('Course', backref='author', lazy='dynamic')
 
