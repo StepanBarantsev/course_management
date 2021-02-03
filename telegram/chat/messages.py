@@ -8,7 +8,9 @@ def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
     with session_scope() as session:
         message = get_message(name, *args)
 
-        names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT', 'NUM_OF_DAYS_SCHEDULED', 'CERTIFICATE']
+        names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT', 'NUM_OF_DAYS_SCHEDULED', 'CERTIFICATE',
+                                        'HOMEWORK_SOLUTION', 'MESSAGE_ABOUT_HOMEWORK_SOLUTION', 'HOMEWORK_IS_NOT_COMPLETED', 'HOMEWORK_NOT_EXIST',
+                                        'HELP_COURSE']
 
         if name in names_required_course_prefix:
             if telegram_id is not None:
@@ -26,9 +28,6 @@ def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
 
 
 def get_message(name, *args):
-
-    if name == 'HELP_TEXT':
-        return '''Чтобы зарегистрироваться на новый курс, введите команду /register'''
 
     if name == 'ENTER_EMAIL':
         return f'''Вы выбрали курс {args[0]}
@@ -150,3 +149,32 @@ Telegram: https://t.me/{args[2]}
 
     if name == "HOMEWORK_NOT_EXIST":
         return "Вы ввели название несуществующей домашней работы. Попробуйте ввести другое название или напишите тренеру."
+
+    if name == 'HELP':
+        return '''Здравствуйте. Данный бот предназначен для предоставления студентам различного рода информации о курсе.
+        
+Бот поддерживает следующие команды:
+
+/register -- позволяет зарегистрироваться на курс. Для успешной регистрации нужно будет по запросу бота ввести e-mail с которым Вы зарегистрированы в LMS, а также код регистрации, пришедший Вам на почту. 
+Регистрироваться можно на несколько курсов. При взаимодействии с ботом активным считается один курс.
+
+/current -- позволяет узнать, какой курс сейчас считается активным.
+
+/checkout -- позволяет сделать активным любой из курсов на которых Вы зарегистрированы.
+
+/help -- получить справку по командам бота и по текущему курсу.
+
+/getdays -- бот отдаст количество дней до окончания срока поддержки активного курса.
+
+/getavailableblocks -- бот отдаст все блоки со всеми видеозаписями и дз, которые у Вас приобретены для активного курса.
+
+/getsolution -- позволяет получить решение по домашнему заданию активного курса. Решение можно получить только если задание выполнено на максимальный балл.
+
+Если с ботом какие-то проблемы или есть какие-то пожелания к нему, то пишите мне в личные сообщения в telegram
+
+При нахождении ошибки в решении задач, сообщите об этом в личные сообщения тренеру.'''
+
+    if name == 'HELP_COURSE':
+        return f'''Вспомогательные инструкции, касающиеся активного в данный момент курса:
+
+{args[0]}'''

@@ -41,15 +41,6 @@ def hello(message):
         bot.send_message(chat_id, get_message_with_course_prefix('HELP_TEXT', chat_id))
 
 
-@bot.message_handler(commands=['help'])
-def help(message):
-    with session_scope() as session:
-        get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
-
-        chat_id = message.chat.id
-        bot.send_message(chat_id, get_message_with_course_prefix('HELP_TEXT', chat_id))
-
-
 @bot.message_handler(commands=['current'])
 def current(message):
     with session_scope() as session:
@@ -108,6 +99,17 @@ def register(message):
         session.commit()
 
 
+@bot.message_handler(commands=['help'])
+def help(message):
+    with session_scope() as session:
+        telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
+        course_id = telegram_session.current_course_id
+        bot.send_message(message.chat.id, get_message_with_course_prefix('HELP', message.chat.id))
+        if course_id is not None:
+            course = get_course_by_id(course_id, session)
+            bot.send_message(message.chat.id, get_message_with_course_prefix('HELP_COURSE', message.chat.id, course.help))
+
+
 @bot.message_handler(func=lambda message: get_telegram_session_or_create_new(message.chat.id).state == states.WAITING_FOR_EMAIL_REGISTER)
 def waiting_for_email(message):
     with session_scope() as session:
@@ -137,7 +139,6 @@ def waiting_for_authcode(message):
 
         authcode = message.text
         telegram_session = get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
-
         student = get_student_by_id(telegram_session.temp_course_student_id, session)
 
         if student is None:
