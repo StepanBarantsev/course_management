@@ -213,11 +213,15 @@ class Student(db.Model):
 
     @staticmethod
     def delete_student_by_id(student_id):
-        Student.query.filter_by(id=student_id).first().deleted = True
+        Student.get_student_by_id(student_id).deleted = True
+
+    @staticmethod
+    def get_student_by_id(student_id):
+        return Student.query.filter_by(id=student_id).first()
 
     @staticmethod
     def freeze_or_unfreeze_student_by_id(student_id):
-        student = Student.query.filter_by(id=student_id).first()
+        student = Student.get_student_by_id(student_id)
         if student.status == Student.student_statuses["freezed"]:
             student.status = Student.student_statuses["active"]
         else:
@@ -225,7 +229,7 @@ class Student(db.Model):
 
     @staticmethod
     def finish_or_unfinish_student_by_id(student_id):
-        student = Student.query.filter_by(id=student_id).first()
+        student = Student.get_student_by_id(student_id)
         if student.status == Student.student_statuses["finished"]:
             student.status = Student.student_statuses["active"]
         else:
@@ -233,7 +237,7 @@ class Student(db.Model):
 
     @staticmethod
     def drop_or_undrop_student_by_id(student_id):
-        student = Student.query.filter_by(id=student_id).first()
+        student = Student.get_student_by_id(student_id)
         if student.status == Student.student_statuses["dropped"]:
             student.status = Student.student_statuses["active"]
         else:
@@ -241,7 +245,7 @@ class Student(db.Model):
 
     @staticmethod
     def add_days_to_student(student_id):
-        student = Student.query.filter_by(id=student_id).first()
+        student = Student.get_student_by_id(student_id)
         course = Course.get_course_by_id(student.course_id)
         student.number_of_days += course.default_num_days
         return student.number_of_days

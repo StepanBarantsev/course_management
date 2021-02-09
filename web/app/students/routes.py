@@ -96,33 +96,35 @@ def add():
     course_id = request.args.get('course_id', type=int)
     course = db.session.query(Course).filter(Course.id == course_id).first()
     course_name = course.name
-
     form = AddOrEditStudentForm(course)
 
-    if form.validate_on_submit():
-        lms_id = form.lms_id.data
-        info_about_student_from_lms = LmsApiHelper.get_student_by_lms_id(lms_id)
+    if course.author.id == current_user.id:
+        if form.validate_on_submit():
+            lms_id = form.lms_id.data
+            info_about_student_from_lms = LmsApiHelper.get_student_by_lms_id(lms_id)
 
-        new_student = Student(name=info_about_student_from_lms['fullname'],
-                              email=form.email.data,
-                              lms_email=info_about_student_from_lms['email'],
-                              number_of_days=form.days.data,
-                              lms_id=lms_id,
-                              registration_code=generate_random_registration_code(),
-                              telegram_id=None,
-                              deleted=False,
-                              course_id=course_id,
-                              status=Student.student_statuses["active"])
+            new_student = Student(name=info_about_student_from_lms['fullname'],
+                                  email=form.email.data,
+                                  lms_email=info_about_student_from_lms['email'],
+                                  number_of_days=form.days.data,
+                                  lms_id=lms_id,
+                                  registration_code=generate_random_registration_code(),
+                                  telegram_id=None,
+                                  deleted=False,
+                                  course_id=course_id,
+                                  status=Student.student_statuses["active"])
 
-        db.session.add(new_student)
-        db.session.commit()
-        flash('Новый студент был успешно добавлен!')
-        return redirect(url_for('students.index', course_id=course_id))
-    elif request.method == 'GET':
-        form.days.data = 0
+            db.session.add(new_student)
+            db.session.commit()
+            flash('Новый студент был успешно добавлен!')
+            return redirect(url_for('students.index', course_id=course_id))
+        elif request.method == 'GET':
+            form.days.data = 0
 
-    return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ",
-                           form=form, for_edit=False)
+        return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ",
+                               form=form, for_edit=False)
+    else:
+        return render_template('error/403.html', title='Ошибка доступа')
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
@@ -184,12 +186,17 @@ def edit():
 def freeze():
     try:
         student_id = int(request.form['student_id'])
+        student = Student.get_student_by_id(student_id)
     except:
         flash('Что-то пошло не так. Подождите несколько секунд и попробуйте заморозить студента снова.')
         return {"error": True}
-    Student.freeze_or_unfreeze_student_by_id(student_id)
-    db.session.commit()
-    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+    if student.course.author.id == current_user.id:
+        Student.freeze_or_unfreeze_student_by_id(student_id)
+        db.session.commit()
+        return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+    else:
+        flash('Вы не имеете права редактировать этого студента!')
+        return {"error": True}
 
 
 @bp.route('/finish', methods=['POST'])
@@ -197,12 +204,17 @@ def freeze():
 def finish():
     try:
         student_id = int(request.form['student_id'])
+        student = Student.get_student_by_id(student_id)
     except:
         flash('Что-то пошло не так. Подождите несколько секунд и попробуйте завершить курс для студента снова.')
         return {"error": True}
-    Student.finish_or_unfinish_student_by_id(student_id)
-    db.session.commit()
-    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+    if student.course.author.id == current_user.id:
+        Student.finish_or_unfinish_student_by_id(student_id)
+        db.session.commit()
+        return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+    else:
+        flash('Вы не имеете права редактировать этого студента!')
+        return {"error": True}
 
 
 @bp.route('/drop', methods=['POST'])
@@ -210,12 +222,17 @@ def finish():
 def drop():
     try:
         student_id = int(request.form['student_id'])
+        student = Student.get_student_by_id(student_id)
     except:
         flash('Что-то пошло не так. Подождите несколько секунд и попробуйте выполнить действие снова.')
         return {"error": True}
-    Student.drop_or_undrop_student_by_id(student_id)
-    db.session.commit()
-    return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+    if student.course.author.id == current_user.id:
+        Student.drop_or_undrop_student_by_id(student_id)
+        db.session.commit()
+        return jsonify({"color": Student.query.filter_by(id=student_id).first().return_color_of_td(), "error": False})
+    else:
+        flash('Вы не имеете права редактировать этого студента!')
+        return {"error": True}
 
 
 @bp.route('/add_days', methods=['POST'])
@@ -223,12 +240,17 @@ def drop():
 def add_days():
     try:
         student_id = int(request.form['student_id'])
+        student = Student.get_student_by_id(student_id)
     except:
         flash('Что-то пошло не так. Подождите несколько секунд и попробуйте выполнить действие снова.')
         return {"error": True}
-    number_of_days = Student.add_days_to_student(student_id)
-    db.session.commit()
-    return jsonify({"error": False, "num_days": number_of_days})
+    if student.course.author.id == current_user.id:
+        number_of_days = Student.add_days_to_student(student_id)
+        db.session.commit()
+        return jsonify({"error": False, "num_days": number_of_days})
+    else:
+        flash('Вы не имеете права редактировать этого студента!')
+        return {"error": True}
 
 
 @bp.route('/autocomplete', methods=['GET'])
@@ -248,5 +270,9 @@ def autocomplete():
           [student.email for student in students if student.email.startswith(q)] + \
           [student.name for student in students if student.name.startswith(q)] + \
           [str(student.telegram_id) for student in students if (student.telegram_id is not None and str(student.telegram_id).startswith(q))]
-
-    return jsonify(lst)
+    
+    if course.author.id == current_user.id:
+        return jsonify(lst)
+    else:
+        flash('Вы не имеете доступа к этому курсу!')
+        return {"error": True}
