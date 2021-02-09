@@ -10,7 +10,7 @@ def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
 
         names_required_course_prefix = ['NUM_OF_DAYS', 'FIRST_PAYMENT', 'NO_FIRST_PAYMENT', 'NUM_OF_DAYS_SCHEDULED', 'CERTIFICATE',
                                         'HOMEWORK_SOLUTION', 'MESSAGE_ABOUT_HOMEWORK_SOLUTION', 'HOMEWORK_IS_NOT_COMPLETED', 'HOMEWORK_NOT_EXIST',
-                                        'HELP_COURSE', 'BLOCKS_MESSAGE']
+                                        'HELP_COURSE', 'BLOCKS_MESSAGE', 'ZERO_DAYS_SCHEDULED']
 
         if name in names_required_course_prefix:
             if telegram_id is not None:
@@ -76,6 +76,11 @@ def get_message(name, *args):
 
     if name == 'NUM_OF_DAYS':
         return f'''Оставшееся количество дней: {args[0]}'''
+
+    if name == 'ZERO_DAYS_SCHEDULED':
+        return f'''Добрый день.
+
+У Вас закончилось время поддержки. Для продолжения прохождения курса следует продлить время или приобрести новый блок (см. правила).'''
 
     if name == 'NUM_OF_DAYS_SCHEDULED':
         return f'''Добрый день.
