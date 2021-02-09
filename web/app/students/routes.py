@@ -52,7 +52,6 @@ def index():
     if sort_type == 'days_reversed':
         students = students.order_by(Student.number_of_days.desc())
 
-
     students = students.paginate(page, current_app.config['ELEMENTS_PER_PAGE'], False)
     next_url = url_for('students.index', page=students.next_num, course_id=course_id, student_filter=student_filter) if students.has_next else None
     prev_url = url_for('students.index', page=students.prev_num, course_id=course_id, student_filter=student_filter) if students.has_prev else None
@@ -270,7 +269,7 @@ def autocomplete():
           [student.email for student in students if student.email.startswith(q)] + \
           [student.name for student in students if student.name.startswith(q)] + \
           [str(student.telegram_id) for student in students if (student.telegram_id is not None and str(student.telegram_id).startswith(q))]
-    
+
     if course.author.id == current_user.id:
         return jsonify(lst)
     else:
