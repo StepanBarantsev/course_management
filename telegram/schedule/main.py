@@ -10,6 +10,7 @@ from api_helper.fauna_helper import FaunaHelper
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from telegram.chat.helpers import get_trainer_by_telegram_id
+from web.app.models import Student
 
 
 def job():
@@ -23,7 +24,7 @@ def job():
 
             for student in students:
                 student.number_of_days -= 1
-                is_delivered = send_message_about_days_to_student(student)
+                is_delivered = send_message_about_days_to_student(student, session)
 
                 if is_delivered:
                     message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней. (Доставлено)\n'
@@ -49,7 +50,7 @@ def job():
             session.commit()
 
 
-def send_message_about_days_to_student(student):
+def send_message_about_days_to_student(student, session):
     try:
         if student.number_of_days % 10 == 0 and student.number_of_days >= 0:
             course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
@@ -58,6 +59,8 @@ def send_message_about_days_to_student(student):
             else:
                 bot.send_message(student.telegram_id, get_message_with_course_prefix('NUM_OF_DAYS_SCHEDULED', None, student.number_of_days, course_name=course_name_and_author))
             return True
+        if student.number_of_days == -10:
+            student.status = Student.student_statuses['dropped']
         return False
     except ApiTelegramException:
         return False
