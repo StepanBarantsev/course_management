@@ -21,7 +21,7 @@ def index():
                                student_name=student.name, student_id=student.id, course_id=student.course.id,
                                course_name=student.course.name, checks=checks)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -116,7 +116,7 @@ def add():
                                add_or_edit="add", telegram_nickname=current_user.telegram_nickname, course_id=student.course.lms_id,
                                trainer_name=current_user.name, registration_code=student.registration_code)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
@@ -169,7 +169,7 @@ def edit():
         return render_template('checks/addedit.html', title="Редактирование чека студента", student=student,
                                checks=checks, form=form, flag_emails_from_default_mail=True, add_or_edit="edit")
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/delete', methods=['GET', 'POST'])
@@ -185,4 +185,4 @@ def delete():
         flash('Чек успешно удален!')
         return redirect(url_for('checks.index', student_id=student_id))
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403

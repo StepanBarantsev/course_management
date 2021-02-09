@@ -62,7 +62,7 @@ def index():
                                student_filter=student_filter, all_courses=all_courses, sort_type=sort_type,
                                student_search=student_search, course_default_num_days=course.default_num_days)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/delete', methods=['POST'])
@@ -78,7 +78,7 @@ def delete():
         flash('Студент успешно удален!')
         return redirect(url_for('students.index', course_id=course_id))
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -123,7 +123,7 @@ def add():
         return render_template('students/addedit.html', title="Добавление студента", course_name=course_name, header="Добавление студента на курс ",
                                form=form, for_edit=False)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
@@ -177,7 +177,7 @@ def edit():
                                course_name=course_name, header="Редактирование студента, обучающегося на курсе ",
                                form=form, for_edit=True)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/freeze', methods=['POST'])

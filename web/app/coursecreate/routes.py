@@ -106,7 +106,7 @@ def edit():
 
         return render_template('coursecreate/editcreate.html', title='Редактировать курс', form=form)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/delete', methods=['POST'])
@@ -121,7 +121,7 @@ def delete():
         flash('Курс успешно удален!')
         return redirect(url_for('main.index'))
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 @bp.route('/edit_additional', methods=['GET', 'POST'])
@@ -188,7 +188,7 @@ def edit_additional():
 
             return render_template('coursecreate/edit_additional.html', title='Дополнительные настройки курса', form=form)
     else:
-        return render_template('error/403.html', title='Ошибка доступа')
+        return render_template('error/403.html', title='Ошибка доступа'), 403
 
 
 def create_blocks(course, num, db):

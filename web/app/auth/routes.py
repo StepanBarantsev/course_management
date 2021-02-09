@@ -46,7 +46,7 @@ def register():
             flash('Регистрация прошла успешно')
             return redirect(url_for('auth.login'))
         else:
-            return render_template('error/403.html', title='Неверный код регистрации')
+            return render_template('error/403.html', title='Неверный код регистрации'), 403
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
