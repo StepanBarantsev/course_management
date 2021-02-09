@@ -1,10 +1,12 @@
 from web.app.models import Course, Student, User
 from telebot import types
+from logger import logger
 
 
 def set_new_state(element, state, session):
     element.state = state
     session.commit()
+    logger.info(f'Элемент {element} меняет состояние с {element.state} на {state}')
 
 
 def print_available_courses_as_buttons(session):
