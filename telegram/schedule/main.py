@@ -23,19 +23,20 @@ def job():
             message_about_days = f'Курс: {course.name}\n\nДата: {datetime.today().strftime("%d.%m.%Y")}\n\n'
 
             for student in students:
-                student.number_of_days -= 1
-                is_delivered = send_message_about_days_to_student(student, session)
+                if student.status == Student.student_statuses['active']:
+                    student.number_of_days -= 1
+                    is_delivered = send_message_about_days_to_student(student, session)
 
-                if is_delivered:
-                    message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней. (Доставлено)\n'
-                else:
-                    message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней. (Не доставлено)\n'
-                if course.is_certificate_needed:
-                    if student.cert_link is None and student.status != 'finished':
-                        cert_link = try_to_generate_cert_to_student(student)
-                        if cert_link is not None:
-                            is_delivered = send_message_about_certificate(student.telegram_id, cert_link, discount_coupon, student)
-                            send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon, student, is_delivered)
+                    if is_delivered:
+                        message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней. (Доставлено)\n'
+                    else:
+                        message_about_days += f'У студента {student.name} осталось {student.number_of_days} дней. (Не доставлено)\n'
+                    if course.is_certificate_needed:
+                        if student.cert_link is None:
+                            cert_link = try_to_generate_cert_to_student(student)
+                            if cert_link is not None:
+                                is_delivered = send_message_about_certificate(student.telegram_id, cert_link, discount_coupon, student)
+                                send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon, student, is_delivered)
 
             try:
                 bot.send_message(course.author.telegram_id, message_about_days)
@@ -51,21 +52,20 @@ def job():
 
 
 def send_message_about_days_to_student(student, session):
-    if student.status == Student.student_statuses['active']:
-        try:
-            if student.number_of_days % 10 == 0 and student.number_of_days >= 0:
-                course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
-                if student.number_of_days == 0:
-                    bot.send_message(student.telegram_id, get_message_with_course_prefix('ZERO_DAYS_SCHEDULED', None, course_name=course_name_and_author))
-                else:
-                    bot.send_message(student.telegram_id, get_message_with_course_prefix('NUM_OF_DAYS_SCHEDULED', None, student.number_of_days, course_name=course_name_and_author))
-                return True
-            if student.number_of_days == -10:
-                student.status = Student.student_statuses['dropped']
-                session.commit()
-        except ApiTelegramException:
-            return False
-    return False
+    try:
+        if student.number_of_days % 10 == 0 and student.number_of_days >= 0:
+            course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
+            if student.number_of_days == 0:
+                bot.send_message(student.telegram_id, get_message_with_course_prefix('ZERO_DAYS_SCHEDULED', None, course_name=course_name_and_author))
+            else:
+                bot.send_message(student.telegram_id, get_message_with_course_prefix('NUM_OF_DAYS_SCHEDULED', None, student.number_of_days, course_name=course_name_and_author))
+            return True
+        if student.number_of_days == -10:
+            student.status = Student.student_statuses['dropped']
+            session.commit()
+        return False
+    except ApiTelegramException:
+        return False
 
 
 def send_message_about_certificate(telegram_id, cert_link, discount_coupon, student, is_delivered=None):

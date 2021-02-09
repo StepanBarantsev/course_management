@@ -65,19 +65,21 @@ def add():
                                                          current_user.telegram_nickname, student.registration_code, current_user.name)
                 # Добавляем два дня бонусом студенту если это первая оплата
                 student.number_of_days += 2
+                message_for_flash = f'Время поддержки студента было увеличено на {student.course.default_num_days + 2} дней!'
             else:
                 message = get_message_with_course_prefix("NO_FIRST_PAYMENT", student.telegram_id, text_block, link, current_user.name)
+                message_for_flash = f'Время поддержки студента было увеличено на {student.course.default_num_days} дней!'
 
             if specific_block_number == 'Консультация' or specific_block_number == 'Продление':
                 new_check = Check(link=link, block_id=None, student_id=student_id, another=specific_block_number, amount=amount)
                 if specific_block_number == 'Продление':
                     student.number_of_days += student.course.default_num_days
-                    flash(f'Время поддержки студента было увеличено на {student.course.default_num_days} дней!')
+                    flash(message_for_flash)
             else:
                 specific_block = list(filter(lambda block: str(block.number) == specific_block_number, blocks))[0]
                 new_check = Check(link=link, block_id=specific_block.id, student_id=student_id, amount=amount)
                 student.number_of_days += student.course.default_num_days
-                flash(f'Время поддержки студента было увеличено на {student.course.default_num_days} дней!')
+                flash(message_for_flash)
 
             db.session.add(new_check)
             db.session.commit()
