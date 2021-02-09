@@ -51,7 +51,7 @@ def job():
 
 def send_message_about_days_to_student(student):
     try:
-        if student.number_of_days % 10 == 0:
+        if student.number_of_days % 10 == 0 and student.number_of_days >= 0:
             course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
             if student.number_of_days == 0:
                 bot.send_message(student.telegram_id, get_message_with_course_prefix('ZERO_DAYS_SCHEDULED', None, course_name=course_name_and_author))
