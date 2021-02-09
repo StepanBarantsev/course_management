@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from web.config import Config
@@ -20,6 +20,7 @@ mail = Mail()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.register_error_handler(404, page_not_found)
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
@@ -48,3 +49,5 @@ def create_app():
     return app
 
 
+def page_not_found(e):
+    return render_template('error/404.html'), 404
