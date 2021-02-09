@@ -63,6 +63,8 @@ def add():
             if is_first_payment:
                 message = get_message_with_course_prefix("FIRST_PAYMENT", student.telegram_id, link, student.course.lms_id,
                                                          current_user.telegram_nickname, student.registration_code, current_user.name)
+                # Добавляем два дня бонусом студенту если это первая оплата
+                student.number_of_days += 2
             else:
                 message = get_message_with_course_prefix("NO_FIRST_PAYMENT", student.telegram_id, text_block, link, current_user.name)
 
