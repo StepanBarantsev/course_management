@@ -2,6 +2,7 @@ from telegram.chat.db_session import session_scope
 from telegram.chat.db_session import get_telegram_session_or_create_new_with_existing_db_session
 from web.app.models import Course
 from telegram.chat.helpers import create_string_with_course_and_author_by_course_id
+from logger import logger
 
 
 def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
@@ -28,6 +29,7 @@ def get_message_with_course_prefix(name, telegram_id, *args, course_name=None):
 
 
 def get_message(name, *args):
+    logger.debug(f"Получаем сообщение для отправки по ключевому слову: {name}")
 
     if name == 'ENTER_EMAIL':
         return f'''Вы выбрали курс {args[0]}

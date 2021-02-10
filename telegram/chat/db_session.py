@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 from web.app.models import TelegramState
+from logger import logger
 
 engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI, convert_unicode=True, connect_args=dict(use_unicode=True))
 Session = sessionmaker(bind=engine)
@@ -10,6 +11,7 @@ Session = sessionmaker(bind=engine)
 
 @contextmanager
 def session_scope():
+    logger.debug("Создается новая сессия бд")
     session = Session()
     try:
         yield session
@@ -22,6 +24,7 @@ def session_scope():
 
 def get_telegram_session_or_create_new(telegram_id):
     with session_scope() as session:
+        logger.debug(f"Пытаемся получить существующую или создать новую сессию тг для юзера {telegram_id}")
         return get_telegram_session_or_create_new_with_existing_db_session(telegram_id, session)
 
 

@@ -34,7 +34,7 @@ class User(db.Model, UserMixin):
     courses = db.relationship('Course', backref='author', lazy='dynamic')
 
     def __repr__(self):
-        return "<{}:{}>".format(self.id, self.username)
+        return "<User {}>".format(self.id)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -88,7 +88,7 @@ class Course(db.Model):
     students = db.relationship('Student', backref='course', lazy='dynamic')
 
     def __repr__(self):
-        return '<Course {}>'.format(self.body)
+        return '<Course {}>'.format(self.id)
 
     @staticmethod
     def delete_course_by_id(course_id):
@@ -172,6 +172,9 @@ class CourseBlock(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     check = db.relationship('Check', backref='block', uselist=False)
 
+    def __repr__(self):
+        return "<CourseBlock {}>".format(self.id)
+
 
 class Homework(db.Model):
     __tablename__ = 'homeworks'
@@ -186,6 +189,9 @@ class Homework(db.Model):
     number = db.Column(db.Integer(), nullable=False)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+
+    def __repr__(self):
+        return "<Homework {}>".format(self.id)
 
 
 class Student(db.Model):
@@ -210,6 +216,9 @@ class Student(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
     checks = db.relationship('Check', backref='student', lazy='dynamic')
+
+    def __repr__(self):
+        return "<Student {}>".format(self.id)
 
     @staticmethod
     def delete_student_by_id(student_id):
@@ -283,6 +292,9 @@ class TelegramState(db.Model):
     # После верификации, экземпляр студента получает в свое поле телеграм id
     temp_course_student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
 
+    def __repr__(self):
+        return "<TelegramState {}>".format(self.id)
+
 
 class Check(db.Model):
     __tablename__ = 'checks'
@@ -298,6 +310,9 @@ class Check(db.Model):
 
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
+
+    def __repr__(self):
+        return "<Check {}>".format(self.id)
     
     @staticmethod
     def delete_check_by_id(check_id):
