@@ -109,9 +109,12 @@ def get_current_course_by_id(course_id, session):
 # Отправляет сообщение студенту, если тот зарегистрирован у телеграм бота
 def try_to_send_message_to_student(student, message, bot):
     if student.telegram_id is not None:
-        logger.debug(f'Пытаемся отправить сообщение {message} студенту: {student.telegram_id}')
-        bot.send_message(student.telegram_id, message)
-        logger.debug(f'Пытаемся отправить сообщение {message} успешно доставлено студенту: {student.telegram_id}')
+        logger.info(f'Пытаемся отправить сообщение {message} студенту: {student.telegram_id}')
+        try:
+            bot.send_message(student.telegram_id, message)
+            logger.info(f'Сообщение {message} успешно доставлено студенту: {student.telegram_id}')
+        except:
+            logger.warning(f'Сообщение {message} не было доставлено студенту: {student.telegram_id}')
 
 
 def get_trainer_by_telegram_id(telegram_id, session):
