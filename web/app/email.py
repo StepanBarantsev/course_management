@@ -2,6 +2,7 @@ from flask_mail import Message
 from web.app import mail
 from flask import current_app, render_template
 from threading import Thread
+from logger import logger
 
 
 def send_async_email(app, msg):
@@ -10,6 +11,7 @@ def send_async_email(app, msg):
 
 
 def send_email(subject, sender, recipients, text_body, html_body, attachments=None, sync=False):
+    logger.critical(f"Отправляется письмо на адрес {recipients}")
     msg = Message(subject, sender=sender, recipients=recipients, bcc=[current_app.config["SECURITY_EMAIL_SENDER"]])
     msg.body = text_body
     msg.html = html_body
