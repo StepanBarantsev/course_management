@@ -27,7 +27,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.drop_table('lmstasks')
+    op.drop_table('lmsTasks')
     # ### end Alembic commands ###
 
 
@@ -46,7 +46,7 @@ def downgrade():
     mysql_default_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
-    op.create_table('lmstasks',
+    op.create_table('lmsTasks',
     sa.Column('id', mysql.INTEGER(), autoincrement=True, nullable=False),
     sa.Column('lms_id', mysql.INTEGER(), autoincrement=False, nullable=False),
     sa.Column('name', mysql.INTEGER(), autoincrement=False, nullable=False),
