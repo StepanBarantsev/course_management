@@ -1,5 +1,3 @@
-import schedule
-import time
 from telegram.chat.singleton_bot import bot
 from telegram.chat.db_session import session_scope
 from web.app.models import Course
@@ -125,9 +123,4 @@ def try_to_generate_cert_to_student(student):
     return None
 
 
-# schedule.every(10).seconds.do(job)
-schedule.every().day.at("12:30").do(job)
-
-while True:
-    schedule.run_pending()
-    time.sleep(60 * 30)
+job()
