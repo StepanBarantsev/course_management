@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from web.app.models import TelegramState
 from logger import logger
 
-engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI, convert_unicode=True, connect_args=dict(use_unicode=True))
+engine = create_engine(telegram.config.ConfigTelegram.SQLALCHEMY_DATABASE_URI, convert_unicode=True)
 Session = sessionmaker(bind=engine)
 
 
