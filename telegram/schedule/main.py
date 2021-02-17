@@ -125,8 +125,8 @@ def try_to_generate_cert_to_student(student):
     return None
 
 
-schedule.every(10).seconds.do(job)
-# schedule.every().day.at("10:30").do(job)
+# schedule.every(10).seconds.do(job)
+schedule.every().day.at("12:30").do(job)
 
 while True:
     schedule.run_pending()
