@@ -14,7 +14,7 @@ from logger import logger
 
 def job():
     with session_scope() as session:
-        courses = session.query(Course).filter_by(deleted=0).all()
+        courses = session.query(Course).filter_by(deleted=False).all()
         discount_coupon = FaunaHelper.get_discount_coupon()
 
         for course in courses:
