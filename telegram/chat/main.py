@@ -40,7 +40,7 @@ def hello(message):
     with session_scope() as session:
         get_telegram_session_or_create_new_with_existing_db_session(message.chat.id, session)
         chat_id = message.chat.id
-        bot.send_message(chat_id, get_message_with_course_prefix('HELP_TEXT', chat_id))
+        bot.send_message(chat_id, get_message_with_course_prefix('HELP', chat_id))
 
 
 @bot.message_handler(commands=['current'])
