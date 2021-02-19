@@ -10,7 +10,7 @@ def set_new_state(element, state, session):
 
 
 def print_available_courses_as_buttons(session):
-    courses_list = session.query(Course).filter_by(deleted=0).all()
+    courses_list = session.query(Course).filter_by(deleted=False).all()
 
     markup = types.InlineKeyboardMarkup()
 
@@ -35,7 +35,7 @@ def parse_callback_data(string):
 
 
 def get_student_by_email_and_course_id(course_id, email, session):
-    student = session.query(Student).filter_by(course_id=int(course_id)).filter_by(lms_email=email).filter_by(deleted=0).first()
+    student = session.query(Student).filter_by(course_id=int(course_id)).filter_by(lms_email=email).filter_by(deleted=False).first()
     logger.debug(f'Получаем студента {student} по course_id: {course_id} и email: {email}')
     return student
 
@@ -45,13 +45,13 @@ def get_student_by_telegram_id_and_course_id(course_id, telegram_id, session):
     if course_id is None or telegram_id is None:
         return None
 
-    student = session.query(Student).filter_by(course_id=int(course_id)).filter_by(telegram_id=telegram_id).filter_by(deleted=0).first()
+    student = session.query(Student).filter_by(course_id=int(course_id)).filter_by(telegram_id=telegram_id).filter_by(deleted=False).first()
     logger.debug(f'Получаем студента {student} по course_id: {course_id} и telegram_id: {telegram_id}')
     return student
 
 
 def get_student_by_id(student_id, session):
-    student = session.query(Student).filter_by(id=int(student_id)).filter_by(deleted=0).first()
+    student = session.query(Student).filter_by(id=int(student_id)).filter_by(deleted=False).first()
     logger.debug(f'Получаем студента {student} по student_id: {student_id}')
     return student
 
@@ -70,13 +70,13 @@ def create_string_with_course_and_author_by_course_id(course_id, session):
 
 
 def get_course_by_id(course_id, session):
-    course = session.query(Course).filter_by(deleted=0).filter_by(id=int(course_id)).first()
+    course = session.query(Course).filter_by(deleted=False).filter_by(id=int(course_id)).first()
     logger.debug(f'Получаем курс {course} по id: {course_id}')
     return course
 
 
 def get_all_active_students_by_telegram_id(telegram_id, session):
-    students = session.query(Student).filter_by(deleted=0).filter_by(telegram_id=telegram_id).all()
+    students = session.query(Student).filter_by(deleted=False).filter_by(telegram_id=telegram_id).all()
     logger.debug(f'Получаем студентов {students} по telegram_id: {telegram_id}')
     return students
 
