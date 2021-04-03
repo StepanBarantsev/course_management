@@ -3,7 +3,12 @@ from werkzeug.security import generate_password_hash
 
 
 def login(client, username, password):
-    pass
+    response = client.post('/auth/login', data=dict(
+        username=username,
+        password=password,
+    ))
+
+    return response
 
 
 def logout(client):

@@ -1,5 +1,5 @@
 from web.app.models import User
-from test.web.unit.helpers import create_default_user
+from test.web.unit.helpers import create_default_user, login
 
 
 def test_registration_success(app):
@@ -55,10 +55,21 @@ def test_auth_success(app):
     password = '123'
 
     create_default_user(app['db'], username, password)
+    response = login(app['client'], username, password)
 
-    response = app['client'].post('/auth/login', data=dict(
-                username=username,
-                password=password,
-            ), follow_redirects=True)
+    assert response.status == '302 FOUND'
+    assert '/auth/login' not in response.headers['location']
+    assert '/index' in response.headers['location']
 
-    assert response.status == '200 OK'
+
+def test_auth_unsuccess(app):
+
+    username = 'testUser'
+    password = '123'
+    incorrect_password = '123123'
+
+    create_default_user(app['db'], username, password)
+    response = login(app['client'], username, incorrect_password)
+
+    assert response.status == '302 FOUND'
+    assert '/auth/login' in response.headers['location']
