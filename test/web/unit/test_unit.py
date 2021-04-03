@@ -1,5 +1,6 @@
 from web.app.models import User
 from test.web.unit.helpers import create_default_user, login, logout
+from flask_login import current_user
 
 
 def test_registration_success(app):
@@ -60,6 +61,7 @@ def test_auth_success(app):
     assert response.status == '302 FOUND'
     assert '/auth/login' not in response.headers['location']
     assert '/index' in response.headers['location']
+    assert current_user.is_authenticated
 
 
 def test_auth_unsuccess(app):
@@ -73,6 +75,7 @@ def test_auth_unsuccess(app):
 
     assert response.status == '302 FOUND'
     assert '/auth/login' in response.headers['location']
+    assert not current_user.is_authenticated
 
 
 def test_auth_logout(app):
@@ -86,3 +89,29 @@ def test_auth_logout(app):
 
     assert response.status == '302 FOUND'
     assert '/auth/login' in response.headers['location']
+    assert not current_user.is_authenticated
+
+
+def test_reset_password_success(app):
+
+    username = 'testUser'
+    old_password = '123'
+    new_password = '321'
+
+    create_default_user(app['db'], username, old_password)
+    login(app['client'], username, old_password)
+
+    response = app['client'].post('/reset_password', data=dict(
+        old_password=old_password,
+        new_password=new_password,
+        repeated_password=new_password
+    ))
+
+    assert response.status == "302 FOUND"
+
+    logout(app['client'])
+    login(app['client'], username, old_password)
+    assert not current_user.is_authenticated
+
+    login(app['client'], username, new_password)
+    assert current_user.is_authenticated
