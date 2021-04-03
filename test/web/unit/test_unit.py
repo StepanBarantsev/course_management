@@ -115,3 +115,29 @@ def test_reset_password_success(app):
 
     login(app['client'], username, new_password)
     assert current_user.is_authenticated
+
+
+def test_reset_password_unsuccess(app):
+
+    username = 'testUser'
+    old_password = '123'
+    incorrect_old_password = 'incorrect'
+    new_password = '321'
+
+    create_default_user(app['db'], username, old_password)
+    login(app['client'], username, old_password)
+
+    response = app['client'].post('/reset_password', data=dict(
+        old_password=incorrect_old_password,
+        new_password=new_password,
+        repeated_password=new_password
+    ))
+
+    assert response.status == "200 OK"
+
+    logout(app['client'])
+    login(app['client'], username, new_password)
+    assert not current_user.is_authenticated
+
+    login(app['client'], username, old_password)
+    assert current_user.is_authenticated
