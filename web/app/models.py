@@ -45,6 +45,10 @@ class User(db.Model, UserMixin):
     def get_all_not_deleted_courses(self):
         return self.courses.filter_by(deleted=False)
 
+    @staticmethod
+    def get_all_users():
+        return User.query.all()
+
     def get_course_by_name(self, name):
         return self.get_all_not_deleted_courses().filter_by(name=name).first()
 
