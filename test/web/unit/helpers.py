@@ -12,7 +12,7 @@ def login(client, username, password):
 
 
 def logout(client):
-    pass
+    return client.get('/auth/logout')
 
 
 def create_default_user(db, name, password, email='default@gmail.com'):
