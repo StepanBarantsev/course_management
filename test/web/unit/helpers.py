@@ -46,3 +46,14 @@ def add_default_student(client, course_id, data_dict=None):
         )
     return client.post(f'/students/add?course_id={course_id}', data=data_dict)
 
+
+def add_default_check(client, student_id, data_dict=None):
+    if data_dict is None:
+        data_dict = dict(
+            block_number=1,
+            link='http://check_link',
+            amount=3000,
+            is_first_payment=True
+        )
+    return client.post(f'/checks/add?student_id={student_id}', data=data_dict)
+

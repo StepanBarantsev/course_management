@@ -1,5 +1,6 @@
 from web.app.models import User, Course, Student
-from test.web.unit.helpers import create_default_user, login, logout, create_default_course, add_default_student
+from test.web.unit.helpers import create_default_user, login, logout, create_default_course, \
+    add_default_student, add_default_check
 from flask_login import current_user
 
 
@@ -469,3 +470,185 @@ def test_edit_student_unsuccess(app):
     assert first_student.name is not None
     assert first_student.lms_email is not None
     assert first_student.registration_code is not None
+
+
+def test_add_check_success(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id)
+    first_student = course.get_all_not_deleted_students().all()[0]
+    block = course.get_block_by_num(1)
+
+    check_dict = dict(
+        block_number=1,
+        link='http://check_link',
+        amount=3000,
+        is_first_payment=True
+    )
+
+    response = add_default_check(app['client'], first_student.id, check_dict)
+
+    checks = first_student.get_all_not_deleted_checks().all()
+    first_check = checks[0]
+
+    assert response.status == '302 FOUND'
+    assert len(checks) == 1
+    assert first_check.link == check_dict['link']
+    assert first_check.amount == check_dict['amount']
+    assert first_check.another is None
+    assert first_check.block_id == block.id
+    assert first_check.student_id == first_student.id
+    assert not first_check.deleted
+
+
+def test_add_check_unsuccess(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id)
+    first_student = course.get_all_not_deleted_students().all()[0]
+    block = course.get_block_by_num(1)
+
+    check_dict_1 = dict(
+        block_number=1,
+        link='http://check_link',
+        amount=3000,
+        is_first_payment=True
+    )
+
+    check_dict_2 = dict(
+        block_number=1,
+        link='http://check_link_2',
+        amount=30003,
+        is_first_payment=False
+    )
+
+    add_default_check(app['client'], first_student.id, check_dict_1)
+    response = add_default_check(app['client'], first_student.id, check_dict_2)
+
+    checks = first_student.get_all_not_deleted_checks().all()
+    first_check = checks[0]
+
+    assert response.status == '200 OK'
+    assert len(checks) == 1
+    assert first_check.link == check_dict_1['link']
+    assert first_check.amount == check_dict_1['amount']
+    assert first_check.another is None
+    assert first_check.block_id == block.id
+    assert first_check.student_id == first_student.id
+    assert not first_check.deleted
+
+
+def test_edit_check_success(app):
+    course_dict = dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=4,
+        is_more_then_one_block=True
+    )
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'], course_dict)
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id)
+    first_student = course.get_all_not_deleted_students().all()[0]
+    block_2 = course.get_block_by_num(2)
+
+    check_dict_1 = dict(
+        block_number=1,
+        link='http://check_link',
+        amount=3000,
+        is_first_payment=True
+    )
+
+    check_dict_new = dict(
+        block_number=2,
+        link='http://check_link_3',
+        amount=30003,
+        is_first_payment=False
+    )
+
+    add_default_check(app['client'], first_student.id, check_dict_1)
+    first_check = first_student.get_all_not_deleted_checks().all()[0]
+    response = app['client'].post(f'/checks/edit?student_id={first_student.id}&check_id={first_check.id}', data=check_dict_new)
+
+    checks = first_student.get_all_not_deleted_checks().all()
+    first_check = checks[0]
+
+    assert response.status == '302 FOUND'
+    assert len(checks) == 1
+    assert first_check.link == check_dict_new['link']
+    assert first_check.amount == check_dict_new['amount']
+    assert first_check.another is None
+    assert first_check.block_id == block_2.id
+    assert first_check.student_id == first_student.id
+    assert not first_check.deleted
+
+
+def test_edit_check_unsuccess(app):
+    course_dict = dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=4,
+        is_more_then_one_block=True
+    )
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'], course_dict)
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id)
+    first_student = course.get_all_not_deleted_students().all()[0]
+    block = course.get_block_by_num(1)
+
+    check_dict_1 = dict(
+        block_number=1,
+        link='http://check_link',
+        amount=3000,
+        is_first_payment=True
+    )
+
+    check_dict_2 = dict(
+        block_number=2,
+        link='http://check_link_2',
+        amount=30002,
+        is_first_payment=False
+    )
+
+    check_dict_new = dict(
+        block_number=2,
+        link='http://check_link_3',
+        amount=30003,
+        is_first_payment=False
+    )
+
+    add_default_check(app['client'], first_student.id, check_dict_1)
+    add_default_check(app['client'], first_student.id, check_dict_2)
+    first_check = first_student.get_all_not_deleted_checks().all()[0]
+    response = app['client'].post(f'/checks/edit?student_id={first_student.id}&check_id={first_check.id}', data=check_dict_new)
+
+    checks = first_student.get_all_not_deleted_checks().all()
+    first_check = checks[0]
+
+    assert response.status == '200 OK'
+    assert len(checks) == 2
+    assert first_check.link == check_dict_1['link']
+    assert first_check.amount == check_dict_1['amount']
+    assert first_check.another is None
+    assert first_check.block_id == block.id
+    assert first_check.student_id == first_student.id
+    assert not first_check.deleted
