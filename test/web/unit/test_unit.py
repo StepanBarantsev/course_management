@@ -1,10 +1,9 @@
-from web.app.models import User, Course
-from test.web.unit.helpers import create_default_user, login, logout, create_default_course
+from web.app.models import User, Course, Student
+from test.web.unit.helpers import create_default_user, login, logout, create_default_course, add_default_student
 from flask_login import current_user
 
 
 def test_registration_success(app):
-
     username = 'testUser'
     email = 'testmail@gmail.com'
 
@@ -32,7 +31,6 @@ def test_registration_success(app):
 
 
 def test_registration_fail(app):
-
     username = 'testUser'
     email = 'testmail@gmail.com'
 
@@ -65,7 +63,6 @@ def test_auth_success(app):
 
 
 def test_auth_unsuccess(app):
-
     username = 'testUser'
     password = '123'
     incorrect_password = '123123'
@@ -93,7 +90,6 @@ def test_auth_logout(app):
 
 
 def test_reset_password_success(app):
-
     username = 'testUser'
     old_password = '123'
     new_password = '321'
@@ -118,7 +114,6 @@ def test_reset_password_success(app):
 
 
 def test_reset_password_unsuccess(app):
-
     username = 'testUser'
     old_password = '123'
     incorrect_old_password = 'incorrect'
@@ -144,7 +139,6 @@ def test_reset_password_unsuccess(app):
 
 
 def test_add_new_course_success(app):
-
     create_default_user(app['db'])
     login(app['client'])
 
@@ -182,7 +176,6 @@ def test_add_new_course_success(app):
 
 
 def test_create_new_course_unsuccess(app):
-
     create_default_user(app['db'])
     login(app['client'])
 
@@ -198,6 +191,7 @@ def test_create_new_course_unsuccess(app):
         number_of_blocks=None
     )
 
+    # Такой же lms_id как в 1 курсе
     course_dict_2 = dict(
         name='Название курса 2',
         lms_id=1040,
@@ -224,7 +218,6 @@ def test_create_new_course_unsuccess(app):
 
 
 def test_edit_course_success(app):
-
     create_default_user(app['db'])
     login(app['client'])
 
@@ -305,6 +298,7 @@ def test_edit_course_unsuccess(app):
         number_of_blocks=None
     )
 
+    # Данные пересекаются со 2 курсом
     course_dict_new = dict(
         name='Новое название курса',
         lms_id=1041,
@@ -348,3 +342,130 @@ def test_edit_course_unsuccess(app):
     assert first_course.user_id == current_user.id
     assert not first_course.is_certificate_needed
 
+
+def test_create_student_success(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+
+    student_dict = dict(email='stepan.barantsev@gmail.com', lms_id=10622, days=0)
+
+    response = add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict)
+    students = course.get_all_not_deleted_students().all()
+    first_student = students[0]
+
+    assert response.status == '302 FOUND'
+    assert len(students) == 1
+    assert first_student.email == student_dict['email']
+    assert first_student.lms_id == student_dict['lms_id']
+    assert first_student.number_of_days == student_dict['days']
+    assert first_student.status == 'active'
+    assert not first_student.deleted
+    assert first_student.course_id == course.id
+    assert first_student.telegram_id is None
+    assert first_student.cert_link is None
+    # Они автоматически тянутся из другой системы, так что просто проверяем что поля заполняются
+    assert first_student.name is not None
+    assert first_student.lms_email is not None
+    assert first_student.registration_code is not None
+
+
+def test_create_student_unsuccess(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+
+    student_dict_1 = dict(email='stepan.barantsev@gmail.com', lms_id=10622, days=0)
+    student_dict_2 = dict(email='stepan.barantsev2@gmail.com', lms_id=10622, days=0)
+
+    add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict_1)
+    response = add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict_2)
+    students = course.get_all_not_deleted_students().all()
+    first_student = students[0]
+
+    assert response.status == '200 OK'
+    assert len(students) == 1
+    assert first_student.email == student_dict_1['email']
+    assert first_student.lms_id == student_dict_1['lms_id']
+    assert first_student.number_of_days == student_dict_1['days']
+    assert first_student.status == 'active'
+    assert not first_student.deleted
+    assert first_student.course_id == course.id
+    assert first_student.telegram_id is None
+    assert first_student.cert_link is None
+    # Они автоматически тянутся из другой системы, так что просто проверяем что поля заполняются
+    assert first_student.name is not None
+    assert first_student.lms_email is not None
+    assert first_student.registration_code is not None
+
+
+def test_edit_student_success(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+
+    student_dict_1 = dict(email='stepan.barantsev@gmail.com', lms_id=10622, days=0)
+    student_dict_new = dict(email='stepan.barantsev2@gmail.com', lms_id=1, days=35)
+
+    add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict_1)
+
+    first_student = course.get_all_not_deleted_students().all()[0]
+
+    response = app['client'].post(f'/students/edit?course_id={course.id}&student_id={first_student.id}', data=student_dict_new)
+
+    students = course.get_all_not_deleted_students().all()
+    first_student = students[0]
+
+    assert response.status == '302 FOUND'
+    assert len(students) == 1
+    assert first_student.email == student_dict_new['email']
+    assert first_student.lms_id == student_dict_new['lms_id']
+    assert first_student.number_of_days == student_dict_new['days']
+    assert first_student.status == 'active'
+    assert not first_student.deleted
+    assert first_student.course_id == course.id
+    assert first_student.telegram_id is None
+    assert first_student.cert_link is None
+    # Они автоматически тянутся из другой системы, так что просто проверяем что поля заполняются
+    assert first_student.name is not None
+    assert first_student.lms_email is not None
+    assert first_student.registration_code is not None
+
+
+def test_edit_student_unsuccess(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+
+    student_dict_1 = dict(email='stepan.barantsev@gmail.com', lms_id=10622, days=0)
+    student_dict_2 = dict(email='stepan.barantsev2@gmail.com', lms_id=1, days=0)
+    student_dict_new = dict(email='stepan.barantsev3@gmail.com', lms_id=1, days=35)
+
+    add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict_1)
+    add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict_2)
+
+    students = course.get_all_not_deleted_students().all()
+    first_student = students[0]
+
+    assert len(students) == 2
+
+    response = app['client'].post(f'/students/edit?course_id={course.id}&student_id={first_student.id}', data=student_dict_new)
+
+    assert response.status == '200 OK'
+    assert len(students) == 2
+    assert first_student.email == student_dict_1['email']
+    assert first_student.lms_id == student_dict_1['lms_id']
+    assert first_student.number_of_days == student_dict_1['days']
+    assert first_student.status == 'active'
+    assert not first_student.deleted
+    assert first_student.course_id == course.id
+    assert first_student.telegram_id is None
+    assert first_student.cert_link is None
+    # Они автоматически тянутся из другой системы, так что просто проверяем что поля заполняются
+    assert first_student.name is not None
+    assert first_student.lms_email is not None
+    assert first_student.registration_code is not None
