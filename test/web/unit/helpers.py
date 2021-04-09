@@ -21,3 +21,17 @@ def create_default_user(db, name='def_name', password='def_pass', email='default
     db.session.commit()
 
 
+def create_default_course(client,
+                          data_dict=dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=None,
+    )):
+    return client.post('/coursecreate/create', data=data_dict)
+

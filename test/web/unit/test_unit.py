@@ -1,5 +1,5 @@
 from web.app.models import User, Course
-from test.web.unit.helpers import create_default_user, login, logout
+from test.web.unit.helpers import create_default_user, login, logout, create_default_course
 from flask_login import current_user
 
 
@@ -148,44 +148,35 @@ def test_add_new_course_success(app):
     create_default_user(app['db'])
     login(app['client'])
 
-    name = 'Название курса'
-    lms_id = 1040
-    trainer_lms_id = 1
-    trainer_telegram_id = 271828
-    review_link = 'http://testlink'
-    help_field = 'Информация отсутствует'
-    default_number_of_days = 30
-    number_homeworks = 15
-    # Если None, то в бд идет 1
-    number_of_blocks = None
+    course_dict = dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=None
+    )
 
-    response = app['client'].post('/coursecreate/create', data=dict(
-        name=name,
-        lms_id=lms_id,
-        trainer_lms_id=trainer_lms_id,
-        trainer_telegram_id=trainer_telegram_id,
-        review_link=review_link,
-        help_field=help_field,
-        default_number_of_days=default_number_of_days,
-        number_homeworks=number_homeworks,
-        number_of_blocks=number_of_blocks,
-    ))
+    response = create_default_course(app['client'], data_dict=course_dict)
 
     courses = Course.get_all_not_deleted_courses().all()
     first_course = courses[0]
 
     assert response.status == "302 FOUND"
     assert len(courses) == 1
-    assert first_course.name == name
+    assert first_course.name == course_dict['name']
     assert not first_course.deleted
-    assert first_course.lms_id == lms_id
-    assert first_course.trainer_telegram_id == trainer_telegram_id
-    assert first_course.trainer_lms_id == trainer_lms_id
+    assert first_course.lms_id == course_dict['lms_id']
+    assert first_course.trainer_telegram_id == course_dict['trainer_telegram_id']
+    assert first_course.trainer_lms_id == course_dict['trainer_lms_id']
     assert first_course.num_of_blocks == 1
-    assert first_course.number_of_homeworks == number_homeworks
-    assert first_course.default_num_days == default_number_of_days
-    assert first_course.review_link == review_link
-    assert first_course.help == help_field
+    assert first_course.number_of_homeworks == course_dict['number_homeworks']
+    assert first_course.default_num_days == course_dict['default_number_of_days']
+    assert first_course.review_link == course_dict['review_link']
+    assert first_course.help == course_dict['help_field']
     assert first_course.user_id == current_user.id
     assert not first_course.is_certificate_needed
 
@@ -195,56 +186,37 @@ def test_create_new_course_unsuccess(app):
     create_default_user(app['db'])
     login(app['client'])
 
-    name_1 = 'Название курса'
-    lms_id_1 = 1040
-    trainer_lms_id_1 = 1
-    trainer_telegram_id_1 = 271828
-    review_link_1 = 'http://testlink'
-    help_field_1 = 'Информация отсутствует'
-    default_number_of_days_1 = 30
-    number_homeworks_1 = 15
-    number_of_blocks_1 = None
+    course_dict_1 = dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=None
+    )
 
-    response_1 = app['client'].post('/coursecreate/create', data=dict(
-        name=name_1,
-        lms_id=lms_id_1,
-        trainer_lms_id=trainer_lms_id_1,
-        trainer_telegram_id=trainer_telegram_id_1,
-        review_link=review_link_1,
-        help_field=help_field_1,
-        default_number_of_days=default_number_of_days_1,
-        number_homeworks=number_homeworks_1,
-        number_of_blocks=number_of_blocks_1,
-    ))
+    course_dict_2 = dict(
+        name='Название курса 2',
+        lms_id=1040,
+        trainer_lms_id=2,
+        trainer_telegram_id=2718282,
+        review_link='http://testlink_2',
+        help_field='Информация отсутствует 2',
+        default_number_of_days=302,
+        number_homeworks=152,
+        number_of_blocks=None
+    )
 
+    response_1 = create_default_course(app['client'], course_dict_1)
     courses = Course.get_all_not_deleted_courses().all()
 
     assert response_1.status == "302 FOUND"
     assert len(courses) == 1
 
-    name_2 = 'Название курса 2'
-    # Такой же Lms_id
-    lms_id_2 = 1040
-    trainer_lms_id_2 = 2
-    trainer_telegram_id_2 = 2718282
-    review_link_2 = 'http://testlink_2'
-    help_field_2 = 'Информация отсутствует'
-    default_number_of_days_2 = 30
-    number_homeworks_2 = 15
-    number_of_blocks_2 = None
-
-    response_2 = app['client'].post('/coursecreate/create', data=dict(
-        name=name_2,
-        lms_id=lms_id_2,
-        trainer_lms_id=trainer_lms_id_2,
-        trainer_telegram_id=trainer_telegram_id_2,
-        review_link=review_link_2,
-        help_field=help_field_2,
-        default_number_of_days=default_number_of_days_2,
-        number_homeworks=number_homeworks_2,
-        number_of_blocks=number_of_blocks_2,
-    ))
-
+    response_2 = create_default_course(app['client'], course_dict_2)
     courses = Course.get_all_not_deleted_courses().all()
 
     assert response_2.status == "200 OK"
@@ -256,68 +228,51 @@ def test_edit_course_success(app):
     create_default_user(app['db'])
     login(app['client'])
 
-    name = 'Название курса'
-    lms_id = 1040
-    trainer_lms_id = 1
-    trainer_telegram_id = 271828
-    review_link = 'http://testlink'
-    help_field = 'Информация отсутствует'
-    default_number_of_days = 30
-    number_homeworks = 15
-    number_of_blocks = None
+    course_dict_1 = dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=None
+    )
 
-    app['client'].post('/coursecreate/create', data=dict(
-        name=name,
-        lms_id=lms_id,
-        trainer_lms_id=trainer_lms_id,
-        trainer_telegram_id=trainer_telegram_id,
-        review_link=review_link,
-        help_field=help_field,
-        default_number_of_days=default_number_of_days,
-        number_homeworks=number_homeworks,
-        number_of_blocks=number_of_blocks,
-    ))
+    course_dict_new = dict(
+        name='Новое название курса',
+        lms_id=1041,
+        trainer_lms_id=2,
+        trainer_telegram_id=333,
+        review_link='http://testlink_new',
+        help_field='Новая информация отсутствует',
+        default_number_of_days=303,
+        number_homeworks=151,
+        number_of_blocks=4,
+        is_more_then_one_block=True
+    )
 
+    create_default_course(app['client'], course_dict_1)
     first_course = Course.get_all_not_deleted_courses()[0]
 
-    new_name = 'Новое название курса'
-    new_lms_id = 1041
-    new_trainer_lms_id = 2
-    new_trainer_telegram_id = 333
-    new_review_link = 'http://testlink_new'
-    new_help_field = 'Информация отсутствует новая'
-    new_default_number_of_days = 301
-    new_number_homeworks = 151
-    new_number_of_blocks = 4
-
-    response = app['client'].post(f'/coursecreate/edit?course_id={first_course.id}', data=dict(
-        name=new_name,
-        lms_id=new_lms_id,
-        trainer_lms_id=new_trainer_lms_id,
-        trainer_telegram_id=new_trainer_telegram_id,
-        review_link=new_review_link,
-        help_field=new_help_field,
-        default_number_of_days=new_default_number_of_days,
-        number_homeworks=new_number_homeworks,
-        number_of_blocks=new_number_of_blocks,
-        is_more_then_one_block=True
-    ))
+    response = app['client'].post(f'/coursecreate/edit?course_id={first_course.id}', data=course_dict_new)
 
     courses = Course.get_all_not_deleted_courses().all()
     first_course = courses[0]
 
     assert response.status == "302 FOUND"
     assert len(courses) == 1
-    assert first_course.name == new_name
+    assert first_course.name == course_dict_new['name']
     assert not first_course.deleted
-    assert first_course.lms_id == new_lms_id
-    assert first_course.trainer_telegram_id == new_trainer_telegram_id
-    assert first_course.trainer_lms_id == new_trainer_lms_id
-    assert first_course.num_of_blocks == new_number_of_blocks
-    assert first_course.number_of_homeworks == new_number_homeworks
-    assert first_course.default_num_days == new_default_number_of_days
-    assert first_course.review_link == new_review_link
-    assert first_course.help == new_help_field
+    assert first_course.lms_id == course_dict_new['lms_id']
+    assert first_course.trainer_telegram_id == course_dict_new['trainer_telegram_id']
+    assert first_course.trainer_lms_id == course_dict_new['trainer_lms_id']
+    assert first_course.num_of_blocks == course_dict_new['number_of_blocks']
+    assert first_course.number_of_homeworks == course_dict_new['number_homeworks']
+    assert first_course.default_num_days == course_dict_new['default_number_of_days']
+    assert first_course.review_link == course_dict_new['review_link']
+    assert first_course.help == course_dict_new['help_field']
     assert first_course.user_id == current_user.id
     assert not first_course.is_certificate_needed
 
@@ -326,97 +281,70 @@ def test_edit_course_unsuccess(app):
     create_default_user(app['db'])
     login(app['client'])
 
-    name_1 = 'Название курса'
-    lms_id_1 = 1040
-    trainer_lms_id_1 = 1
-    trainer_telegram_id_1 = 271828
-    review_link_1 = 'http://testlink'
-    help_field_1 = 'Информация отсутствует'
-    default_number_of_days_1 = 30
-    number_homeworks_1 = 15
-    number_of_blocks_1 = None
+    course_dict_1 = dict(
+        name='Название курса',
+        lms_id=1040,
+        trainer_lms_id=1,
+        trainer_telegram_id=271828,
+        review_link='http://testlink',
+        help_field='Информация отсутствует',
+        default_number_of_days=30,
+        number_homeworks=15,
+        number_of_blocks=None
+    )
 
-    app['client'].post('/coursecreate/create', data=dict(
-        name=name_1,
-        lms_id=lms_id_1,
-        trainer_lms_id=trainer_lms_id_1,
-        trainer_telegram_id=trainer_telegram_id_1,
-        review_link=review_link_1,
-        help_field=help_field_1,
-        default_number_of_days=default_number_of_days_1,
-        number_homeworks=number_homeworks_1,
-        number_of_blocks=number_of_blocks_1,
-    ))
+    course_dict_2 = dict(
+        name='Название курса 2',
+        lms_id=1041,
+        trainer_lms_id=2,
+        trainer_telegram_id=2718282,
+        review_link='http://testlink_2',
+        help_field='Информация отсутствует 2',
+        default_number_of_days=302,
+        number_homeworks=152,
+        number_of_blocks=None
+    )
 
+    course_dict_new = dict(
+        name='Новое название курса',
+        lms_id=1041,
+        trainer_lms_id=2,
+        trainer_telegram_id=333,
+        review_link='http://testlink_new',
+        help_field='Новая информация отсутствует',
+        default_number_of_days=303,
+        number_homeworks=151,
+        number_of_blocks=4,
+        is_more_then_one_block=True
+    )
+
+    create_default_course(app['client'], course_dict_1)
     courses = Course.get_all_not_deleted_courses().all()
     first_course = courses[0]
 
     assert len(courses) == 1
 
-    name_2 = 'Название курса 2'
-    lms_id_2 = 10401
-    trainer_lms_id_2 = 2
-    trainer_telegram_id_2 = 2718282
-    review_link_2 = 'http://testlink_2'
-    help_field_2 = 'Информация отсутствует'
-    default_number_of_days_2 = 30
-    number_homeworks_2 = 15
-    number_of_blocks_2 = None
-
-    app['client'].post('/coursecreate/create', data=dict(
-        name=name_2,
-        lms_id=lms_id_2,
-        trainer_lms_id=trainer_lms_id_2,
-        trainer_telegram_id=trainer_telegram_id_2,
-        review_link=review_link_2,
-        help_field=help_field_2,
-        default_number_of_days=default_number_of_days_2,
-        number_homeworks=number_homeworks_2,
-        number_of_blocks=number_of_blocks_2,
-    ))
-
+    create_default_course(app['client'], course_dict_2)
     courses = Course.get_all_not_deleted_courses().all()
 
     assert len(courses) == 2
 
-    new_name = 'Новое название курса'
-    # Меняем на существующий Lms Id
-    new_lms_id = 10401
-    new_trainer_lms_id = 2
-    new_trainer_telegram_id = 333
-    new_review_link = 'http://testlink_new'
-    new_help_field = 'Информация отсутствует новая'
-    new_default_number_of_days = 301
-    new_number_homeworks = 151
-    new_number_of_blocks = 4
-
-    response = app['client'].post(f'/coursecreate/edit?course_id={first_course.id}', data=dict(
-        name=new_name,
-        lms_id=new_lms_id,
-        trainer_lms_id=new_trainer_lms_id,
-        trainer_telegram_id=new_trainer_telegram_id,
-        review_link=new_review_link,
-        help_field=new_help_field,
-        default_number_of_days=new_default_number_of_days,
-        number_homeworks=new_number_homeworks,
-        number_of_blocks=new_number_of_blocks,
-    ))
-
+    response = app['client'].post(f'/coursecreate/edit?course_id={first_course.id}', data=course_dict_new)
     courses = Course.get_all_not_deleted_courses().all()
     first_course = courses[0]
 
     assert response.status == "200 OK"
     assert len(courses) == 2
-    assert first_course.name == name_1
+    assert first_course.name == course_dict_1['name']
     assert not first_course.deleted
-    assert first_course.lms_id == lms_id_1
-    assert first_course.trainer_telegram_id == trainer_telegram_id_1
-    assert first_course.trainer_lms_id == trainer_lms_id_1
+    assert first_course.lms_id == course_dict_1['lms_id']
+    assert first_course.trainer_telegram_id == course_dict_1['trainer_telegram_id']
+    assert first_course.trainer_lms_id == course_dict_1['trainer_lms_id']
     assert first_course.num_of_blocks == 1
-    assert first_course.number_of_homeworks == number_homeworks_1
-    assert first_course.default_num_days == default_number_of_days_1
-    assert first_course.review_link == review_link_1
-    assert first_course.help == help_field_1
+    assert first_course.number_of_homeworks == course_dict_1['number_homeworks']
+    assert first_course.default_num_days == course_dict_1['default_number_of_days']
+    assert first_course.review_link == course_dict_1['review_link']
+    assert first_course.help == course_dict_1['help_field']
     assert first_course.user_id == current_user.id
     assert not first_course.is_certificate_needed
 
