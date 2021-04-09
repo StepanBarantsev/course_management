@@ -652,3 +652,74 @@ def test_edit_check_unsuccess(app):
     assert first_check.block_id == block.id
     assert first_check.student_id == first_student.id
     assert not first_check.deleted
+
+
+def test_edit_profile_success(app):
+    username = 'testUser'
+    password = '123'
+
+    create_default_user(app['db'], username, password)
+    login(app['client'], username, password)
+
+    profile_dict = dict(
+        username="Username",
+        email='stepan.barantsev@gmail.com',
+        name='Имя Фамилия',
+        lms_id=10622,
+        telegram_id=23782378,
+        telegram_nickname='Bars'
+    )
+
+    response = app['client'].post(f'/editprofile', data=profile_dict)
+
+    users = User.get_all_users()
+    user = users[0]
+
+    assert response.status == '302 FOUND'
+    assert len(users) == 1
+    assert user.username == profile_dict['username']
+    assert user.email == profile_dict['email']
+    assert user.name == profile_dict['name']
+    assert user.telegram_id == profile_dict['telegram_id']
+    assert user.telegram_nickname == profile_dict['telegram_nickname']
+    assert user.lms_id == profile_dict['lms_id']
+    assert not user.flag_emails_from_default_mail
+    assert user.flag_is_messages_from_bot_is_delivered
+
+
+def test_edit_profile_unsuccess(app):
+    username_1 = 'testUser'
+    password_1 = '123'
+    email_1 = 'testmail@gmail.com'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2)
+    login(app['client'], username_1, password_1)
+
+    profile_dict = dict(
+        username=username_2,
+        email='stepan.barantsev@gmail.com',
+        name='Имя Фамилия',
+        lms_id=10622,
+        telegram_id=23782378,
+        telegram_nickname='Bars'
+    )
+
+    response = app['client'].post('/editprofile', data=profile_dict)
+
+    users = User.get_all_users()
+    user = users[0]
+
+    assert response.status == '200 OK'
+    assert len(users) == 2
+    assert user.username == username_1
+    assert user.email == email_1
+    assert user.name is None
+    assert user.telegram_id is None
+    assert user.telegram_nickname is None
+    assert user.lms_id is None
+    assert not user.flag_emails_from_default_mail
+    assert user.flag_is_messages_from_bot_is_delivered
