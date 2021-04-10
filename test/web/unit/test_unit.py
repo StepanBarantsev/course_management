@@ -804,3 +804,26 @@ def test_trainer_try_to_add_check_to_anothers_student(app):
     assert response.status == '403 FORBIDDEN'
     assert len(checks) == 0
 
+
+def test_trainer_try_edit_additional_course_settings(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    # Отправляем пустой запрос и просто смотрим что нам не дают это сделать
+    response = app['client'].post(f'/coursecreate/edit_additional?course_id={course.id}', data=dict())
+
+    assert response.status == '403 FORBIDDEN'
+
