@@ -779,6 +779,76 @@ def test_trainer_try_to_add_student_to_anothers_course(app):
     assert len(students) == 0
 
 
+def test_trainer_try_to_edit_check_to_anothers_student(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id)
+    student = course.get_all_not_deleted_students()[0]
+    add_default_check(app['client'], student.id)
+    check = student.get_all_not_deleted_checks()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = app['client'].post(f'/checks/edit?check_id={check.id}&student_id={student.id}', data=dict())
+
+    assert response.status == '403 FORBIDDEN'
+
+
+def test_trainer_try_edit_additional_anothers_course_settings(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = app['client'].post(f'/coursecreate/edit_additional?course_id={course.id}', data=dict())
+
+    assert response.status == '403 FORBIDDEN'
+
+
+def test_trainer_try_edit_anothers_course(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = app['client'].post(f'/coursecreate/edit?course_id={course.id}', data=dict())
+
+    assert response.status == '403 FORBIDDEN'
+
+
 def test_trainer_try_to_add_check_to_anothers_student(app):
     username_1 = 'testUser1'
     password_1 = '123'
@@ -805,7 +875,7 @@ def test_trainer_try_to_add_check_to_anothers_student(app):
     assert len(checks) == 0
 
 
-def test_trainer_try_edit_additional_course_settings(app):
+def test_trainer_try_delete_anothers_course(app):
     username_1 = 'testUser1'
     password_1 = '123'
     email_1 = 'email_1'
@@ -822,8 +892,106 @@ def test_trainer_try_edit_additional_course_settings(app):
     course = Course.get_all_not_deleted_courses()[0]
     logout(app['client'])
     login(app['client'], username_2, password_2)
-    # Отправляем пустой запрос и просто смотрим что нам не дают это сделать
-    response = app['client'].post(f'/coursecreate/edit_additional?course_id={course.id}', data=dict())
+    response = app['client'].post(f'/coursecreate/delete', data=dict(course_id=course.id))
+    courses = Course.get_all_not_deleted_courses().all()
 
     assert response.status == '403 FORBIDDEN'
+    assert len(courses) == 1
 
+
+def test_trainer_try_delete_anothers_student(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(app['client'], course.id)
+    student = course.get_all_not_deleted_students()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = app['client'].post(f'/students/delete', data=dict(student_id=student.id, course_id=course.id))
+    students = course.get_all_not_deleted_students().all()
+
+    assert response.status == '403 FORBIDDEN'
+    assert len(students) == 1
+
+
+def test_trainer_try_delete_anothers_check(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(app['client'], course.id)
+    student = course.get_all_not_deleted_students()[0]
+    add_default_check(app['client'], student.id)
+    check = student.get_all_not_deleted_checks()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = app['client'].post(f'/checks/delete', data=dict(student_id=student.id, check_id=check.id))
+    checks = student.get_all_not_deleted_checks().all()
+
+    assert response.status == '403 FORBIDDEN'
+    assert len(checks) == 1
+
+
+def test_delete_course(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    response = app['client'].post(f'/coursecreate/delete', data=dict(course_id=course.id))
+    courses = Course.get_all_not_deleted_courses().all()
+
+    assert response.status == '302 FOUND'
+    assert len(courses) == 0
+
+
+def test_delete_student(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(app['client'], course.id)
+    student = course.get_all_not_deleted_students()[0]
+
+    response = app['client'].post(f'/students/delete', data=dict(course_id=course.id, student_id=student.id))
+    students = course.get_all_not_deleted_students().all()
+
+    assert response.status == '302 FOUND'
+    assert len(students) == 0
+
+
+def test_delete_check(app):
+    create_default_user(app['db'])
+    login(app['client'])
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(app['client'], course.id)
+    student = course.get_all_not_deleted_students()[0]
+    add_default_check(app['client'], student.id)
+    check = student.get_all_not_deleted_checks()[0]
+
+    response = app['client'].post(f'/checks/delete', data=dict(check_id=check.id, student_id=student.id))
+    checks = student.get_all_not_deleted_checks().all()
+    
+    assert response.status == '302 FOUND'
+    assert len(checks) == 0
