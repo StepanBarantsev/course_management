@@ -723,3 +723,84 @@ def test_edit_profile_unsuccess(app):
     assert user.lms_id is None
     assert not user.flag_emails_from_default_mail
     assert user.flag_is_messages_from_bot_is_delivered
+
+
+def test_trainer_try_to_edit_anothers_student(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    student_dict_1 = dict(email='stepan.barantsev@gmail.com', lms_id=10622, days=0)
+    student_dict_new = dict(email='stepan.barantsev3@gmail.com', lms_id=1, days=35)
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id, data_dict=student_dict_1)
+    student = course.get_all_not_deleted_students()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = app['client'].post(f'/students/edit?course_id={course.id}&student_id={student.id}', data=student_dict_new)
+
+    assert response.status == '403 FORBIDDEN'
+    assert student.email == student_dict_1['email']
+    assert student.lms_id == student_dict_1['lms_id']
+    assert student.number_of_days == student_dict_1['days']
+
+
+def test_trainer_try_to_add_student_to_anothers_course(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = add_default_student(client=app['client'], course_id=course.id)
+    students = course.get_all_not_deleted_students().all()
+
+    assert response.status == '403 FORBIDDEN'
+    assert len(students) == 0
+
+
+def test_trainer_try_to_add_check_to_anothers_student(app):
+    username_1 = 'testUser1'
+    password_1 = '123'
+    email_1 = 'email_1'
+
+    username_2 = 'testUser2'
+    password_2 = '123'
+    email_2 = 'email_2'
+
+    create_default_user(app['db'], username_1, password_1, email_1)
+    create_default_user(app['db'], username_2, password_2, email_2)
+
+    login(app['client'], username_1, password_1)
+    create_default_course(app['client'])
+    course = Course.get_all_not_deleted_courses()[0]
+    add_default_student(client=app['client'], course_id=course.id)
+    student = course.get_all_not_deleted_students()[0]
+    logout(app['client'])
+    login(app['client'], username_2, password_2)
+    response = add_default_check(app['client'], student.id)
+    checks = student.get_all_not_deleted_checks().all()
+
+    assert response.status == '403 FORBIDDEN'
+    assert len(checks) == 0
+
