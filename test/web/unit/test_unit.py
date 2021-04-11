@@ -992,6 +992,6 @@ def test_delete_check(app):
 
     response = app['client'].post(f'/checks/delete', data=dict(check_id=check.id, student_id=student.id))
     checks = student.get_all_not_deleted_checks().all()
-    
+
     assert response.status == '302 FOUND'
     assert len(checks) == 0
