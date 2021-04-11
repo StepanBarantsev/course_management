@@ -51,3 +51,22 @@ def test_change_student_status(session, app, user_logined):
     status = app.students_page.get_student_status(0)
 
     assert status == Student.student_statuses['finished']
+
+
+def test_add_days_to_student(session, app, user_logined):
+
+    course = create_course(session, user_id=user_logined.id, course_name=f'Название курса', course_lms_id=1)
+    create_student(session, course_id=course.id, student_name=f'Имя студента', student_lms_id=1)
+
+    app.refresh()
+
+    app.courses_page.go_to_students_of_course_by_course_number(0)
+    days = app.students_page.get_student_number_of_days(0)
+
+    assert days == 0
+
+    app.students_page.add_days_to_student(0)
+    sleep(1)
+    days = app.students_page.get_student_number_of_days(0)
+
+    assert days == 30

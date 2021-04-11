@@ -31,3 +31,13 @@ class StudentsPage:
     def change_status_to_finished(self, student_index):
         row = self.app.wd.find_elements_by_css_selector('.table-responsive tr')[student_index + 1]
         row.find_element_by_css_selector('[title="Завершил курс"]').click()
+
+    def add_days_to_student(self, student_index):
+        row = self.app.wd.find_elements_by_css_selector('.table-responsive tr')[student_index + 1]
+        row.find_element_by_css_selector('[name="add_days"]').click()
+
+    def get_student_number_of_days(self, student_index):
+        row = self.app.wd.find_elements_by_css_selector('.table-responsive tr')[student_index + 1]
+        td = row.find_elements_by_css_selector('td')[3]
+        number = int(td.text)
+        return number
