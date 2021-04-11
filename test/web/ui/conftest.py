@@ -3,9 +3,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
-from web.app.models import User
-from werkzeug.security import generate_password_hash
-from test.db_helper import create_minimal_user
+from web.app.models import User, Course
+from test.db_helper import create_minimal_user, create_full_info_user
 
 
 fixture = None
@@ -21,8 +20,10 @@ def session():
         engine = create_engine(SQLALCHEMY_DATABASE_URI, convert_unicode=True)
         Session = sessionmaker(bind=engine)
         session_fixture = Session()
-        session_fixture.query(User).delete()
-        session_fixture.commit()
+
+    session_fixture.query(Course).delete()
+    session_fixture.query(User).delete()
+    session_fixture.commit()
 
     return session_fixture
 
@@ -34,11 +35,29 @@ def app():
     if fixture is None:
         fixture = Application()
 
+    return fixture
+
+
+@pytest.fixture()
+def user_logined_minimal():
+    global fixture
+
     fixture.open_base_page()
-    create_minimal_user(session_fixture)
+    user = create_minimal_user(session_fixture)
     fixture.login_page.login('Stepan', '1')
 
-    return fixture
+    return user
+
+
+@pytest.fixture()
+def user_logined():
+    global fixture
+
+    fixture.open_base_page()
+    user = create_full_info_user(session_fixture)
+    fixture.login_page.login('Stepan', '1')
+
+    return user
 
 
 @pytest.fixture(scope='session', autouse=True)
