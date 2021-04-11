@@ -62,3 +62,8 @@ class StudentsPage:
         self.app.wd.find_element_by_css_selector('#block_filters .form-control [value="freezed"]').click()
         sleep(2)
 
+    def filter_by_course(self, course):
+        self.app.wd.find_elements_by_css_selector('#block_filters .form-control')[0].click()
+        sleep(1)
+        self.app.wd.find_elements_by_css_selector('#block_filters .form-control')[0].find_element_by_css_selector(f'[value="{course.id}"]').click()
+        sleep(2)

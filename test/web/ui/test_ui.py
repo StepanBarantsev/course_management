@@ -114,3 +114,22 @@ def test_filter_students_by_status(session, app, user_logined):
     assert number_of_students == 1
     assert first_student_name == 'Студент Студентович'
     assert status == Student.student_statuses['freezed']
+
+
+def test_filter_students_by_course(session, app, user_logined):
+    course_1 = create_course(session, user_id=user_logined.id, course_name=f'Студенческий курс', course_lms_id=1)
+    course_2 = create_course(session, user_id=user_logined.id, course_name=f'Школьнический курс', course_lms_id=1)
+    create_student(session, course_id=course_1.id, student_name=f'Студент Студентович', student_lms_id=1)
+    create_student(session, course_id=course_2.id, student_name=f'Школьник Школьникович', student_lms_id=2)
+
+    app.refresh()
+
+    app.courses_page.go_to_students_of_course_by_course_number(0)
+    first_student_name = app.students_page.get_student_name(0)
+
+    assert first_student_name == 'Студент Студентович'
+
+    app.students_page.filter_by_course(course_2)
+    first_student_name = app.students_page.get_student_name(0)
+
+    assert first_student_name == 'Школьник Школьникович'
