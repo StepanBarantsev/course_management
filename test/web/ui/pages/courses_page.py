@@ -15,3 +15,7 @@ class CoursesPage:
 
     def go_to_next_page(self):
         self.app.wd.find_elements_by_css_selector('.page-link')[1].click()
+
+    def go_to_students_of_course_by_course_number(self, course_number):
+        self.app.wd.find_elements_by_css_selector('a[title="Студенты"]')[course_number].click()
+

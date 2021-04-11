@@ -3,7 +3,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
-from web.app.models import User, Course
+from web.app.models import User, Course, Student
 from test.db_helper import create_minimal_user, create_full_info_user
 
 
@@ -21,6 +21,7 @@ def session():
         Session = sessionmaker(bind=engine)
         session_fixture = Session()
 
+    session_fixture.query(Student).delete()
     session_fixture.query(Course).delete()
     session_fixture.query(User).delete()
     session_fixture.commit()

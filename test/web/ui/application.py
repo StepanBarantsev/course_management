@@ -2,6 +2,7 @@ from selenium import webdriver
 import os
 from test.web.ui.pages.login_page import LoginPage
 from test.web.ui.pages.courses_page import CoursesPage
+from test.web.ui.pages.students_page import StudentsPage
 from test.web.ui.components.navigation_component import NavigationComponent
 
 
@@ -14,6 +15,7 @@ class Application:
 
         self.login_page = LoginPage(self)
         self.courses_page = CoursesPage(self)
+        self.students_page = StudentsPage(self)
 
         self.navigation_component = NavigationComponent(self)
 

@@ -1,4 +1,4 @@
-from web.app.models import User, Course
+from web.app.models import User, Course, Student
 from werkzeug.security import generate_password_hash
 
 
@@ -23,4 +23,12 @@ def create_course(session, user_id, course_name, course_lms_id):
     session.add(course)
     session.commit()
     return course
+
+
+def create_student(session, course_id, student_name, student_lms_id):
+    student = Student(name=student_name, course_id=course_id, lms_id=student_lms_id, registration_code=1,
+                      email='stepan.barantsev@gmail.com', lms_email='stepan.barantsev@gmail.com', number_of_days=0)
+    session.add(student)
+    session.commit()
+    return student
 
