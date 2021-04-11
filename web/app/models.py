@@ -321,7 +321,3 @@ class Check(db.Model):
     @staticmethod
     def delete_check_by_id(check_id):
         Check.query.filter_by(id=check_id).first().deleted = True
-
-
-
-

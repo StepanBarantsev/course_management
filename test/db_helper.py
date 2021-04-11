@@ -31,4 +31,3 @@ def create_student(session, course_id, student_name, student_lms_id):
     session.add(student)
     session.commit()
     return student
-
