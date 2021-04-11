@@ -1,2 +1,5 @@
-def test_test(app, session):
-    pass
+from time import sleep
+
+
+def test_test(session, app):
+    sleep(10000)
