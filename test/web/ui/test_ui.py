@@ -107,7 +107,6 @@ def test_filter_students_by_status(session, app, user_logined):
     assert number_of_students == 2
 
     app.students_page.filter_by_status_freezed()
-    sleep(1)
     number_of_students = app.students_page.get_number_of_students_on_page()
     first_student_name = app.students_page.get_student_name(0)
     status = app.students_page.get_student_status(0)
