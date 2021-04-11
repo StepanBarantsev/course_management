@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 from web.app.models import User
 from werkzeug.security import generate_password_hash
+from test.db_helper import create_minimal_user
 
 
 fixture = None
@@ -34,9 +35,7 @@ def app():
         fixture = Application()
 
     fixture.open_base_page()
-    user = User(username='Stepan', email='stepan.barantsev@gmail.com', password_hash=generate_password_hash('1'))
-    session_fixture.add(user)
-    session_fixture.commit()
+    create_minimal_user(session_fixture)
     fixture.login_page.login('Stepan', '1')
 
     return fixture

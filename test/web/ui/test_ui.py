@@ -1,5 +1,5 @@
 from time import sleep
 
 
-def test_test(session, app):
-    sleep(10000)
+def test_edit_profile_data(session, app):
+    sleep(5)
