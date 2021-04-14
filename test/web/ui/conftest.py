@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 from web.app.models import User, Course, Student
-from test.db_helper import create_minimal_user, create_full_info_user
+from test.web.db_helper import create_minimal_user, create_full_info_user
 
 
 fixture = None

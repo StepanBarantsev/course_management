@@ -1,5 +1,5 @@
 from time import sleep
-from test.db_helper import create_course, create_student
+from test.web.db_helper import create_course, create_student
 from web.app.models import Student
 
 

@@ -1,4 +1,4 @@
-from web.app.models import User, Course, Student
+from web.app.models import User, Course
 from test.web.unit.helpers import create_default_user, login, logout, create_default_course, \
     add_default_student, add_default_check
 from flask_login import current_user
