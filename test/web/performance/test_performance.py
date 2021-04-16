@@ -1,4 +1,4 @@
-from locust import HttpUser, TaskSet, task
+from locust import HttpUser, TaskSet, task, between, constant
 import os
 from web.app.models import User, Course
 from sqlalchemy import create_engine
@@ -36,23 +36,6 @@ class WebsiteUser(HttpUser):
         self.session.query(Course).delete()
         self.session.query(User).delete()
         self.session.commit()
-
-    @task
-    def create_course(self):
-        name, lms_id = self.COURSE_CREDITIONALS.pop()
-        course_dict = dict(
-            name=name,
-            lms_id=lms_id,
-            trainer_lms_id=1,
-            trainer_telegram_id=271828,
-            review_link='http://testlink',
-            help_field='Информация отсутствует',
-            default_number_of_days=30,
-            number_homeworks=15,
-            number_of_blocks=None
-        )
-
-        self.client.post('/coursecreate/create', course_dict)
 
     @task
     def get_main(self):
