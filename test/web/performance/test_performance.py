@@ -1,9 +1,8 @@
-from locust import HttpUser, TaskSet, task, between, constant
+from locust import HttpUser, task
 import os
 from web.app.models import User, Course
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import time
 
 
 class WebsiteUser(HttpUser):
