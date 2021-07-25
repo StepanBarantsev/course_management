@@ -16,7 +16,7 @@ class FaunaHelper:
                                                       "student_name": student.name,
                                                       "email": student.email,
                                                       "date": FaunaHelper.create_current_date_in_specific_format(),
-                                                      "course_name": student.course.name,
+                                                      "course_name": student.course.name.split(',')[0],
                                                       "otl": False}
                                                   }))['ref'].value['id']
 

@@ -10,6 +10,8 @@ from dateutil.relativedelta import relativedelta
 from telegram.chat.helpers import get_trainer_by_telegram_id
 from web.app.models import Student
 from logger import logger
+from telegram.schedule.email_helper import send_email
+from telegram.config import ConfigTelegram
 
 
 def job():
@@ -35,9 +37,7 @@ def job():
                         if student.cert_link is None:
                             cert_link = try_to_generate_cert_to_student(student)
                             if cert_link is not None:
-                                is_delivered = send_message_about_certificate(student.telegram_id, cert_link, discount_coupon, student)
-                                send_message_about_certificate(course.author.telegram_id, cert_link, discount_coupon, student, is_delivered)
-
+                                send_message_about_certificate(student.telegram_id, student.course.author.name, cert_link, discount_coupon, student)
             try:
                 bot.send_message(course.author.telegram_id, message_about_days)
                 trainer = get_trainer_by_telegram_id(course.author.telegram_id, session)
@@ -74,42 +74,17 @@ def send_message_about_days_to_student(student, session):
         return False
 
 
-def send_message_about_certificate(telegram_id, cert_link, discount_coupon, student, is_delivered=None):
-    with session_scope() as session:
-        date_after_month = (datetime.today() + relativedelta(months=1)).strftime("%d.%m.%Y")
-        course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
-        if is_delivered is None:
-            try:
-                bot.send_message(telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, course_name=course_name_and_author))
-                logger.info(f"Студенту с telegram_id {telegram_id} доставлено сообщение о сертификате: {cert_link}")
-                return True
-            except ApiTelegramException:
-                logger.critical(f"Студенту с telegram_id {telegram_id} НЕ доставлено сообщение о сертификате: {cert_link}")
-                return False
-        # Сообщение для теренера о том, доставлено ли студенту сообщение
-        else:
-            try:
-                if is_delivered:
-                    bot.send_message(telegram_id,
-                                     get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
-                                                                    student.course.review_link,
-                                                                    date_after_month,
-                                                                    course_name=course_name_and_author) + '\n\n(Доставлено)')
-                else:
-                    bot.send_message(telegram_id,
-                                     get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon,
-                                                                    student.course.review_link,
-                                                                    date_after_month,
-                                                                    course_name=course_name_and_author) + '\n\n(Не доставлено)')
-                logger.info(f"Тренеру с telegram_id {telegram_id} доставлено сообщение о сертификате: {cert_link}")
-                trainer = get_trainer_by_telegram_id(telegram_id, session)
-                trainer.flag_is_messages_from_bot_is_delivered = True
-                session.commit()
-            except ApiTelegramException:
-                trainer = get_trainer_by_telegram_id(telegram_id, session)
-                trainer.flag_is_messages_from_bot_is_delivered = False
-                session.commit()
-                logger.critical(f"Тренеру НЕ telegram_id {telegram_id} доставлено сообщение о сертификате: {cert_link}")
+def send_message_about_certificate(student_telegram_id, trainer_telegram_id, cert_link, discount_coupon, student):
+    date_after_month = (datetime.today() + relativedelta(months=1)).strftime("%d.%m.%Y")
+    course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
+    send_email(student.email, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, student.course.author.name, course_name=course_name_and_author), f'Сертификат по курсу {student.course.name}', ConfigTelegram.CERT_MAIL_USERNAME)
+    try:
+        bot.send_message(student_telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, student.course.author.name, course_name=course_name_and_author))
+        logger.info(f"Студенту с telegram_id {student_telegram_id} доставлено сообщение о сертификате: {cert_link}")
+    except ApiTelegramException:
+        logger.critical(f"Студенту с telegram_id {student_telegram_id} НЕ доставлено сообщение о сертификате: {cert_link}")
+
+    bot.send_message(trainer_telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, student.course.author.name, course_name=course_name_and_author))
 
 
 def try_to_generate_cert_to_student(student):
