@@ -14,7 +14,6 @@ dnspython==2.0.0
 dominate==2.5.1
 email-validator==1.1.1
 enum34==1.1.10
-faunadb==4.0.1
 Flask==1.1.2
 Flask-Bootstrap==3.3.7.1
 Flask-CLI==0.4.0
