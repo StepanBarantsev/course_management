@@ -8,11 +8,10 @@ def send_mail(student):
     logger.critical(f'Отправляем письмо студенту {student}')
     date = datetime.today().date() + timedelta(days=31)
     # bcc просто на мою запасную почту
-    # "to": [student.email],
     requests.post(f'{ConfigTelegram.MAIL_ADDRESS}/email',
                   json={"secret": ConfigTelegram.MAIL_KEY,
                         "message": {
-                        "to": ['stepan.barantsev@gmail.com'],
+                        "to": [student.email],
                         "bcc": ['pythonbeginners.info@gmail.com'],
                         "from": ConfigTelegram.CERT_MAIL_ADDR,
                         "subject": f"Сертификат ({student.course.name})",
