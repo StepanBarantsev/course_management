@@ -1,23 +1,25 @@
+from api_helper.certificate_helper import CertDBHelper
+from api_helper.date_helper import DateHelper
 from telegram.chat.singleton_bot import bot
 from telegram.chat.db_session import session_scope
 from web.app.models import Course
 from telegram.chat.messages import get_message_with_course_prefix
 from telebot.apihelper import ApiTelegramException
 from api_helper.lms_api_helper import LmsApiHelper
-from api_helper.fauna_helper import FaunaHelper
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from telegram.chat.helpers import get_trainer_by_telegram_id
 from web.app.models import Student
 from logger import logger
-from telegram.schedule.email_helper import send_email
+from telegram.schedule.email_helper import send_mail
 from telegram.config import ConfigTelegram
 
+cert_db_helper = CertDBHelper()
 
 def job():
     with session_scope() as session:
         courses = session.query(Course).filter_by(deleted=False).all()
-        discount_coupon = FaunaHelper.get_discount_coupon()
+        discount_coupon = ConfigTelegram.COUPON_CODE
 
         for course in courses:
             students = course.get_all_not_deleted_students()
@@ -77,7 +79,7 @@ def send_message_about_days_to_student(student, session):
 def send_message_about_certificate(student_telegram_id, trainer_telegram_id, cert_link, discount_coupon, student):
     date_after_month = (datetime.today() + relativedelta(months=1)).strftime("%d.%m.%Y")
     course_name_and_author = f'{student.course.name} [{student.course.author.name}]'
-    send_email(student.email, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, student.course.author.name, course_name=course_name_and_author), f'Сертификат по курсу {student.course.name}', ConfigTelegram.CERT_MAIL_USERNAME)
+    send_mail(student)
     try:
         bot.send_message(student_telegram_id, get_message_with_course_prefix('CERTIFICATE', None, cert_link, discount_coupon, student.course.review_link, date_after_month, student.course.author.name, course_name=course_name_and_author))
         logger.info(f"Студенту с telegram_id {student_telegram_id} доставлено сообщение о сертификате: {cert_link}")
@@ -89,7 +91,7 @@ def send_message_about_certificate(student_telegram_id, trainer_telegram_id, cer
 
 def try_to_generate_cert_to_student(student):
     if LmsApiHelper.can_we_give_certificate_to_student(student.lms_id, student.course.lms_id):
-        cert_link = 'http://cert.software-testing.ru/' + FaunaHelper.create_certify(student)
+        cert_link = 'http://cert.software-testing.ru/certificate/' + cert_db_helper.insert_certificate(student.email, student.name, student.course.name.split(',')[0], DateHelper.create_current_date_in_specific_format(), False)
         print(cert_link)
         student.cert_link = cert_link
         student.status = 'finished'
