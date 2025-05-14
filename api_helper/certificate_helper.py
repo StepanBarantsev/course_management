@@ -7,10 +7,10 @@ class CertDBHelper:
     def __init__(self):
         self.conn = psycopg2.connect(
             host=ConfigTelegram.CERT_DB_HOST,
-            port=int(ConfigTelegram.CERT_DB_HOST),
-            dbname=ConfigTelegram.CERT_DB_HOST,
-            user=ConfigTelegram.CERT_DB_HOST,
-            password=ConfigTelegram.CERT_DB_HOST
+            port=int(ConfigTelegram.CERT_DB_PORT),
+            dbname=ConfigTelegram.CERT_DB_NAME,
+            user=ConfigTelegram.CERT_DB_USER,
+            password=ConfigTelegram.CERT_DB_PASSWORD
         )
 
     def insert_certificate(self, email, student_name, course_name, date, otl=False):
