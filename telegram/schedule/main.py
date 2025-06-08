@@ -91,7 +91,7 @@ def send_message_about_certificate(student_telegram_id, trainer_telegram_id, cer
 
 def try_to_generate_cert_to_student(student):
     if LmsApiHelper.can_we_give_certificate_to_student(student.lms_id, student.course.lms_id):
-        cert_link = 'http://cert.software-testing.ru/certificate/' + cert_db_helper.insert_certificate(student.email, student.name, student.course.name.split(',')[0], DateHelper.create_current_date_in_specific_format(), False)
+        cert_link = 'http://cert.software-testing.ru/' + cert_db_helper.insert_certificate(student.email, student.name, student.course.name.split(',')[0], DateHelper.create_current_date_in_specific_format(), False)
         print(cert_link)
         student.cert_link = cert_link
         student.status = 'finished'

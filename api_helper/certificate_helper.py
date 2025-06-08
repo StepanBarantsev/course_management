@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from telegram.config import ConfigTelegram
+import uuid
 
 
 class CertDBHelper:
@@ -15,6 +16,7 @@ class CertDBHelper:
 
     def insert_certificate(self, email, student_name, course_name, date, otl=False):
         try:
+            faunaid = str(uuid.uuid4())
             with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(
                     """
@@ -22,10 +24,10 @@ class CertDBHelper:
                     VALUES (%s, %s, %s, %s, %s, %s)
                     RETURNING id
                     """,
-                    (None, student_name, email, date, course_name, otl)
+                    (faunaid, student_name, email, date, course_name, otl)
                 )
                 self.conn.commit()
-                return cur.fetchone()["id"]
+                return faunaid
         except Exception as e:
             self.conn.rollback()
             raise Exception("Ошибка при создании сертификата:", e)
