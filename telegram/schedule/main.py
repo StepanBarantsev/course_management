@@ -39,7 +39,7 @@ def job():
                         if student.cert_link is None:
                             cert_link = try_to_generate_cert_to_student(student)
                             if cert_link is not None:
-                                send_message_about_certificate(student.telegram_id, student.course.author.name, cert_link, discount_coupon, student)
+                                send_message_about_certificate(student.telegram_id, student.course.trainer_telegram_id, cert_link, discount_coupon, student)
             try:
                 bot.send_message(course.author.telegram_id, message_about_days)
                 trainer = get_trainer_by_telegram_id(course.author.telegram_id, session)
